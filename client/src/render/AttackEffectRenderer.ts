@@ -21,13 +21,12 @@ export class AttackEffectRenderer{
     renderAttackEffect(action:Action, rotation:number){
         if(action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
             return;
-        
         switch (action) {
             case Action.ATTACK_1:
                 this.animations[action]!.visible = true;
                 this.animations[action]!.loop = false;
                 this.animations[action]!.currentFrame = 0;
-                this.animations[action]!.rotation = rotation;
+                this.animations[action]!.angle = rotation;
                 this.animations[action]!.play();
                 this.animations[action]!.onComplete = ()=>{this.animations[action]!.visible=false}
 

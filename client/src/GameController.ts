@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import { Application, Container } from "pixi.js";
 import { Action } from "../../shared/Action";
 import Player from "../../shared/Player";
 import { EventBus } from "./core/EventBus";
@@ -7,6 +7,7 @@ import { NetworkClient } from "./network/NetworkClient";
 import PlayerRenderer from "./render/PlayerRenderer";
 import { InputHandler } from "./core/InputHandler";
 import type { AttackData } from "../../shared/AttackData";
+import { CoordinateService } from "./core/CoordinateService";
 
 
 export class GameController {
@@ -16,8 +17,11 @@ export class GameController {
     private eventBus: EventBus;
     private localPlayerId: string | null = null;
     private inputHandler:InputHandler;
+    private coordinateService: CoordinateService;
 
-    constructor(parentContainer: Container, serverUrl: string) {
+
+    constructor(parentContainer: Container, serverUrl: string, app:Application) {
+        this.coordinateService = new CoordinateService(app);
         this.inputHandler = new InputHandler();
         this.eventBus = new EventBus();
         this.gameState = new GameState();
@@ -58,6 +62,7 @@ export class GameController {
         });
 
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
+            console.log("attackData",attackData)
             this.renderer.showAttackEffect(attackData)
             
         });
@@ -89,17 +94,18 @@ export class GameController {
         if (!player) return;
 
         const mousePos = this.inputHandler.getMousePosition();
-        const dx = mousePos.x - player.position.x;
-        const dy = mousePos.y - player.position.y;
-        let dir = Math.atan2(dy, dx);
+        const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
+        const dx = worldMousePos.x - player.position.x;
+        const dy = worldMousePos.y - player.position.y;
+        let dir = Math.atan2(dy, dx) * 180 / Math.PI;
         player.currentAction = Action.ATTACK_1;
         this.network.attack({
             playerId: this.localPlayerId,
             position: {
-                x: 0,
-                y: 0
+                x: player.position.x,
+                y: player.position.y
             },
-            rotation: dir,
+            rotation: dir ,
             hitbox: {
                 x: 0,
                 y: 0,

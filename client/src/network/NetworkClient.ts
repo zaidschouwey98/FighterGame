@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import type { EventBus } from "../core/EventBus";
 import type Player from "../../../shared/Player";
+import type { Action } from "../../../shared/Action";
 
 export class NetworkClient {
     private socket: Socket;
@@ -14,7 +15,7 @@ export class NetworkClient {
             this.playerId = this.socket.id;
             this.eventBus.emit("connected", this.socket.id);
         });
-        
+
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
         this.socket.on("currentPlayers", (players: Record<string, Player>) => {
@@ -29,8 +30,12 @@ export class NetworkClient {
         });
     }
 
-    move(position: { x: number, y: number }) {
-        this.socket.emit("move", position);
+    move(position: { x: number, y: number }, action: Action) {
+        this.socket.emit("move", {
+            x: position.x,
+            y: position.y,
+            action: action
+        });
     }
 
     getPlayerId(): string | undefined {

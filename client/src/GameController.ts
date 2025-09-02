@@ -52,8 +52,8 @@ export class GameController {
 
         // quand un joueur bouge
         this.eventBus.on("player:moved", (player: Player) => {
-            // this.gameState.updatePlayer(player);
-            // this.renderer.updatePlayers([player]);
+            this.gameState.updatePlayer(player);
+            this.renderer.updatePlayers([player]);
         });
         
     }
@@ -104,7 +104,6 @@ export class GameController {
             // Mise à jour de la position
             player.position.x += dx * player.speed * 16 * delta / 60;
             player.position.y += dy * player.speed * 16*  delta / 60;
-            this.network.move({x:player.position.x,y:player.position.y})
             // Choisir l'action en fonction de la direction
             if (dx > 0) newAction = Action.MOVE_RIGHT;
             else if (dx < 0) newAction = Action.MOVE_LEFT;
@@ -115,11 +114,10 @@ export class GameController {
             player.currentAction = newAction;
 
             // Envoyer la nouvelle position au serveur
-            // this.network.move({ 
-            //     x: player.position.x, 
-            //     y: player.position.y,
-            //     action: player.currentAction
-            // });
+            this.network.move({ 
+                x: player.position.x, 
+                y: player.position.y, 
+            }, player.currentAction);
 
         } else {
             switch (player.currentAction) {

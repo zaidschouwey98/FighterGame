@@ -4,8 +4,9 @@ import { CoordinateService } from "./CoordinateService";
 import { InputHandler } from "./InputHandler";
 import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
-
+export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
 export class AttackService {
+    public attackTimer: number =  30;
     constructor(
         private inputHandler: InputHandler,
         private coordinateService: CoordinateService,
@@ -31,8 +32,7 @@ export class AttackService {
     }
 
     public performAttack(player: Player, dir: number) {
-        player.currentAction = Action.ATTACK_1;
-
+        player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
 
         this.network.attack({
@@ -40,7 +40,8 @@ export class AttackService {
             position: { ...player.position },
             rotation: dir,
             hitbox,
-            playerAction: Action.ATTACK_1
+            playerAction: player.currentAction
         });
+        player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
     }
 }

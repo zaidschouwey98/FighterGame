@@ -2,7 +2,7 @@ import { Application, Container, Spritesheet } from "pixi.js";
 import Player from "../../shared/Player";
 import type { AttackData } from "../../shared/AttackData";
 import type { AttackResult } from "../../shared/AttackResult";
-import { AttackService } from "./core/AttackService";
+import { ATTACK_SEQUENCE, AttackService } from "./core/AttackService";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus } from "./core/EventBus";
 import { GameState } from "./core/GameState";
@@ -10,6 +10,7 @@ import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "./core/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import PlayerRenderer from "./render/PlayerRenderer";
+import { Action } from "../../shared/Action";
 
 
 export class GameController {
@@ -83,16 +84,24 @@ export class GameController {
         } else {
             this.movementService.handleMovement(player, delta);
         }
-
         if (this.inputHandler.consumeAttack()) {
             this.attackService.initiateAttack(player);
+
+        }
+        
+        if (player.attackIndex != 0)
+            this.attackService.attackTimer -= delta;
+
+        if (this.attackService.attackTimer <= 0 || player.attackIndex == 0) {
+            player.attackIndex = 0;
+            this.attackService.attackTimer = 30;
         }
 
         this.gameState.updatePlayer(player);
     }
 
     private handleDash(player: Player) {
-        if(!player.dashTimer)
+        if (!player.dashTimer)
             return;
 
         const totalFrames = 14;
@@ -103,7 +112,7 @@ export class GameController {
         player.position.y += (player.dashVelocity!.y / 0.5) * speedFactor;
 
         player.dashTimer!--;
-        player.currentAction = "ATTACK_DASH" as any;
+        player.currentAction = Action.ATTACK_DASH;
 
         this.network.move({ ...player.position }, player.currentAction);
 

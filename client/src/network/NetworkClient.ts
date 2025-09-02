@@ -1,20 +1,39 @@
 import { io, Socket } from "socket.io-client";
-import type { EventBus } from "../core/Eventbus";
-import type Player from "../Player";
-
+import type { EventBus } from "../core/EventBus";
+import type Player from "../../../shared/Player";
 
 export class NetworkClient {
     private socket: Socket;
+    public playerId: string | undefined = undefined;
 
     constructor(serverUrl: string, private eventBus: EventBus) {
         this.socket = io(serverUrl);
 
-        this.socket.on("connect", () => console.log("Connecté au serveur", this.socket.id));
+        this.socket.on("connect", () => {
+            console.log("Connecté au serveur", this.socket.id);
+            this.playerId = this.socket.id;
+            this.eventBus.emit("connected", this.socket.id);
+        });
+        
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
+        this.socket.on("currentPlayers", (players: Record<string, Player>) => {
+            const playersArray = Object.values(players);
+            this.eventBus.emit("players:update", playersArray);
+        });
+        this.socket.on("newPlayer", (player: Player) => {
+            this.eventBus.emit("player:joined", player);
+        });
+        this.socket.on("playerDisconnected", (playerId: string) => {
+            this.eventBus.emit("player:left", playerId);
+        });
     }
 
     move(position: { x: number, y: number }) {
         this.socket.emit("move", position);
+    }
+
+    getPlayerId(): string | undefined {
+        return this.playerId;
     }
 }

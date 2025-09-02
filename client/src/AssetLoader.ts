@@ -1,4 +1,4 @@
-import { Assets, Sprite, Spritesheet, Texture } from "pixi.js";
+import { Assets, Spritesheet } from "pixi.js";
 export type AnimationName =
     "codebot"|
     "player_idle"|

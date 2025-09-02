@@ -1,5 +1,5 @@
 import { Container } from "pixi.js";
-import type Player from "../Player";
+import type Player from "../../../shared/Player";
 import PlayerSprite from "./PlayerSprite";
 
 export default class PlayerRenderer {
@@ -15,13 +15,13 @@ export default class PlayerRenderer {
         this.parentContainer = parentContainer;
     }
 
-    public addNewPlayer(player: Player) {
+    public async addNewPlayer(player: Player) {
         const newPlayerContainer = new Container();
         newPlayerContainer.label = player.id;
 
         // créer le sprite lié à ce player
         const sprite = new PlayerSprite(player.id, newPlayerContainer);
-        sprite.initialize();
+        await sprite.initialize();
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
@@ -29,37 +29,47 @@ export default class PlayerRenderer {
         this.parentContainer.addChild(newPlayerContainer);
     }
 
-    public removeNewPlayer(player: Player) {
-        const container = this.playerContainers.get(player.id);
-        const sprite = this.playerSprites.get(player.id);
+    public removePlayer(playerId: string) {
+        const container = this.playerContainers.get(playerId);
+        const sprite = this.playerSprites.get(playerId);
 
-        sprite?.destroy();
-        container?.destroy(true);
+        if (sprite) {
+            sprite.destroy();
+        }
 
-        this.playerContainers.delete(player.id);
-        this.playerSprites.delete(player.id);
-        this.players.delete(player.id);
+        if (container) {
+            container.destroy({ children: true });
+            this.parentContainer.removeChild(container);
+        }
+
+        this.playerContainers.delete(playerId);
+        this.playerSprites.delete(playerId);
+        this.players.delete(playerId);
     }
 
     public updatePlayers(players: Player[]) {
         for (const player of players) {
-            const playerContainer = this.playerContainers.get(player.id);
-            const playerSprite = this.playerSprites.get(player.id);
+            let playerContainer = this.playerContainers.get(player.id);
+            let playerSprite = this.playerSprites.get(player.id);
 
-            if (!playerContainer || !playerSprite)
-                throw new Error(`Missing container/sprite for player ${player.id}`);
+            // Si le joueur n'existe pas encore, créez-le
+            if (!playerContainer || !playerSprite) {
+                this.addNewPlayer(player);
+                playerContainer = this.playerContainers.get(player.id);
+                playerSprite = this.playerSprites.get(player.id);
+            }
 
-            // 💡 maj position
+            if (!playerContainer || !playerSprite) continue;
+
+            // Mise à jour de la position
             playerContainer.x = player.position.x;
             playerContainer.y = player.position.y;
 
-            // 💡 maj animation si l’action a changé
-            const lastState = this.players.get(player.id);
-            if (!lastState || lastState.currentAction !== player.currentAction) {
-                playerSprite.playAnimation(player.currentAction);
-            }
+            // Mise à jour de l'animation
+            
+            playerSprite.playAnimation(player.currentAction, player);
+            
 
-            // on stocke l’état pour comparaison future
             this.players.set(player.id, player);
         }
     }

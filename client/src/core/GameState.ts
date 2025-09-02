@@ -1,4 +1,4 @@
-import type Player from "../Player";
+import type Player from "../../../shared/Player";
 
 export class GameState {
     players: Map<string, Player> = new Map();

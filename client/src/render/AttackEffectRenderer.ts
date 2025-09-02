@@ -24,9 +24,8 @@ export class AttackEffectRenderer{
         }
     }
 
-    renderAttackEffect(action:Action, rotation:number, playerPos:Position){
-        if(action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
-            return;
+
+    renderDashCloud(playerPos:Position){
         this.dashCloud.x = playerPos.x;
         this.dashCloud.y = playerPos.y;
         this.dashCloud.visible = true;
@@ -35,6 +34,12 @@ export class AttackEffectRenderer{
         this.dashCloud.currentFrame = 0;
         this.dashCloud.play();
         this.dashCloud.onComplete = ()=>{this.dashCloud.visible=false}
+    }
+
+    renderAttackEffect(action:Action, rotation:number, playerPos:Position){
+        if(action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
+            return;
+        
         switch (action) {
             case Action.ATTACK_1:
                 

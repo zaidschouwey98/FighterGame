@@ -89,13 +89,12 @@ export class GameController {
 
         this.handleMovement(player, delta);
         if (this.inputHandler.consumeAttack()) {
-            this.performAttack();
+            this.initiateAttack();
         }
         this.gameState.players.set(this.localPlayerId, player)
     }
 
-
-    private performAttack() {
+    private initiateAttack() {
         if (!this.localPlayerId) return;
 
         const player = this.gameState.players.get(this.localPlayerId);
@@ -106,27 +105,35 @@ export class GameController {
         const dx = worldMousePos.x - player.position.x;
         const dy = worldMousePos.y - player.position.y;
         let dir = Math.atan2(dy, dx);
-        // DASH
+
+        // DASH config
         const dashDistance = 80; // pixels totaux
-        const dashFrames = 14; // nombre de frames pour le dash
-        player.dashVelocity = { x: Math.cos(dir) * dashDistance / dashFrames, y: Math.sin(dir) * dashDistance / dashFrames };
+        const dashFrames = 14;   // durée du dash
+        player.dashVelocity = {
+            x: Math.cos(dir) * dashDistance / dashFrames,
+            y: Math.sin(dir) * dashDistance / dashFrames
+        };
         player.dashTimer = dashFrames;
+
+        // 👉 on garde la direction de l’attaque pour plus tard
+        (player as any).pendingAttackDir = dir;
+        (player as any).pendingAttack = true;
+
         this.gameState.updatePlayer(player);
-        // Dash
+    }
+
+    private performAttack(player: Player, dir: number) {
         player.currentAction = Action.ATTACK_1;
+
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
 
         this.network.attack({
-            playerId: this.localPlayerId,
-            position: {
-                x: player.position.x,
-                y: player.position.y
-            },
+            playerId: player.id,
+            position: { x: player.position.x, y: player.position.y },
             rotation: dir,
-            hitbox: hitbox,
+            hitbox,
             playerAction: Action.ATTACK_1
-        })
-
+        });
     }
 
     private handleMovement(player: Player, delta: number) {
@@ -136,20 +143,23 @@ export class GameController {
             const totalFrames = 14;
             const t = 1 - player.dashTimer / totalFrames;
 
-            // Ease-in-out : facteur allant de 0 → 1 → 0
             const speedFactor = Math.sin(Math.PI * t);
-
-            // Appliquer la distance totale du dash proportionnelle au facteur
-            player.position.x += (player.dashVelocity.x / (0.5)) * speedFactor;
-            player.position.y += (player.dashVelocity.y / (0.5)) * speedFactor;
+            player.position.x += (player.dashVelocity.x / 0.5) * speedFactor;
+            player.position.y += (player.dashVelocity.y / 0.5) * speedFactor;
 
             player.dashTimer -= 1;
-            player.currentAction = Action.DASH;
+            player.currentAction = Action.ATTACK_DASH;
 
             this.network.move({
                 x: player.position.x,
                 y: player.position.y,
             }, player.currentAction);
+
+            // 👉 si le dash est fini → lancer l’attaque
+            if (player.dashTimer <= 0 && (player as any).pendingAttack) {
+                this.performAttack(player, (player as any).pendingAttackDir);
+                (player as any).pendingAttack = false;
+            }
 
             return;
         }

@@ -1,6 +1,7 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../../shared/Action";
 import { findAnimation, getSpritesheets } from "../AssetLoader";
+import { AttackEffectRenderer } from "./AttackEffectRenderer";
 
 export default class PlayerSprite {
     private playerContainer: Container;
@@ -8,14 +9,14 @@ export default class PlayerSprite {
     private currentAnimation?: AnimatedSprite;
     private currentAction?: Action;
     private spriteSheets: Spritesheet[] | undefined;
-
+    private attackEffectRenderer:AttackEffectRenderer | undefined;
     constructor(public id: string, playerContainer: Container) {
         this.playerContainer = playerContainer;
     }
 
     public async initialize() {
         this.spriteSheets = await getSpritesheets();
-
+        this.attackEffectRenderer = new AttackEffectRenderer(this.spriteSheets,this.playerContainer);
         this.animations[Action.IDLE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle")!);
         this.animations[Action.IDLE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle_right")!);
 
@@ -28,6 +29,8 @@ export default class PlayerSprite {
         this.animations[Action.MOVE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_down")!);
         this.animations[Action.MOVE_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_up")!);
 
+        this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(this.spriteSheets,"player_walk_down")!);
+        
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.1;
@@ -39,13 +42,17 @@ export default class PlayerSprite {
         if(action == this.currentAction)
             return; // Pas besoin de changer action
         this.currentAction = action;
-
         if (this.currentAnimation) {
             this.currentAnimation.visible = false;
             this.currentAnimation.stop();
         }
 
         this.currentAnimation = this.animations[action];
+
+        if(action == Action.ATTACK_1){
+            this.attackEffectRenderer?.renderAttackEffect(action);
+        }
+
         this.currentAnimation!.visible = true;
         this.currentAnimation?.play();
     }

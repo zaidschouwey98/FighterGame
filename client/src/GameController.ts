@@ -5,6 +5,7 @@ import { EventBus } from "./core/EventBus";
 import { GameState } from "./core/GameState";
 import { NetworkClient } from "./network/NetworkClient";
 import PlayerRenderer from "./render/PlayerRenderer";
+import { InputHandler } from "./core/InputHandler";
 
 
 export class GameController {
@@ -13,16 +14,15 @@ export class GameController {
     private network: NetworkClient;
     private eventBus: EventBus;
     private localPlayerId: string | null = null;
-    private keysPressed: Set<string> = new Set();
+    private inputHandler:InputHandler;
 
     constructor(parentContainer: Container, serverUrl: string) {
+        this.inputHandler = new InputHandler();
         this.eventBus = new EventBus();
         this.gameState = new GameState();
         this.renderer = new PlayerRenderer(parentContainer);
         this.network = new NetworkClient(serverUrl, this.eventBus);
-    
         this.setupEventListeners();
-        this.setupInputHandlers();
     }
 
     private setupEventListeners() {
@@ -55,41 +55,62 @@ export class GameController {
             this.gameState.updatePlayer(player);
             this.renderer.updatePlayers([player]);
         });
+
+        this.eventBus.on("player:attacked", (player: Player) => {
+            this.gameState.updatePlayer(player);
+            this.renderer.updatePlayers([player]);
+        });
         
     }
-
-    private setupInputHandlers() {
-        window.addEventListener("keydown", (e) => {
-            this.keysPressed.add(e.key.toLowerCase());
-        });
-
-        window.addEventListener("keyup", (e) => {
-            this.keysPressed.delete(e.key.toLowerCase());
-        });
-    }
-
-   
+    
 
     public update(delta: number) {
         if (!this.localPlayerId) return;
-        console.log(this.gameState);
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
 
         this.handleMovement(player, delta);
+        if (this.inputHandler.consumeAttack()) {
+            this.performAttack();
+        }
         this.gameState.players.set(this.localPlayerId,player)
         this.renderer.updatePlayers([player]);
     }
 
+    private performAttack() {
+        if (!this.localPlayerId) return;
+
+        const player = this.gameState.players.get(this.localPlayerId);
+        if (!player) return;
+
+        player.currentAction = Action.ATTACK_1;
+        this.network.attack({
+            playerId: this.localPlayerId,
+            position: {
+                x: 0,
+                y: 0
+            },
+            rotation: 0,
+            hitbox: {
+                x: 0,
+                y: 0,
+                angle: 0,
+                range: 0,
+                arcAngle: 0
+            },
+            playerAction: Action.ATTACK_1
+        })
+
+    }
 
     private handleMovement(player: Player, delta: number) {
         let dx = 0;
         let dy = 0;
         
-        if (this.keysPressed.has("w")) dy -= 1;
-        if (this.keysPressed.has("s")) dy += 1;
-        if (this.keysPressed.has("a")) dx -= 1;
-        if (this.keysPressed.has("d")) dx += 1;
+        if (this.inputHandler.getKeys().has("w")) dy -= 1;
+        if (this.inputHandler.getKeys().has("s")) dy += 1;
+        if (this.inputHandler.getKeys().has("a")) dx -= 1;
+        if (this.inputHandler.getKeys().has("d")) dx += 1;
         
         let newAction = player.currentAction;
 

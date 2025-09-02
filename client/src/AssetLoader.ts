@@ -8,7 +8,10 @@ export type AnimationName =
     "player_walk_down"|
     "player_walk_right"|
     "player_walk_left"|
-    "player_walk_up";
+    "player_walk_up"|
+    "player_attack_effect_right_1"|
+    "player_attack_2"|
+    "player_attack_3"
 
 export const findAnimation = (spriteSheets: Spritesheet[], animation: AnimationName) => {
     return spriteSheets.find((spritesheet) => spritesheet.animations[animation])?.animations[animation];
@@ -115,7 +118,11 @@ export type TextureName =
     "walk_up_1"|
     "walk_up_2"|
     "walk_up_3"|
-    "walk_up_4";
+    "walk_up_4"|
+    "attack_effect_right_1"|
+    "attack_effect_right_2"|
+    "attack_effect_right_3"|
+    "attack_effect_right_4"
     ;
 
 export const findTexture = (spriteSheets: Spritesheet[], texture: TextureName) => {
@@ -225,6 +232,14 @@ const atlas = [
         "tree_3",
         "tree_4",
     ]),
+    generateAtlas("/assets/attack_effect_right_1.png", { w: 2, h: 2 }, { w: 128, h: 128 }, [
+        "attack_effect_right_1",
+        "attack_effect_right_2",
+        "attack_effect_right_3",
+        "attack_effect_right_4",
+    ], {
+        player_attack_effect_right_1:["attack_effect_right_1","attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4"]
+    }),
     generateAtlas("/assets/gui_spritesheet.png", {w: 3, h: 3}, {w: 30, h: 30}, [
         "light_square",
         "dark_square",

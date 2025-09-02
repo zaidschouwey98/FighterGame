@@ -36,6 +36,21 @@ export default class PlayerSprite {
 
         this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
         this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT].loop = false;
+
+        this.animations[Action.ATTACK_DASH_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
+        this.animations[Action.ATTACK_DASH_LEFT].loop = false;
+        this.animations[Action.ATTACK_DASH_LEFT].scale.x *= -1;
+
+
+        this.animations[Action.ATTACK_DASH_TOP_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
+        this.animations[Action.ATTACK_DASH_TOP_LEFT].loop = false;
+        this.animations[Action.ATTACK_DASH_TOP_LEFT].scale.x *= -1;
+
+
+        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
+        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].loop = false;
+        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].scale.x *= -1;
+
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.1;
@@ -78,6 +93,9 @@ export default class PlayerSprite {
             case Action.ATTACK_DASH_RIGHT:
             case Action.ATTACK_DASH_BOTTOM_RIGHT:
             case Action.ATTACK_DASH_TOP_RIGHT:
+            case Action.ATTACK_DASH_LEFT:
+            case Action.ATTACK_DASH_BOTTOM_LEFT:
+            case Action.ATTACK_DASH_TOP_LEFT:
                 this.playUniqueAnimation(action,player)
                 break;
             // case Action.DASH:

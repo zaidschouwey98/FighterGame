@@ -20,7 +20,7 @@ export default class PlayerRenderer {
     public addNewPlayer(player: Player) {
         const newPlayerContainer = new Container();
         newPlayerContainer.label = player.id;
-
+        
         // créer le sprite lié à ce player
         const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets,this.globalContainer);
         this.playerContainers.set(player.id, newPlayerContainer);

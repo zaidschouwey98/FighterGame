@@ -2,7 +2,7 @@ import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../../shared/Action";
 import { findAnimation } from "../AssetLoader";
 import { AttackEffectRenderer } from "./AttackEffectRenderer";
-import type Position from "../../../shared/Position";
+import type Player from "../../../shared/Player";
 
 export default class PlayerSprite {
     private uniqueAnimationPlaying: boolean = false;
@@ -28,8 +28,14 @@ export default class PlayerSprite {
         this.animations[Action.MOVE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_down")!);
         this.animations[Action.MOVE_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_up")!);
 
-        this.animations[Action.ATTACK_DASH] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
-        this.animations[Action.ATTACK_DASH].loop = false;
+        this.animations[Action.ATTACK_DASH_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
+        this.animations[Action.ATTACK_DASH_RIGHT].loop = false;
+
+        this.animations[Action.ATTACK_DASH_TOP_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
+        this.animations[Action.ATTACK_DASH_TOP_RIGHT].loop = false;
+
+        this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
+        this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT].loop = false;
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.1;
@@ -38,28 +44,27 @@ export default class PlayerSprite {
         }
     }
 
-    private playUniqueAnimation(action:Action,playerPos:Position) {
+    private playUniqueAnimation(action:Action,player:Player) {
         if(!this.animations[action])
             return;
-        switch(action){
-            case Action.ATTACK_DASH:
-                this.uniqueAnimationPlaying = true;
-                this.currentAnimation = this.animations[action]
-                this.currentAnimation.visible = true;
-                this.currentAnimation.animationSpeed = 0.3;
-                this.currentAnimation.currentFrame = 2;
-                this.currentAnimation.onComplete = ()=>{
-                    this.uniqueAnimationPlaying = false;
-                };
-                this.currentAnimation.play();
-                this.attackEffectRenderer?.renderDashCloud(playerPos)
-                break;
-        }
+        
+        this.uniqueAnimationPlaying = true;
+        this.currentAnimation = this.animations[action]
+        this.currentAnimation.visible = true;
+        this.currentAnimation.animationSpeed = 0.3;
+        this.currentAnimation.currentFrame = 2;
+        this.currentAnimation.onComplete = ()=>{
+            this.uniqueAnimationPlaying = false;
+        };
+        this.currentAnimation.play();
+        this.attackEffectRenderer?.renderDashCloud(player.position)
+              
+        
         
 
     }
 
-    public playAnimation(action: Action, playerPos:Position) {
+    public playAnimation(action: Action, player:Player) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
         this.currentAction = action;
@@ -68,8 +73,12 @@ export default class PlayerSprite {
             this.currentAnimation.stop();
         }
         switch (action) {
-            case Action.ATTACK_DASH:
-                this.playUniqueAnimation(action,playerPos)
+            case Action.ATTACK_DASH_BOTTOM:
+            case Action.ATTACK_DASH_TOP:
+            case Action.ATTACK_DASH_RIGHT:
+            case Action.ATTACK_DASH_BOTTOM_RIGHT:
+            case Action.ATTACK_DASH_TOP_RIGHT:
+                this.playUniqueAnimation(action,player)
                 break;
             // case Action.DASH:
             //     this.playUniqueAnimation(action)

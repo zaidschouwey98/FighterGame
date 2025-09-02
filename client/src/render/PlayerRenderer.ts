@@ -68,7 +68,7 @@ export default class PlayerRenderer {
 
             // Mise à jour de l'animation
             
-            playerSprite.playAnimation(player.currentAction, player.position);
+            playerSprite.playAnimation(player.currentAction, player);
             
 
             this.players.set(player.id, player);

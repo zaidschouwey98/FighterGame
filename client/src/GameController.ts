@@ -2,7 +2,7 @@ import { Application, Container, Spritesheet } from "pixi.js";
 import Player from "../../shared/Player";
 import type { AttackData } from "../../shared/AttackData";
 import type { AttackResult } from "../../shared/AttackResult";
-import { ATTACK_SEQUENCE, AttackService } from "./core/AttackService";
+import { AttackService } from "./core/AttackService";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus } from "./core/EventBus";
 import { GameState } from "./core/GameState";
@@ -86,9 +86,8 @@ export class GameController {
         }
         if (this.inputHandler.consumeAttack()) {
             this.attackService.initiateAttack(player);
-
         }
-        
+
         if (player.attackIndex != 0)
             this.attackService.attackTimer -= delta;
 
@@ -112,7 +111,7 @@ export class GameController {
         player.position.y += (player.dashVelocity!.y / 0.5) * speedFactor;
 
         player.dashTimer!--;
-        player.currentAction = Action.ATTACK_DASH;
+        player.currentAction = this.getDashAction(player.dashVelocity!);
 
         this.network.move({ ...player.position }, player.currentAction);
 
@@ -120,6 +119,22 @@ export class GameController {
             this.attackService.performAttack(player, (player as any).pendingAttackDir);
             (player as any).pendingAttack = false;
         }
+    }
+
+    private getDashAction(velocity: { x: number, y: number }): Action {
+        const angle = Math.atan2(velocity.y, velocity.x); 
+        const deg = (angle * 180) / Math.PI;
+
+        if (deg >= -22.5 && deg < 22.5) return Action.ATTACK_DASH_RIGHT;
+        if (deg >= 22.5 && deg < 67.5) return Action.ATTACK_DASH_BOTTOM_RIGHT;
+        if (deg >= 67.5 && deg < 112.5) return Action.ATTACK_DASH_BOTTOM;
+        if (deg >= 112.5 && deg < 157.5) return Action.ATTACK_DASH_BOTTOM_LEFT;
+        if (deg >= 157.5 || deg < -157.5) return Action.ATTACK_DASH_LEFT;
+        if (deg >= -157.5 && deg < -112.5) return Action.ATTACK_DASH_TOP_LEFT;
+        if (deg >= -112.5 && deg < -67.5) return Action.ATTACK_DASH_TOP;
+        if (deg >= -67.5 && deg < -22.5) return Action.ATTACK_DASH_TOP_RIGHT;
+
+        return Action.ATTACK_DASH_RIGHT; // fallback
     }
 
     public getPlayerState(playerId: string): Player | undefined {

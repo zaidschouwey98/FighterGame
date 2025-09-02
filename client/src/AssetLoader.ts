@@ -141,8 +141,9 @@ export type TextureName =
     "dash_attack_right_5"|
     "dash_attack_right_6"|
     "dash_attack_right_7"|
-    "dash_attack_right_8"
-    ;
+    "dash_attack_right_8"|
+     "dash_attack_right_9"|  
+        "dash_attack_right_10"
 
 export const findTexture = (spriteSheets: Spritesheet[], texture: TextureName) => {
     return spriteSheets.find((spritesheet) => spritesheet.textures[texture])?.textures[texture];
@@ -280,7 +281,7 @@ const atlas = [
     ], {
         player_dash_attack_effect:["dash_attack_effect_1","dash_attack_effect_2", "dash_attack_effect_3", "dash_attack_effect_4","dash_attack_effect_5","dash_attack_effect_6"]
     }),
-    generateAtlas("/assets/dash_attack_right.png", { w: 3, h: 3 }, { w: 32, h: 32 }, [
+    generateAtlas("/assets/dash_attack_right.png", { w: 3, h: 4 }, { w: 32, h: 32 }, [
         "dash_attack_right_1",
         "dash_attack_right_2",
         "dash_attack_right_3",
@@ -289,8 +290,10 @@ const atlas = [
         "dash_attack_right_6",
         "dash_attack_right_7",
         "dash_attack_right_8",   
+        "dash_attack_right_9",   
+        "dash_attack_right_10",   
     ], {
-        player_dash_attack_right:["dash_attack_right_1","dash_attack_right_2","dash_attack_right_3","dash_attack_right_4","dash_attack_right_5","dash_attack_right_6","dash_attack_right_7","dash_attack_right_8"]
+        player_dash_attack_right:["dash_attack_right_1","dash_attack_right_2","dash_attack_right_3","dash_attack_right_4","dash_attack_right_5","dash_attack_right_6","dash_attack_right_7","dash_attack_right_8","dash_attack_right_9", "dash_attack_right_10"]
     }),
     generateAtlas("/assets/gui_spritesheet.png", {w: 3, h: 3}, {w: 30, h: 30}, [
         "light_square",

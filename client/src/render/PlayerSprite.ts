@@ -8,14 +8,11 @@ export default class PlayerSprite {
     private animations: Partial<Record<Action, AnimatedSprite>> = {};
     private currentAnimation?: AnimatedSprite;
     private currentAction?: Action;
-    private spriteSheets: Spritesheet[] | undefined;
+    private spriteSheets: Spritesheet[];
     private attackEffectRenderer:AttackEffectRenderer | undefined;
-    constructor(public id: string, playerContainer: Container) {
+    constructor(public id: string, playerContainer: Container, spriteSheet:Spritesheet[]) {
         this.playerContainer = playerContainer;
-    }
-
-    public async initialize() {
-        this.spriteSheets = await getSpritesheets();
+        this.spriteSheets = spriteSheet;
         this.attackEffectRenderer = new AttackEffectRenderer(this.spriteSheets,this.playerContainer);
         this.animations[Action.IDLE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle")!);
         this.animations[Action.IDLE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle_right")!);

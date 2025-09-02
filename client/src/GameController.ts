@@ -1,4 +1,4 @@
-import { Application, Container } from "pixi.js";
+import { Application, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../shared/Action";
 import Player from "../../shared/Player";
 import { EventBus } from "./core/EventBus";
@@ -20,12 +20,12 @@ export class GameController {
     private coordinateService: CoordinateService;
 
 
-    constructor(parentContainer: Container, serverUrl: string, app:Application) {
+    constructor(parentContainer: Container, serverUrl: string, app:Application, spriteSheets:Spritesheet[]) {
         this.coordinateService = new CoordinateService(app);
         this.inputHandler = new InputHandler();
         this.eventBus = new EventBus();
         this.gameState = new GameState();
-        this.renderer = new PlayerRenderer(parentContainer);
+        this.renderer = new PlayerRenderer(parentContainer,spriteSheets);
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.setupEventListeners();
     }

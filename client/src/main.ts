@@ -13,7 +13,7 @@ import { initDevtools } from '@pixi/devtools';
   initDevtools({ app });
   // Chargez d'abord les assets
   console.log("Chargement des assets...");
-  await getSpritesheets();
+  const spritesheets = await getSpritesheets();
   console.log("Assets chargés !");
   
   document.body.appendChild(app.canvas);
@@ -22,7 +22,7 @@ import { initDevtools } from '@pixi/devtools';
   app.stage.addChild(container);
 
   // Créez le contrôleur de jeu
-  const gameController = new GameController(container, "http://localhost:3000", app);
+  const gameController = new GameController(container, "http://localhost:3000", app,spritesheets);
 
   // Animation loop
   app.ticker.add((delta) => {

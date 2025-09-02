@@ -1,28 +1,29 @@
-import { Container } from "pixi.js";
+import { Container, Spritesheet } from "pixi.js";
 import type Player from "../../../shared/Player";
 import PlayerSprite from "./PlayerSprite";
 import type { AttackData } from "../../../shared/AttackData";
 
 export default class PlayerRenderer {
     private playerContainers: Map<string, Container>;
+    private spriteSheets:Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
     private players: Map<string, Player>;
     private parentContainer: Container;
 
-    constructor(parentContainer: Container) {
+    constructor(parentContainer: Container, spriteSheets:Spritesheet[]) {
+        this.spriteSheets = spriteSheets;
         this.playerContainers = new Map();
         this.playerSprites = new Map();
         this.players = new Map();
         this.parentContainer = parentContainer;
     }
 
-    public async addNewPlayer(player: Player) {
+    public addNewPlayer(player: Player) {
         const newPlayerContainer = new Container();
         newPlayerContainer.label = player.id;
 
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer);
-        await sprite.initialize();
+        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets);
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);

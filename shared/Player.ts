@@ -7,6 +7,8 @@ export default class Player{
     public speed: number;
     public id:string;
     public currentAction:Action;
+    public dashVelocity?: { x: number, y: number }; // vitesse actuelle du dash
+    public dashTimer?: number; // durée restante du dash
     constructor(position: Position, hp: number, speed: number, id:string) {
         this.id = id;
         this.position = position;

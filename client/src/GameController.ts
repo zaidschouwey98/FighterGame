@@ -18,16 +18,16 @@ export class GameController {
     private network: NetworkClient;
     private eventBus: EventBus;
     private localPlayerId: string | null = null;
-    private inputHandler:InputHandler;
+    private inputHandler: InputHandler;
     private coordinateService: CoordinateService;
 
 
-    constructor(parentContainer: Container, serverUrl: string, app:Application, spriteSheets:Spritesheet[]) {
+    constructor(parentContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
         this.coordinateService = new CoordinateService(app);
         this.inputHandler = new InputHandler();
         this.eventBus = new EventBus();
         this.gameState = new GameState();
-        this.renderer = new PlayerRenderer(parentContainer,spriteSheets);
+        this.renderer = new PlayerRenderer(parentContainer, spriteSheets);
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.setupEventListeners();
     }
@@ -65,22 +65,22 @@ export class GameController {
 
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
             this.renderer.showAttackEffect(attackData)
-            
+
         });
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
-            for(const player of attackResult.hitPlayers){
+            for (const player of attackResult.hitPlayers) {
                 this.gameState.updatePlayer(player);
-                if(player.id == this.localPlayerId){
+                if (player.id == this.localPlayerId) {
                     // todo Handle damage taken
                     console.log("I GOT HIT")
                 }
             }
             this.renderer.updatePlayers(attackResult.hitPlayers);
         });
-        
+
     }
-    
+
 
     public update(delta: number) {
         if (!this.localPlayerId) return;
@@ -91,12 +91,13 @@ export class GameController {
         if (this.inputHandler.consumeAttack()) {
             this.performAttack();
         }
-        this.gameState.players.set(this.localPlayerId,player)
+        this.gameState.players.set(this.localPlayerId, player)
     }
+
 
     private performAttack() {
         if (!this.localPlayerId) return;
-        
+
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
 
@@ -105,15 +106,23 @@ export class GameController {
         const dx = worldMousePos.x - player.position.x;
         const dy = worldMousePos.y - player.position.y;
         let dir = Math.atan2(dy, dx);
+        // DASH
+        const dashDistance = 40; // pixels totaux
+        const dashFrames = 8; // nombre de frames pour le dash
+        player.dashVelocity = { x: Math.cos(dir) * dashDistance / dashFrames, y: Math.sin(dir) * dashDistance / dashFrames };
+        player.dashTimer = dashFrames;
+        this.gameState.updatePlayer(player);
+        // Dash
         player.currentAction = Action.ATTACK_1;
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
+
         this.network.attack({
             playerId: this.localPlayerId,
             position: {
                 x: player.position.x,
                 y: player.position.y
             },
-            rotation: dir ,
+            rotation: dir,
             hitbox: hitbox,
             playerAction: Action.ATTACK_1
         })
@@ -123,12 +132,29 @@ export class GameController {
     private handleMovement(player: Player, delta: number) {
         let dx = 0;
         let dy = 0;
-        
+        console.log(player.dashTimer)
+        if (player.dashTimer && player.dashTimer > 0 && player.dashVelocity) {
+            // Appliquer le dash
+            player.position.x += player.dashVelocity.x;
+            player.position.y += player.dashVelocity.y;
+
+            // Réduction progressive de la vitesse
+            player.dashVelocity.x *= 0.8;
+            player.dashVelocity.y *= 0.8;
+
+            player.dashTimer -= 1;
+            this.network.move({
+                x: player.position.x,
+                y: player.position.y,
+            }, player.currentAction);
+            
+            return;
+        }
         if (this.inputHandler.getKeys().has("w")) dy -= 1;
         if (this.inputHandler.getKeys().has("s")) dy += 1;
         if (this.inputHandler.getKeys().has("a")) dx -= 1;
         if (this.inputHandler.getKeys().has("d")) dx += 1;
-        
+
         let newAction = player.currentAction;
 
         // Si déplacement
@@ -140,7 +166,7 @@ export class GameController {
 
             // Mise à jour de la position
             player.position.x += dx * player.speed * 16 * delta / 60;
-            player.position.y += dy * player.speed * 16*  delta / 60;
+            player.position.y += dy * player.speed * 16 * delta / 60;
             // Choisir l'action en fonction de la direction
             if (dx > 0) newAction = Action.MOVE_RIGHT;
             else if (dx < 0) newAction = Action.MOVE_LEFT;
@@ -149,9 +175,9 @@ export class GameController {
             player.currentAction = newAction;
 
             // Envoyer la nouvelle position au serveur
-            this.network.move({ 
-                x: player.position.x, 
-                y: player.position.y, 
+            this.network.move({
+                x: player.position.x,
+                y: player.position.y,
             }, player.currentAction);
 
         } else {
@@ -173,9 +199,9 @@ export class GameController {
             }
 
             player.currentAction = newAction;
-            this.network.move({ 
-                x: player.position.x, 
-                y: player.position.y, 
+            this.network.move({
+                x: player.position.x,
+                y: player.position.y,
             }, player.currentAction);
         }
 

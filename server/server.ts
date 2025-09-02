@@ -55,7 +55,6 @@ io.on("connection", (socket) => {
     if (!attacker) return;
     socket.broadcast.emit("playerAttacks", data)
     socket.emit("playerAttacks", data);
-    console.log("attack begin...")
     // Mettre à jour l'état du joueur
     attacker.position = data.position;
     attacker.currentAction = data.playerAction;
@@ -85,7 +84,6 @@ io.on("connection", (socket) => {
         // this.handlePlayerDeath(targetId);
       }
     }
-    console.log("attack ends...")
     // Envoyer les résultats à tous les clients
     io.emit("attackResult", {
       attackerId: data.playerId,

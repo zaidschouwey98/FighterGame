@@ -8,8 +8,16 @@ export class GameState {
         players.forEach(p => this.players.set(p.id, p));
     }
 
-    updatePlayer(player: Player) {
-        this.players.set(player.id, player);
+    updatePlayer(newPlayer: Player) {
+        const existing = this.players.get(newPlayer.id);
+        if (existing) {
+            existing.position = newPlayer.position;
+            existing.currentAction = newPlayer.currentAction;
+            existing.speed = newPlayer.speed;
+            existing.hp = newPlayer.hp;
+        } else {
+            this.players.set(newPlayer.id, newPlayer);
+        }
     }
 
     removePlayer(id: string) {

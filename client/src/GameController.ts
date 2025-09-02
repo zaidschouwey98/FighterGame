@@ -1,5 +1,6 @@
 import { Application, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../shared/Action";
+import type { AttackResult } from "../../shared/AttackResult";
 import Player from "../../shared/Player";
 import { EventBus } from "./core/EventBus";
 import { GameState } from "./core/GameState";
@@ -8,6 +9,7 @@ import PlayerRenderer from "./render/PlayerRenderer";
 import { InputHandler } from "./core/InputHandler";
 import type { AttackData } from "../../shared/AttackData";
 import { CoordinateService } from "./core/CoordinateService";
+import { AttackHitboxService } from "./core/AttackHitboxService";
 
 
 export class GameController {
@@ -62,14 +64,19 @@ export class GameController {
         });
 
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
-            console.log("attackData",attackData)
             this.renderer.showAttackEffect(attackData)
             
         });
 
-        this.eventBus.on("player:attackedResult", (player: Player) => {
-            this.gameState.updatePlayer(player);
-            this.renderer.updatePlayers([player]);
+        this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
+            for(const player of attackResult.hitPlayers){
+                this.gameState.updatePlayer(player);
+                if(player.id == this.localPlayerId){
+                    // todo Handle damage taken
+                    console.log("I GOT HIT")
+                }
+            }
+            this.renderer.updatePlayers(attackResult.hitPlayers);
         });
         
     }
@@ -97,8 +104,9 @@ export class GameController {
         const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
         const dx = worldMousePos.x - player.position.x;
         const dy = worldMousePos.y - player.position.y;
-        let dir = Math.atan2(dy, dx) * 180 / Math.PI;
+        let dir = Math.atan2(dy, dx);
         player.currentAction = Action.ATTACK_1;
+        const hitbox = AttackHitboxService.createHitbox(player.position, dir);
         this.network.attack({
             playerId: this.localPlayerId,
             position: {
@@ -106,13 +114,7 @@ export class GameController {
                 y: player.position.y
             },
             rotation: dir ,
-            hitbox: {
-                x: 0,
-                y: 0,
-                angle: 0,
-                range: 0,
-                arcAngle: 0
-            },
+            hitbox: hitbox,
             playerAction: Action.ATTACK_1
         })
 

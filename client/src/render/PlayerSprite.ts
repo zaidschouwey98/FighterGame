@@ -1,6 +1,6 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../../shared/Action";
-import { findAnimation, getSpritesheets } from "../AssetLoader";
+import { findAnimation } from "../AssetLoader";
 import { AttackEffectRenderer } from "./AttackEffectRenderer";
 
 export default class PlayerSprite {

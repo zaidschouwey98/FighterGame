@@ -26,7 +26,7 @@ export class AttackEffectRenderer{
                 this.animations[action]!.visible = true;
                 this.animations[action]!.loop = false;
                 this.animations[action]!.currentFrame = 0;
-                this.animations[action]!.angle = rotation;
+                this.animations[action]!.rotation = rotation;
                 this.animations[action]!.play();
                 this.animations[action]!.onComplete = ()=>{this.animations[action]!.visible=false}
 

@@ -3,6 +3,7 @@ import type { EventBus } from "../core/EventBus";
 import type Player from "../../../shared/Player";
 import type { Action } from "../../../shared/Action";
 import type { AttackData } from "../../../shared/AttackData";
+import type { AttackResult } from "../../../shared/AttackResult";
 
 export class NetworkClient {
     private socket: Socket;
@@ -16,7 +17,7 @@ export class NetworkClient {
             this.playerId = this.socket.id;
             this.eventBus.emit("connected", this.socket.id);
         });
-        this.socket.on("attackResult", (player:Player)=> this.eventBus.emit("player:attackedResult", player));
+        this.socket.on("attackResult", (attackResult:AttackResult)=> this.eventBus.emit("player:attackedResult", attackResult));
         this.socket.on("playerAttacks", (player:Player)=> this.eventBus.emit("player:attacks", player));
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));

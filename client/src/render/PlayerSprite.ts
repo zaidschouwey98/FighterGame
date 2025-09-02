@@ -36,7 +36,7 @@ export default class PlayerSprite {
         }
     }
 
-    public playAnimation(action: Action,player:Player) {
+    public playAnimation(action: Action) {
         if(action == this.currentAction)
             return; // Pas besoin de changer action
         this.currentAction = action;
@@ -46,12 +46,9 @@ export default class PlayerSprite {
             this.currentAnimation.stop();
         }
 
-        const anim = this.animations[action];
-        if (anim) {
-            this.currentAnimation = anim;
-            anim.visible = true;
-            anim.play();
-        }
+        this.currentAnimation = this.animations[action];
+        this.currentAnimation!.visible = true;
+        this.currentAnimation?.play();
     }
 
     public destroy() {

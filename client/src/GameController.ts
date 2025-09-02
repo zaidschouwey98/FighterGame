@@ -52,8 +52,8 @@ export class GameController {
 
         // quand un joueur bouge
         this.eventBus.on("player:moved", (player: Player) => {
-            this.gameState.updatePlayer(player);
-            this.renderer.updatePlayers([player]);
+            // this.gameState.updatePlayer(player);
+            // this.renderer.updatePlayers([player]);
         });
         
     }
@@ -77,6 +77,7 @@ export class GameController {
         if (!player) return;
 
         this.handleMovement(player, delta);
+        this.gameState.players.set(this.localPlayerId,player)
         this.renderer.updatePlayers([player]);
     }
 
@@ -89,7 +90,7 @@ export class GameController {
         if (this.keysPressed.has("s")) dy += 1;
         if (this.keysPressed.has("a")) dx -= 1;
         if (this.keysPressed.has("d")) dx += 1;
-
+        
         let actionChanged = false;
         let newAction = player.currentAction;
 
@@ -121,7 +122,6 @@ export class GameController {
             // });
 
         } else {
-            // Gestion de l'idle en fonction de la dernière direction
             switch (player.currentAction) {
                 case Action.MOVE_RIGHT:
                 case Action.IDLE_RIGHT:
@@ -143,10 +143,6 @@ export class GameController {
             player.currentAction = newAction;
         }
 
-        // Mettre à jour le rendu si l'action a changé
-        if (actionChanged) {
-            this.renderer.updatePlayers([player]);
-        }
     }
     private getActionFromMovement(x: number, y: number): Action {
         // Logique simple pour déterminer l'action basée sur le mouvement

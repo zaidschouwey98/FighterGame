@@ -8,14 +8,13 @@ export default class PlayerRenderer {
     private spriteSheets:Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
     private players: Map<string, Player>;
-    private parentContainer: Container;
-
-    constructor(parentContainer: Container, spriteSheets:Spritesheet[]) {
+    private globalContainer: Container;
+    constructor(globalContainer: Container, spriteSheets:Spritesheet[]) {
         this.spriteSheets = spriteSheets;
         this.playerContainers = new Map();
         this.playerSprites = new Map();
         this.players = new Map();
-        this.parentContainer = parentContainer;
+        this.globalContainer = globalContainer;
     }
 
     public addNewPlayer(player: Player) {
@@ -23,12 +22,12 @@ export default class PlayerRenderer {
         newPlayerContainer.label = player.id;
 
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets);
+        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets,this.globalContainer);
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
 
-        this.parentContainer.addChild(newPlayerContainer);
+        this.globalContainer.addChild(newPlayerContainer);
     }
 
     public removePlayer(playerId: string) {
@@ -41,7 +40,7 @@ export default class PlayerRenderer {
 
         if (container) {
             container.destroy({ children: true });
-            this.parentContainer.removeChild(container);
+            this.globalContainer.removeChild(container);
         }
 
         this.playerContainers.delete(playerId);
@@ -78,7 +77,7 @@ export default class PlayerRenderer {
 
     public showAttackEffect(attackData:AttackData): void {
         let playerSprite = this.playerSprites.get(attackData.playerId);
-        playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation);
+        playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation, attackData.position);
         
     }
 }

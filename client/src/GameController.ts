@@ -22,12 +22,12 @@ export class GameController {
     private coordinateService: CoordinateService;
 
 
-    constructor(parentContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
+    constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
         this.coordinateService = new CoordinateService(app);
         this.inputHandler = new InputHandler();
         this.eventBus = new EventBus();
         this.gameState = new GameState();
-        this.renderer = new PlayerRenderer(parentContainer, spriteSheets);
+        this.renderer = new PlayerRenderer(globalContainer, spriteSheets);
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.setupEventListeners();
     }
@@ -107,8 +107,8 @@ export class GameController {
         const dy = worldMousePos.y - player.position.y;
         let dir = Math.atan2(dy, dx);
         // DASH
-        const dashDistance = 40; // pixels totaux
-        const dashFrames = 8; // nombre de frames pour le dash
+        const dashDistance = 80; // pixels totaux
+        const dashFrames = 14; // nombre de frames pour le dash
         player.dashVelocity = { x: Math.cos(dir) * dashDistance / dashFrames, y: Math.sin(dir) * dashDistance / dashFrames };
         player.dashTimer = dashFrames;
         this.gameState.updatePlayer(player);
@@ -132,24 +132,28 @@ export class GameController {
     private handleMovement(player: Player, delta: number) {
         let dx = 0;
         let dy = 0;
-        console.log(player.dashTimer)
         if (player.dashTimer && player.dashTimer > 0 && player.dashVelocity) {
-            // Appliquer le dash
-            player.position.x += player.dashVelocity.x;
-            player.position.y += player.dashVelocity.y;
+            const totalFrames = 14;
+            const t = 1 - player.dashTimer / totalFrames;
 
-            // Réduction progressive de la vitesse
-            player.dashVelocity.x *= 0.8;
-            player.dashVelocity.y *= 0.8;
+            // Ease-in-out : facteur allant de 0 → 1 → 0
+            const speedFactor = Math.sin(Math.PI * t);
+
+            // Appliquer la distance totale du dash proportionnelle au facteur
+            player.position.x += (player.dashVelocity.x / (0.5)) * speedFactor;
+            player.position.y += (player.dashVelocity.y / (0.5)) * speedFactor;
 
             player.dashTimer -= 1;
+            player.currentAction = Action.DASH;
+
             this.network.move({
                 x: player.position.x,
                 y: player.position.y,
             }, player.currentAction);
-            
+
             return;
         }
+
         if (this.inputHandler.getKeys().has("w")) dy -= 1;
         if (this.inputHandler.getKeys().has("s")) dy += 1;
         if (this.inputHandler.getKeys().has("a")) dx -= 1;

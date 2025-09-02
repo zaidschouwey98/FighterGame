@@ -28,7 +28,7 @@ export default class PlayerSprite {
         this.animations[Action.MOVE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_down")!);
         this.animations[Action.MOVE_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_up")!);
 
-        this.animations[Action.ATTACK_DASH] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
+        this.animations[Action.ATTACK_DASH] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
         this.animations[Action.ATTACK_DASH].loop = false;
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;

@@ -1,19 +1,23 @@
 import { Assets, Spritesheet } from "pixi.js";
 export type AnimationName =
-    "codebot"|
-    "player_idle"|
-    "player_idle_right"|
-    "player_idle_left"|
-    "player_idle_back"|
-    "player_walk_down"|
-    "player_walk_right"|
-    "player_walk_left"|
-    "player_walk_up"|
-    "player_attack_effect_right_1"|
-    "player_attack_effect_right_2"|
-    "player_attack_3"|
-    "player_dash_attack_effect"|
-    "player_dash_attack_right";
+    "codebot" |
+    "player_idle" |
+    "player_idle_right" |
+    "player_idle_left" |
+    "player_idle_back" |
+    "player_walk_down" |
+    "player_walk_right" |
+    "player_walk_left" |
+    "player_walk_up" |
+    "player_attack_effect_right_1" |
+    "player_attack_effect_right_2" |
+    "player_attack_3" |
+    "player_dash_attack_effect" |
+    "player_dash_attack_right" |
+    "player_dash_attack_bottom_right" |
+    "player_dash_attack_top_right"
+
+    ;
 
 export const findAnimation = (spriteSheets: Spritesheet[], animation: AnimationName) => {
     return spriteSheets.find((spritesheet) => spritesheet.animations[animation])?.animations[animation];
@@ -95,61 +99,81 @@ export type TextureName =
     "light_frame" |
     "dark_frame" |
     "scroll" |
-    "bar"|
-    "selected_slot"|
-    "idle1"|
-    "idle2"|
-    "idle_right_1"|
-    "idle_right_2"|
-    "idle_left_1"|
-    "idle_left_2"|
-    "idle_back_1"|
-    "idle_back_2"|
-    "walk_down_1"|
-    "walk_down_2"|
-    "walk_down_3"|
-    "walk_down_4"|
-    "walk_right_1"|
-    "walk_right_2"|
-    "walk_right_3"|
-    "walk_right_4"|
-    "walk_left_1"|
-    "walk_left_2"|
-    "walk_left_3"|
-    "walk_left_4"|
-    "walk_up_1"|
-    "walk_up_2"|
-    "walk_up_3"|
-    "walk_up_4"|
-    "attack_effect_right_1"|
-    "attack_effect_right_2"|
-    "attack_effect_right_3"|
-    "attack_effect_right_4"|
-    "attack_effect_right_5"|
-    "attack_effect_right_6"|
-    "attack_effect_right_7"|
-    "dash_attack_effect_1"|
-    "dash_attack_effect_2"|
-    "dash_attack_effect_3"|
-    "dash_attack_effect_4"|
-    "dash_attack_effect_5"|
-    "dash_attack_effect_6"|
-    "dash_attack_right_1"|
-    "dash_attack_right_2"|
-    "dash_attack_right_3"|
-    "dash_attack_right_4"|
-    "dash_attack_right_5"|
-    "dash_attack_right_6"|
-    "dash_attack_right_7"|
-    "dash_attack_right_8"|
-     "dash_attack_right_9"|  
-        "dash_attack_right_10"
+    "bar" |
+    "selected_slot" |
+    "idle1" |
+    "idle2" |
+    "idle_right_1" |
+    "idle_right_2" |
+    "idle_left_1" |
+    "idle_left_2" |
+    "idle_back_1" |
+    "idle_back_2" |
+    "walk_down_1" |
+    "walk_down_2" |
+    "walk_down_3" |
+    "walk_down_4" |
+    "walk_right_1" |
+    "walk_right_2" |
+    "walk_right_3" |
+    "walk_right_4" |
+    "walk_left_1" |
+    "walk_left_2" |
+    "walk_left_3" |
+    "walk_left_4" |
+    "walk_up_1" |
+    "walk_up_2" |
+    "walk_up_3" |
+    "walk_up_4" |
+    "attack_effect_right_1" |
+    "attack_effect_right_2" |
+    "attack_effect_right_3" |
+    "attack_effect_right_4" |
+    "attack_effect_right_5" |
+    "attack_effect_right_6" |
+    "attack_effect_right_7" |
+    "dash_attack_effect_1" |
+    "dash_attack_effect_2" |
+    "dash_attack_effect_3" |
+    "dash_attack_effect_4" |
+    "dash_attack_effect_5" |
+    "dash_attack_effect_6" |
+    "dash_attack_right_1" |
+    "dash_attack_right_2" |
+    "dash_attack_right_3" |
+    "dash_attack_right_4" |
+    "dash_attack_right_5" |
+    "dash_attack_right_6" |
+    "dash_attack_right_7" |
+    "dash_attack_right_8" |
+    "dash_attack_right_9" |
+    "dash_attack_right_10" |
+    "dash_attack_top_right_1" |
+    "dash_attack_top_right_2" |
+    "dash_attack_top_right_3" |
+    "dash_attack_top_right_4" |
+    "dash_attack_top_right_5" |
+    "dash_attack_top_right_6" |
+    "dash_attack_top_right_7" |
+    "dash_attack_top_right_8" |
+    "dash_attack_top_right_9" |
+    "dash_attack_top_right_10" |
+    "dash_attack_bottom_right_1" |
+    "dash_attack_bottom_right_2" |
+    "dash_attack_bottom_right_3" |
+    "dash_attack_bottom_right_4" |
+    "dash_attack_bottom_right_5" |
+    "dash_attack_bottom_right_6" |
+    "dash_attack_bottom_right_7" |
+    "dash_attack_bottom_right_8" |
+    "dash_attack_bottom_right_9" |
+    "dash_attack_bottom_right_10";
 
 export const findTexture = (spriteSheets: Spritesheet[], texture: TextureName) => {
     return spriteSheets.find((spritesheet) => spritesheet.textures[texture])?.textures[texture];
 };
 
-const generateAtlas = (file: string, spriteAmount: Dimensions, assetDimensions: Dimensions, names: TextureName[], animations?:Partial<Record<AnimationName,TextureName[]>>) => {
+const generateAtlas = (file: string, spriteAmount: Dimensions, assetDimensions: Dimensions, names: TextureName[], animations?: Partial<Record<AnimationName, TextureName[]>>) => {
     return {
         meta: {
             image: file,
@@ -258,7 +282,7 @@ const atlas = [
         "attack_effect_right_3",
         "attack_effect_right_4",
     ], {
-        player_attack_effect_right_1:["attack_effect_right_1","attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4"]
+        player_attack_effect_right_1: ["attack_effect_right_1", "attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4"]
     }),
     generateAtlas("/assets/attack_effect_right_2.png", { w: 3, h: 3 }, { w: 128, h: 128 }, [
         "attack_effect_right_1",
@@ -269,7 +293,7 @@ const atlas = [
         "attack_effect_right_6",
         "attack_effect_right_7",
     ], {
-        player_attack_effect_right_2:["attack_effect_right_1","attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4", "attack_effect_right_5","attack_effect_right_6","attack_effect_right_7"]
+        player_attack_effect_right_2: ["attack_effect_right_1", "attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4", "attack_effect_right_5", "attack_effect_right_6", "attack_effect_right_7"]
     }),
     generateAtlas("/assets/dash_attack_effect.png", { w: 2, h: 2 }, { w: 128, h: 128 }, [
         "dash_attack_effect_1",
@@ -279,7 +303,7 @@ const atlas = [
         "dash_attack_effect_5",
         "dash_attack_effect_6",
     ], {
-        player_dash_attack_effect:["dash_attack_effect_1","dash_attack_effect_2", "dash_attack_effect_3", "dash_attack_effect_4","dash_attack_effect_5","dash_attack_effect_6"]
+        player_dash_attack_effect: ["dash_attack_effect_1", "dash_attack_effect_2", "dash_attack_effect_3", "dash_attack_effect_4", "dash_attack_effect_5", "dash_attack_effect_6"]
     }),
     generateAtlas("/assets/dash_attack_right.png", { w: 3, h: 4 }, { w: 32, h: 32 }, [
         "dash_attack_right_1",
@@ -289,13 +313,41 @@ const atlas = [
         "dash_attack_right_5",
         "dash_attack_right_6",
         "dash_attack_right_7",
-        "dash_attack_right_8",   
-        "dash_attack_right_9",   
-        "dash_attack_right_10",   
+        "dash_attack_right_8",
+        "dash_attack_right_9",
+        "dash_attack_right_10",
     ], {
-        player_dash_attack_right:["dash_attack_right_1","dash_attack_right_2","dash_attack_right_3","dash_attack_right_4","dash_attack_right_5","dash_attack_right_6","dash_attack_right_7","dash_attack_right_8","dash_attack_right_9", "dash_attack_right_10"]
+        player_dash_attack_right: ["dash_attack_right_1", "dash_attack_right_2", "dash_attack_right_3", "dash_attack_right_4", "dash_attack_right_5", "dash_attack_right_6", "dash_attack_right_7", "dash_attack_right_8", "dash_attack_right_9", "dash_attack_right_10"]
     }),
-    generateAtlas("/assets/gui_spritesheet.png", {w: 3, h: 3}, {w: 30, h: 30}, [
+    generateAtlas("/assets/dash_attack_top_right.png", { w: 10, h: 1 }, { w: 32, h: 32 }, [
+        "dash_attack_top_right_1",
+        "dash_attack_top_right_2",
+        "dash_attack_top_right_3",
+        "dash_attack_top_right_4",
+        "dash_attack_top_right_5",
+        "dash_attack_top_right_6",
+        "dash_attack_top_right_7",
+        "dash_attack_top_right_8",
+        "dash_attack_top_right_9",
+        "dash_attack_top_right_10",
+    ], {
+        player_dash_attack_top_right: ["dash_attack_top_right_1", "dash_attack_top_right_2", "dash_attack_top_right_3", "dash_attack_top_right_4", "dash_attack_top_right_5", "dash_attack_top_right_6", "dash_attack_top_right_7", "dash_attack_top_right_8", "dash_attack_top_right_9", "dash_attack_top_right_10"]
+    }),
+    generateAtlas("/assets/dash_attack_bottom_right.png", { w: 10, h: 1 }, { w: 32, h: 32 }, [
+        "dash_attack_bottom_right_1",
+        "dash_attack_bottom_right_2",
+        "dash_attack_bottom_right_3",
+        "dash_attack_bottom_right_4",
+        "dash_attack_bottom_right_5",
+        "dash_attack_bottom_right_6",
+        "dash_attack_bottom_right_7",
+        "dash_attack_bottom_right_8",
+        "dash_attack_bottom_right_9",
+        "dash_attack_bottom_right_10",
+    ], {
+        player_dash_attack_bottom_right: ["dash_attack_bottom_right_1", "dash_attack_bottom_right_2", "dash_attack_bottom_right_3", "dash_attack_bottom_right_4", "dash_attack_bottom_right_5", "dash_attack_bottom_right_6", "dash_attack_bottom_right_7", "dash_attack_bottom_right_8", "dash_attack_bottom_right_9", "dash_attack_bottom_right_10"]
+    }),
+    generateAtlas("/assets/gui_spritesheet.png", { w: 3, h: 3 }, { w: 30, h: 30 }, [
         "light_square",
         "dark_square",
         "light_frame",
@@ -330,14 +382,14 @@ const atlas = [
         "walk_up_3",
         "walk_up_4",
     ], {
-        player_idle: ["idle1","idle2"],
-        player_idle_right: ["idle_right_1","idle_right_2"],
-        player_idle_left: ["idle_left_1","idle_left_2"],
-        player_idle_back: ["idle_back_1","idle_back_2"],
-        player_walk_down: ["walk_down_1","walk_down_2","walk_down_3","walk_down_4"],
-        player_walk_right: ["walk_right_1","walk_right_2","walk_right_3","walk_right_4"],
-        player_walk_left: ["walk_left_1","walk_left_2","walk_left_3","walk_left_4"],
-        player_walk_up: ["walk_up_1","walk_up_2","walk_up_3","walk_up_4"]
+        player_idle: ["idle1", "idle2"],
+        player_idle_right: ["idle_right_1", "idle_right_2"],
+        player_idle_left: ["idle_left_1", "idle_left_2"],
+        player_idle_back: ["idle_back_1", "idle_back_2"],
+        player_walk_down: ["walk_down_1", "walk_down_2", "walk_down_3", "walk_down_4"],
+        player_walk_right: ["walk_right_1", "walk_right_2", "walk_right_3", "walk_right_4"],
+        player_walk_left: ["walk_left_1", "walk_left_2", "walk_left_3", "walk_left_4"],
+        player_walk_up: ["walk_up_1", "walk_up_2", "walk_up_3", "walk_up_4"]
     }),
 ];
 

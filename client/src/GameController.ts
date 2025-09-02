@@ -72,7 +72,7 @@ export class GameController {
 
     public update(delta: number) {
         if (!this.localPlayerId) return;
-
+        console.log(this.gameState);
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
 
@@ -91,7 +91,6 @@ export class GameController {
         if (this.keysPressed.has("a")) dx -= 1;
         if (this.keysPressed.has("d")) dx += 1;
         
-        let actionChanged = false;
         let newAction = player.currentAction;
 
         // Si déplacement
@@ -109,8 +108,6 @@ export class GameController {
             else if (dx < 0) newAction = Action.MOVE_LEFT;
             else if (dy > 0) newAction = Action.MOVE_DOWN;
             else if (dy < 0) newAction = Action.MOVE_TOP;
-
-            actionChanged = player.currentAction !== newAction;
             player.currentAction = newAction;
 
             // Envoyer la nouvelle position au serveur
@@ -137,15 +134,13 @@ export class GameController {
                     newAction = Action.IDLE_DOWN;
             }
 
-            actionChanged = player.currentAction !== newAction;
             player.currentAction = newAction;
+            this.network.move({ 
+                x: player.position.x, 
+                y: player.position.y, 
+            }, player.currentAction);
         }
 
-    }
-    private getActionFromMovement(x: number, y: number): Action {
-        // Logique simple pour déterminer l'action basée sur le mouvement
-        // Vous pouvez améliorer cela selon vos besoins
-        return Action.IDLE_DOWN; // Temporaire
     }
 
     public getPlayerState(playerId: string): Player | undefined {

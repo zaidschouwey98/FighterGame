@@ -1,0 +1,13 @@
+export enum Action{
+    IDLE_TOP = "IDLE_TOP",
+    IDLE_DOWN ="IDLE_DOWN",
+    IDLE_LEFT ="IDLE_LEFT",
+    IDLE_RIGHT = "IDLE_RIGHT",
+    MOVE_RIGHT ="MOVE_RIGHT",
+    MOVE_LEFT = "MOVE_LEFT",
+    MOVE_DOWN = "MOVE_DOWN",
+    MOVE_TOP ="MOVE_TOP",
+    ATTACK_1 ="ATTACK_1",
+    ATTACK_2 ="ATTACK_2",
+    ATTACK_3 = "ATTACK_3",
+}

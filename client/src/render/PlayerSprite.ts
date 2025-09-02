@@ -1,7 +1,6 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../../shared/Action";
 import { findAnimation, getSpritesheets } from "../AssetLoader";
-import type Player from "../../../shared/Player";
 
 export default class PlayerSprite {
     private playerContainer: Container;

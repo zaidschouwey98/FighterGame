@@ -1,6 +1,7 @@
 import { Container } from "pixi.js";
 import type Player from "../../../shared/Player";
 import PlayerSprite from "./PlayerSprite";
+import type { AttackData } from "../../../shared/AttackData";
 
 export default class PlayerRenderer {
     private playerContainers: Map<string, Container>;
@@ -72,5 +73,11 @@ export default class PlayerRenderer {
 
             this.players.set(player.id, player);
         }
+    }
+
+    public showAttackEffect(attackData:AttackData): void {
+        let playerSprite = this.playerSprites.get(attackData.playerId);
+        playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation);
+        
     }
 }

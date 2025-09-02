@@ -8,15 +8,17 @@ export class AttackEffectRenderer{
     constructor(spriteSheets:Spritesheet[], playerContainer:Container){
         this.attackEffectContainer = new Container();
         playerContainer.addChild(this.attackEffectContainer);
+ 
         this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.5;
+            anim.anchor.set(0.5,0.5)
             this.attackEffectContainer.addChild(anim);
         }
     }
 
-    renderAttackEffect(action:Action){
+    renderAttackEffect(action:Action, rotation:number){
         if(action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
             return;
         
@@ -25,6 +27,7 @@ export class AttackEffectRenderer{
                 this.animations[action]!.visible = true;
                 this.animations[action]!.loop = false;
                 this.animations[action]!.currentFrame = 0;
+                this.animations[action]!.rotation = rotation;
                 this.animations[action]!.play();
                 this.animations[action]!.onComplete = ()=>{this.animations[action]!.visible=false}
 

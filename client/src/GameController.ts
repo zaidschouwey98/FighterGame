@@ -6,6 +6,7 @@ import { GameState } from "./core/GameState";
 import { NetworkClient } from "./network/NetworkClient";
 import PlayerRenderer from "./render/PlayerRenderer";
 import { InputHandler } from "./core/InputHandler";
+import type { AttackData } from "../../shared/AttackData";
 
 
 export class GameController {
@@ -56,7 +57,12 @@ export class GameController {
             this.renderer.updatePlayers([player]);
         });
 
-        this.eventBus.on("player:attacked", (player: Player) => {
+        this.eventBus.on("player:attacks", (attackData: AttackData) => {
+            this.renderer.showAttackEffect(attackData)
+            
+        });
+
+        this.eventBus.on("player:attackedResult", (player: Player) => {
             this.gameState.updatePlayer(player);
             this.renderer.updatePlayers([player]);
         });
@@ -74,15 +80,18 @@ export class GameController {
             this.performAttack();
         }
         this.gameState.players.set(this.localPlayerId,player)
-        this.renderer.updatePlayers([player]);
     }
 
     private performAttack() {
         if (!this.localPlayerId) return;
-
+        
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
 
+        const mousePos = this.inputHandler.getMousePosition();
+        const dx = mousePos.x - player.position.x;
+        const dy = mousePos.y - player.position.y;
+        let dir = Math.atan2(dy, dx);
         player.currentAction = Action.ATTACK_1;
         this.network.attack({
             playerId: this.localPlayerId,
@@ -90,7 +99,7 @@ export class GameController {
                 x: 0,
                 y: 0
             },
-            rotation: 0,
+            rotation: dir,
             hitbox: {
                 x: 0,
                 y: 0,

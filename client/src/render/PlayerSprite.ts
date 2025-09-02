@@ -34,6 +34,7 @@ export default class PlayerSprite {
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.1;
+            anim.anchor.set(0.5);
             this.playerContainer.addChild(anim);
         }
     }
@@ -49,12 +50,16 @@ export default class PlayerSprite {
 
         this.currentAnimation = this.animations[action];
 
-        if(action == Action.ATTACK_1){
-            this.attackEffectRenderer?.renderAttackEffect(action);
-        }
+        
 
         this.currentAnimation!.visible = true;
         this.currentAnimation?.play();
+    }
+
+    public playAttackAnimation(action:Action, attackRotation:number){
+        if(action == Action.ATTACK_1){
+            this.attackEffectRenderer?.renderAttackEffect(action,attackRotation);
+        }
     }
 
     public destroy() {

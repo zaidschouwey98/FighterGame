@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import Player from "../shared/Player";
 import Position from "../shared/Position";
 import { Action } from "../shared/Action";
+import { AttackData } from "../shared/AttackData";
 
 const app = express();
 const server = http.createServer(app);
@@ -46,6 +47,45 @@ io.on("connection", (socket) => {
       socket.emit("playerMoved", players[socket.id]);
     }
   });
+
+  socket.on("attack", (data: AttackData) => {
+        const attacker = players[data.playerId];
+        if (!attacker) return;
+
+        attacker.currentAction = data.playerAction;
+        socket.broadcast.emit("playerAttacks", data)
+        socket.emit("playerAttacks", data);
+        // attacker.attackCooldown = 25;
+
+        const hitPlayers: string[] = [];
+        for (const [id, target] of Object.entries(players)) {
+            if (id === data.playerId) continue;
+
+            const dx = target.position.x - data.hitbox.x;
+            const dy = target.position.y - data.hitbox.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance <= data.hitbox.range) {
+                // Vérifier si dans l'arc d'attaque
+                const targetAngle = Math.atan2(dy, dx);
+                const angleDiff = Math.abs(targetAngle - data.rotation);
+                const normalizedAngleDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
+
+                if (Math.abs(normalizedAngleDiff) <= data.hitbox.arcAngle) {
+                    target.hp -= 30;
+                    hitPlayers.push(id);
+                    console.log(`Player ${id} hit! HP: ${target.hp}`);
+                }
+            }
+        }
+
+        io.emit("attackResult", {
+            attackerId: data.playerId,
+            position: data.position,
+            rotation: data.rotation,
+            hitPlayers: hitPlayers
+        });
+    });
 
   // Déconnexion
   socket.on("disconnect", () => {

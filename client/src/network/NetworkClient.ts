@@ -16,8 +16,8 @@ export class NetworkClient {
             this.playerId = this.socket.id;
             this.eventBus.emit("connected", this.socket.id);
         });
-        this.socket.on("attackResult", (player:Player)=> this.eventBus.emit("player:attacked", player));
-        this.socket.on("playerAttacked", (player:Player)=> this.eventBus.emit("player:attacked", player));
+        this.socket.on("attackResult", (player:Player)=> this.eventBus.emit("player:attackedResult", player));
+        this.socket.on("playerAttacks", (player:Player)=> this.eventBus.emit("player:attacks", player));
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
         this.socket.on("currentPlayers", (players: Record<string, Player>) => {

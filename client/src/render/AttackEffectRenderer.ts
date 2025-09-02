@@ -12,6 +12,7 @@ export class AttackEffectRenderer{
         playerContainer.addChild(this.attackEffectContainer);
         
         this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
+        this.animations[Action.ATTACK_2] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
         this.dashCloud = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_effect")!);
         this.dashCloud.visible = false;
         this.dashCloud.anchor.set(0.5);
@@ -36,7 +37,7 @@ export class AttackEffectRenderer{
         this.dashCloud.onComplete = ()=>{this.dashCloud.visible=false}
     }
 
-    renderAttackEffect(action:Action, rotation:number, playerPos:Position){
+    renderAttackEffect(action:Action, rotation:number){
         if(action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
             return;
         

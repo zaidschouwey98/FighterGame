@@ -83,26 +83,9 @@ export default class PlayerSprite {
         }
     }
 
-    public playAttackAnimation(action: Action, attackRotation: number, playerPos: Position) {
-        // this.uniqueAnimationPlaying = true;
-        // if (this.currentAnimation) {
-        //     this.currentAnimation.visible = false;
-        //     this.currentAnimation.stop();
-        // }
-
-        // this.currentAnimation = this.animations[action];
-        // this.currentAnimation!.visible = true;
-        // this.currentAnimation!.currentFrame = 2;
-        // this.currentAnimation!.loop = false;
-        // this.currentAnimation!.animationSpeed = 0.2;
-        // this.currentAnimation!.play();
-        // this.currentAnimation!.onComplete = () => {
-        //     this.currentAnimation!.visible = false;
-        //     this.uniqueAnimationPlaying = false;
-        //     this.playAnimation(Action.IDLE_DOWN)
-        // }
+    public playAttackAnimation(action: Action, attackRotation: number) {
         if (action == Action.ATTACK_1) {
-            this.attackEffectRenderer?.renderAttackEffect(action, attackRotation, playerPos);
+            this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);
         }
     }
 

@@ -10,7 +10,7 @@ export type AnimationName =
     "player_walk_left"|
     "player_walk_up"|
     "player_attack_effect_right_1"|
-    "player_attack_2"|
+    "player_attack_effect_right_2"|
     "player_attack_3"|
     "player_dash_attack_effect"|
     "player_dash_attack_right";
@@ -125,6 +125,9 @@ export type TextureName =
     "attack_effect_right_2"|
     "attack_effect_right_3"|
     "attack_effect_right_4"|
+    "attack_effect_right_5"|
+    "attack_effect_right_6"|
+    "attack_effect_right_7"|
     "dash_attack_effect_1"|
     "dash_attack_effect_2"|
     "dash_attack_effect_3"|
@@ -255,6 +258,17 @@ const atlas = [
         "attack_effect_right_4",
     ], {
         player_attack_effect_right_1:["attack_effect_right_1","attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4"]
+    }),
+    generateAtlas("/assets/attack_effect_right_2.png", { w: 3, h: 3 }, { w: 128, h: 128 }, [
+        "attack_effect_right_1",
+        "attack_effect_right_2",
+        "attack_effect_right_3",
+        "attack_effect_right_4",
+        "attack_effect_right_5",
+        "attack_effect_right_6",
+        "attack_effect_right_7",
+    ], {
+        player_attack_effect_right_2:["attack_effect_right_1","attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4", "attack_effect_right_5","attack_effect_right_6","attack_effect_right_7"]
     }),
     generateAtlas("/assets/dash_attack_effect.png", { w: 2, h: 2 }, { w: 128, h: 128 }, [
         "dash_attack_effect_1",

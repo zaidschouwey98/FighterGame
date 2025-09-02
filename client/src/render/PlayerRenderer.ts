@@ -77,7 +77,7 @@ export default class PlayerRenderer {
 
     public showAttackEffect(attackData:AttackData): void {
         let playerSprite = this.playerSprites.get(attackData.playerId);
-        playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation, attackData.position);
+        playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation);
         
     }
 }

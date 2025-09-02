@@ -84,9 +84,7 @@ export default class PlayerSprite {
     }
 
     public playAttackAnimation(action: Action, attackRotation: number) {
-        if (action == Action.ATTACK_1) {
-            this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);
-        }
+        this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);
     }
 
     public destroy() {

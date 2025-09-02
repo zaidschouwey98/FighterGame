@@ -7,8 +7,8 @@ export enum Action{
     MOVE_LEFT = "MOVE_LEFT",
     MOVE_DOWN = "MOVE_DOWN",
     MOVE_TOP ="MOVE_TOP",
+    ATTACK_DASH="ATTACK_DASH",
     ATTACK_1 ="ATTACK_1",
     ATTACK_2 ="ATTACK_2",
     ATTACK_3 = "ATTACK_3",
-    DASH = "DASH"
 }

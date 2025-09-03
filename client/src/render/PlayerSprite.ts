@@ -11,7 +11,7 @@ export default class PlayerSprite {
     private currentAnimation?: AnimatedSprite;
     private currentAction?: Action;
     private spriteSheets: Spritesheet[];
-    private attackEffectRenderer: AttackEffectRenderer | undefined;
+    private attackEffectRenderer: AttackEffectRenderer;
     constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[], globalContainer: Container) {
         this.playerContainer = playerContainer;
         this.spriteSheets = spriteSheet;
@@ -53,62 +53,77 @@ export default class PlayerSprite {
 
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
-            anim.animationSpeed = 0.1;
+            anim.animationSpeed = 0.2;
             anim.anchor.set(0.5);
             this.playerContainer.addChild(anim);
         }
     }
 
-    private playUniqueAnimation(action:Action,player:Player) {
-        if(!this.animations[action])
-            return;
-        
+    private playUniqueAnimation(action: Action, player: Player) {
+        const anim = this.animations[action];
+        if (!anim) return;
+
+        // Si une autre anim unique tournait, on la stoppe
+        if (this.currentAnimation && this.uniqueAnimationPlaying) {
+            this.currentAnimation.stop();
+            this.currentAnimation.visible = false;
+        }
+
         this.uniqueAnimationPlaying = true;
-        this.currentAnimation = this.animations[action]
+        this.currentAnimation = anim;
         this.currentAnimation.visible = true;
         this.currentAnimation.animationSpeed = 0.3;
         this.currentAnimation.currentFrame = 2;
-        this.currentAnimation.onComplete = ()=>{
+        this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
         };
         this.currentAnimation.play();
-        this.attackEffectRenderer?.renderDashCloud(player.position)
-              
-        
-        
-
+        this.attackEffectRenderer?.renderDashCloud(player.position);
     }
 
-    public playAnimation(action: Action, player:Player) {
-        if (action == this.currentAction || this.uniqueAnimationPlaying)
+
+    public playAnimation(action: Action, player: Player) {
+        // Vérifie si c'est une animation unique (un dash)
+        const isUnique = [
+            Action.ATTACK_DASH_BOTTOM,
+            Action.ATTACK_DASH_TOP,
+            Action.ATTACK_DASH_RIGHT,
+            Action.ATTACK_DASH_BOTTOM_RIGHT,
+            Action.ATTACK_DASH_TOP_RIGHT,
+            Action.ATTACK_DASH_LEFT,
+            Action.ATTACK_DASH_BOTTOM_LEFT,
+            Action.ATTACK_DASH_TOP_LEFT,
+        ].includes(action);
+
+        // Si c'est une animation normale et qu'un dash est en cours → on ignore
+        if (!isUnique && this.uniqueAnimationPlaying) {
             return;
-        this.currentAction = action;
+        }
+
+        // Si on rejoue la même action → inutile
+        if (action === this.currentAction && !isUnique) {
+            return;
+        }
+
+        // Nettoie l'ancienne anim
         if (this.currentAnimation) {
             this.currentAnimation.visible = false;
             this.currentAnimation.stop();
         }
-        switch (action) {
-            case Action.ATTACK_DASH_BOTTOM:
-            case Action.ATTACK_DASH_TOP:
-            case Action.ATTACK_DASH_RIGHT:
-            case Action.ATTACK_DASH_BOTTOM_RIGHT:
-            case Action.ATTACK_DASH_TOP_RIGHT:
-            case Action.ATTACK_DASH_LEFT:
-            case Action.ATTACK_DASH_BOTTOM_LEFT:
-            case Action.ATTACK_DASH_TOP_LEFT:
-                this.playUniqueAnimation(action,player)
-                break;
-            // case Action.DASH:
-            //     this.playUniqueAnimation(action)
-            //     break;
 
-            default:
-                this.currentAnimation = this.animations[action];
-                this.currentAnimation!.visible = true;
-                this.currentAnimation?.play();
-                break;
+        this.currentAction = action;
+
+        if (isUnique) {
+            this.playUniqueAnimation(action, player);
+        } else {
+            this.currentAnimation = this.animations[action];
+            if (this.currentAnimation) {
+                this.currentAnimation.visible = true;
+                this.currentAnimation.play();
+            }
         }
     }
+
 
     public playAttackAnimation(action: Action, attackRotation: number) {
         this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);

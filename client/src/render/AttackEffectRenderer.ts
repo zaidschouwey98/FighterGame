@@ -27,6 +27,9 @@ export class AttackEffectRenderer {
 
 
     renderDashCloud(playerPos: Position) {
+        if (this.dashCloud.playing) {
+            return;
+        }
         this.dashCloud.x = playerPos.x;
         this.dashCloud.y = playerPos.y;
         this.dashCloud.visible = true;

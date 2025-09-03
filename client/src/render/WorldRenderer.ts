@@ -2,12 +2,9 @@ import { Container, Sprite, Spritesheet } from "pixi.js";
 import seedrandom from "seedrandom";
 import * as Simplex from "simplex-noise";
 import type Position from "../../../shared/Position";
-import { RENDER_DISTANCE } from "../../../shared/Constantes";
 import { findTexture, type TextureName } from "../AssetLoader";
+import { MAP_FREQUENCY, TILE_SIZE } from "../constantes";
 
-const TILE_SIZE = 16;        // Taille en pixels
-const CHUNK_SIZE = 16;       // Taille des chunks
-const MAP_FREQUENCY = 0.1;   // Fréquence du bruit
 
 export class WorldRenderer {
     private _tilesContainer:Container;

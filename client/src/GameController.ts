@@ -25,11 +25,14 @@ export class GameController {
     private localPlayerId: string | null = null;
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
-        this.coordinateService = new CoordinateService(app);
-        this.renderer = new Renderer(globalContainer,spriteSheets);
+        
+        this.renderer = new Renderer(app,globalContainer,spriteSheets);
+
+        this.coordinateService = new CoordinateService(app,this.renderer.camera);
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.movementService = new MovementService(this.inputHandler, this.network);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
+        
         this.setupEventListeners();
     }
 
@@ -82,15 +85,14 @@ export class GameController {
         if (!this.localPlayerId) return;
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
-
+        this.renderer.updateCamera(player.position)
         if (player.dashTimer && player.dashTimer > 0 && player.dashVelocity) {
             this.handleDash(player);
         } else {
-            this.renderer.worldRenderer.update({x:0,y:0})
             this.movementService.handleMovement(player, delta);
         }
         if (this.inputHandler.consumeAttack()) {
-
+            this.renderer.worldRenderer.update(player.position);
             this.attackService.initiateAttack(player);
         }
 

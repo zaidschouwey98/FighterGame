@@ -18,7 +18,6 @@ import { initDevtools } from '@pixi/devtools';
   
   document.body.appendChild(app.canvas);
   const container = new Container();
-  container.scale.set(4)
   app.stage.addChild(container);
 
   // Créez le contrôleur de jeu

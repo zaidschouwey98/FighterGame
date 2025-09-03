@@ -50,6 +50,21 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("dash", (data: { x: number; y: number; action: Action }) => {
+    if (players[socket.id]) {
+      players[socket.id].position.x = data.x;
+      players[socket.id].position.y = data.y;
+      players[socket.id].currentAction = data.action;
+      // Différenciez l'action selon le mouvement
+      // (Vous devrez implémenter cette logique)
+      // Notifier tous les autres joueurs 
+      socket.broadcast.emit("playerDashed", players[socket.id]);
+
+      // Renvoyer aussi au joueur qui bouge pour synchronisation
+      socket.emit("playerDashed", players[socket.id]);
+    }
+  });
+
   socket.on("attack", (data: AttackData) => {
     const attacker = players[data.playerId];
     if (!attacker) return;

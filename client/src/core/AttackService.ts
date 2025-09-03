@@ -4,11 +4,10 @@ import { CoordinateService } from "./CoordinateService";
 import { InputHandler } from "./InputHandler";
 import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
-import DashDirection from "../helper/DashDirection";
+import DashHelper from "../helper/DashHelper";
 export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
 const ATTACK_COOLDOWN = 10;
 const ATTACK_RESET = 60;
-const DASH_DISTANCE = 40;
 export class AttackService {
     private attackResetTimer: number = ATTACK_RESET;
     private attackCoolDownTimer: number = ATTACK_COOLDOWN;
@@ -46,21 +45,20 @@ export class AttackService {
         const dy = worldMousePos.y - player.position.y;
         let dir = Math.atan2(dy, dx);
 
-        const dashDistance = DASH_DISTANCE;
-        const dashFrames = 14;
+  
+        const len = Math.sqrt(dx * dx + dy * dy);
 
-        // Stocker la position de départ pour le dash
-        player.dashPositionStart = { ...player.position };
+        // Direction du dash
+        player.dashDir = { x: dx / len, y: dy / len };
 
-        player.dashVelocity = {
-            x: Math.cos(dir) * dashDistance,
-            y: Math.sin(dir) * dashDistance
-        };
-        player.dashTimer = dashFrames;
+        // Paramètres du dash
+        player.dashTimer = player.dashDuration;    
+
+
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
         
-        this.network.dash({x:player.position.x, y:player.position.y}, DashDirection.getDashActionByVelocity(player.dashVelocity))
+        this.network.dash({x:player.position.x, y:player.position.y}, DashHelper.getDashActionByVector(player.dashDir))
 
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;

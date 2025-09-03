@@ -27,7 +27,6 @@ export class WorldRenderer {
         
     }
 
-    /** Pas de gameplay, mais tu pourrais bouger la caméra ici */
     public update(newPlayerPosition: Position) {
         this.generateChunk(0,0,8);
     }

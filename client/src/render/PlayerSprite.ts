@@ -70,6 +70,7 @@ export default class PlayerSprite {
     }
 
 
+    // DASH
     private playUniqueAnimation(action: Action, player: Player) {
         const anim = this.animations[action];
         if (!anim) return;
@@ -83,7 +84,7 @@ export default class PlayerSprite {
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
         this.currentAnimation.animationSpeed = 0.3;
-        this.currentAnimation.currentFrame = 3;
+        this.currentAnimation.currentFrame = 0;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
         };

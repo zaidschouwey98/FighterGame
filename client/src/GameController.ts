@@ -100,29 +100,30 @@ export class GameController {
     }
 
     private handleDash(player: Player) {
-        if (!player.dashTimer)
-            return;
+        if (!player.dashTimer || !player.dashVelocity) return;
 
         const totalFrames = 14;
-        const t = 1 - player.dashTimer / totalFrames;
-        const speedFactor = Math.sin(Math.PI * t);
+        const t = 1 - player.dashTimer / totalFrames; // progression 0 -> 1
+        const ease = Math.sin((Math.PI / 2) * t);  // easing sinusoïdal (ease-in-out)
 
-        player.position.x += (player.dashVelocity!.x / 0.5) * speedFactor;
-        player.position.y += (player.dashVelocity!.y / 0.5) * speedFactor;
+        // position de départ + distance totale * easing
+        player.position.x = player.dashPositionStart!.x + player.dashVelocity.x * ease;
+        player.position.y = player.dashPositionStart!.y + player.dashVelocity.y * ease;
 
         player.dashTimer!--;
-        player.currentAction = this.getDashAction(player.dashVelocity!);
+        player.currentAction = this.getDashAction(player.dashVelocity);
 
         this.network.move({ ...player.position }, player.currentAction);
 
-        if (player.dashTimer <= 0 && (player as any).pendingAttack) {
-            this.attackService.performAttack(player, (player as any).pendingAttackDir);
-            (player as any).pendingAttack = false;
+        if (player.dashTimer <= 0 && player.pendingAttack) {
+            this.attackService.performAttack(player, player.pendingAttackDir!);
+            player.pendingAttack = false;
         }
     }
 
+
     private getDashAction(velocity: { x: number, y: number }): Action {
-        const angle = Math.atan2(velocity.y, velocity.x); 
+        const angle = Math.atan2(velocity.y, velocity.x);
         const deg = (angle * 180) / Math.PI;
 
         if (deg >= -22.5 && deg < 22.5) return Action.ATTACK_DASH_RIGHT;

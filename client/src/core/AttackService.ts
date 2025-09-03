@@ -6,12 +6,12 @@ import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
 export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
 export class AttackService {
-    public attackTimer: number =  30;
+    public attackTimer: number = 30;
     constructor(
         private inputHandler: InputHandler,
         private coordinateService: CoordinateService,
         private network: NetworkClient
-    ) {}
+    ) { }
 
     public initiateAttack(player: Player) {
         const mousePos = this.inputHandler.getMousePosition();
@@ -22,14 +22,19 @@ export class AttackService {
 
         const dashDistance = 40;
         const dashFrames = 14;
+
+        // Stocker la position de départ pour le dash
+        player.dashPositionStart = { ...player.position };
+
         player.dashVelocity = {
-            x: Math.cos(dir) * dashDistance / dashFrames,
-            y: Math.sin(dir) * dashDistance / dashFrames
+            x: Math.cos(dir) * dashDistance,
+            y: Math.sin(dir) * dashDistance
         };
         player.dashTimer = dashFrames;
-        (player as any).pendingAttackDir = dir;
-        (player as any).pendingAttack = true;
+        player.pendingAttackDir = dir;
+        player.pendingAttack = true;
     }
+
 
     public performAttack(player: Player, dir: number) {
         player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;

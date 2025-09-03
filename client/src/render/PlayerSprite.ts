@@ -63,7 +63,6 @@ export default class PlayerSprite {
         const anim = this.animations[action];
         if (!anim) return;
 
-        // Si une autre anim unique tournait, on la stoppe
         if (this.currentAnimation && this.uniqueAnimationPlaying) {
             this.currentAnimation.stop();
             this.currentAnimation.visible = false;
@@ -73,7 +72,7 @@ export default class PlayerSprite {
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
         this.currentAnimation.animationSpeed = 0.3;
-        this.currentAnimation.currentFrame = 2;
+        this.currentAnimation.currentFrame = 3;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
         };

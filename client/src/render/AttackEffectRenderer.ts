@@ -34,7 +34,7 @@ export class AttackEffectRenderer {
         this.dashCloud.y = playerPos.y;
         this.dashCloud.visible = true;
         this.dashCloud.loop = false;
-        this.dashCloud.animationSpeed = 0.5;
+        this.dashCloud.animationSpeed = 0.2;
         this.dashCloud.currentFrame = 0;
         this.dashCloud.play();
         this.dashCloud.onComplete = () => { this.dashCloud.visible = false }

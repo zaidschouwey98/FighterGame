@@ -4,6 +4,7 @@ import PlayerSprite from "./PlayerSprite";
 import type { AttackData } from "../../../shared/AttackData";
 
 export default class PlayerRenderer {
+    
     private playerContainers: Map<string, Container>;
     private spriteSheets:Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
@@ -67,11 +68,16 @@ export default class PlayerRenderer {
             playerContainer.y = player.position.y;
             // Mise à jour de l'animation
             
-            playerSprite.playAnimation(player.currentAction, player);
+            playerSprite.playAnimation(player.currentAction);
             
 
             this.players.set(player.id, player);
         }
+    }
+    
+    overridePlayerAnimation(player: Player) {
+        let playerSprite = this.playerSprites.get(player.id);
+        playerSprite?.overrideCurrentAnimation(player.currentAction,player);
     }
 
     public showAttackEffect(attackData:AttackData): void {

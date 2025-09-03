@@ -59,11 +59,16 @@ export default class PlayerSprite {
         }
     }
 
+    overrideCurrentAnimation(action: Action, player: Player){
+        this.playUniqueAnimation(action,player);
+    }
+
+
     private playUniqueAnimation(action: Action, player: Player) {
         const anim = this.animations[action];
         if (!anim) return;
 
-        if (this.currentAnimation && this.uniqueAnimationPlaying) {
+        if (this.currentAnimation) {
             this.currentAnimation.stop();
             this.currentAnimation.visible = false;
         }
@@ -81,18 +86,7 @@ export default class PlayerSprite {
     }
 
 
-    public playAnimation(action: Action, player: Player) {
-        const isUnique = [
-            Action.ATTACK_DASH_BOTTOM,
-            Action.ATTACK_DASH_TOP,
-            Action.ATTACK_DASH_RIGHT,
-            Action.ATTACK_DASH_BOTTOM_RIGHT,
-            Action.ATTACK_DASH_TOP_RIGHT,
-            Action.ATTACK_DASH_LEFT,
-            Action.ATTACK_DASH_BOTTOM_LEFT,
-            Action.ATTACK_DASH_TOP_LEFT,
-        ].includes(action);
-        
+    public playAnimation(action: Action) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
         this.currentAction = action;
@@ -101,13 +95,11 @@ export default class PlayerSprite {
             this.currentAnimation.stop();
         }
 
-        if (isUnique)
-            this.playUniqueAnimation(action, player)
-        else {
-            this.currentAnimation = this.animations[action];
-            this.currentAnimation!.visible = true;
-            this.currentAnimation?.play();
-        }
+     
+        this.currentAnimation = this.animations[action];
+        this.currentAnimation!.visible = true;
+        this.currentAnimation?.play();
+        
     }
 
 

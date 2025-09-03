@@ -4,8 +4,9 @@ import { CoordinateService } from "./CoordinateService";
 import { InputHandler } from "./InputHandler";
 import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
+import DashDirection from "../helper/DashDirection";
 export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
-const ATTACK_COOLDOWN = 20;
+const ATTACK_COOLDOWN = 10;
 const ATTACK_RESET = 60;
 const DASH_DISTANCE = 40;
 export class AttackService {
@@ -58,6 +59,8 @@ export class AttackService {
         player.dashTimer = dashFrames;
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
+        
+        this.network.dash({x:player.position.x, y:player.position.y}, DashDirection.getDashActionByVelocity(player.dashVelocity))
 
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;

@@ -10,7 +10,7 @@ import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "./core/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import PlayerRenderer from "./render/PlayerRenderer";
-import { Action } from "../../shared/Action";
+import DashDirection from "./helper/DashDirection";
 
 
 export class GameController {
@@ -62,6 +62,10 @@ export class GameController {
             this.renderer.showAttackEffect(attackData);
         });
 
+        this.eventBus.on("player:dashed", (player:Player)=>{
+            this.renderer.overridePlayerAnimation(player);
+        })
+
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             for (const player of attackResult.hitPlayers) {
                 this.gameState.updatePlayer(player);
@@ -85,6 +89,7 @@ export class GameController {
             this.movementService.handleMovement(player, delta);
         }
         if (this.inputHandler.consumeAttack()) {
+
             this.attackService.initiateAttack(player);
         }
 
@@ -105,7 +110,7 @@ export class GameController {
         player.position.y = player.dashPositionStart!.y + player.dashVelocity.y * ease;
 
         player.dashTimer!--;
-        player.currentAction = this.getDashAction(player.dashVelocity);
+        player.currentAction = DashDirection.getDashActionByVelocity(player.dashVelocity);
 
         this.network.move({ ...player.position }, player.currentAction);
 
@@ -113,23 +118,6 @@ export class GameController {
             this.attackService.performAttack(player, player.pendingAttackDir!);
             player.pendingAttack = false;
         }
-    }
-
-
-    private getDashAction(velocity: { x: number, y: number }): Action {
-        const angle = Math.atan2(velocity.y, velocity.x);
-        const deg = (angle * 180) / Math.PI;
-
-        if (deg >= -22.5 && deg < 22.5) return Action.ATTACK_DASH_RIGHT;
-        if (deg >= 22.5 && deg < 67.5) return Action.ATTACK_DASH_BOTTOM_RIGHT;
-        if (deg >= 67.5 && deg < 112.5) return Action.ATTACK_DASH_BOTTOM;
-        if (deg >= 112.5 && deg < 157.5) return Action.ATTACK_DASH_BOTTOM_LEFT;
-        if (deg >= 157.5 || deg < -157.5) return Action.ATTACK_DASH_LEFT;
-        if (deg >= -157.5 && deg < -112.5) return Action.ATTACK_DASH_TOP_LEFT;
-        if (deg >= -112.5 && deg < -67.5) return Action.ATTACK_DASH_TOP;
-        if (deg >= -67.5 && deg < -22.5) return Action.ATTACK_DASH_TOP_RIGHT;
-
-        return Action.ATTACK_DASH_RIGHT; // fallback
     }
 
     public getPlayerState(playerId: string): Player | undefined {

@@ -295,7 +295,7 @@ const atlas = [
     ], {
         player_attack_effect_right_2: ["attack_effect_right_1", "attack_effect_right_2", "attack_effect_right_3", "attack_effect_right_4", "attack_effect_right_5", "attack_effect_right_6", "attack_effect_right_7"]
     }),
-    generateAtlas("/assets/dash_attack_effect.png", { w: 2, h: 2 }, { w: 128, h: 128 }, [
+    generateAtlas("/assets/dash_attack_effect.png", { w: 6, h: 1 }, { w: 128, h: 128 }, [
         "dash_attack_effect_1",
         "dash_attack_effect_2",
         "dash_attack_effect_3",

@@ -18,6 +18,7 @@ export class NetworkClient {
             this.eventBus.emit("connected", this.socket.id);
         });
         this.socket.on("attackResult", (attackResult:AttackResult)=> this.eventBus.emit("player:attackedResult", attackResult));
+        this.socket.on("playerDashed", (player:Player)=> this.eventBus.emit("player:dashed", player));
         this.socket.on("playerAttacks", (player:Player)=> this.eventBus.emit("player:attacks", player));
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
@@ -39,6 +40,14 @@ export class NetworkClient {
             y: position.y,
             action: action
         });
+    }
+
+    dash(position: { x: number, y: number }, action:Action){
+        this.socket.emit("dash",{
+            x: position.x,
+            y: position.y,
+            action: action
+        })
     }
 
     attack(attackData:AttackData){

@@ -6,12 +6,13 @@ import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
 import DashHelper from "../helper/DashHelper";
 export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
-const ATTACK_COOLDOWN = 10;
+const ATTACK_COOLDOWN = 20;
 const ATTACK_RESET = 60;
 export class AttackService {
     private attackResetTimer: number = ATTACK_RESET;
     private attackCoolDownTimer: number = ATTACK_COOLDOWN;
     private isAttackReady: boolean = true;
+    private _attackOnGoing: boolean = false;
 
     constructor(
         private inputHandler: InputHandler,
@@ -36,8 +37,15 @@ export class AttackService {
         }
     }
 
+    public stopAttack(){
+        if(this._attackOnGoing)
+            this._attackOnGoing = false;
+    }
+
     public initiateAttack(player: Player) {
         if (!this.isAttackReady) return;
+
+        this._attackOnGoing = true;
 
         const mousePos = this.inputHandler.getMousePosition();
         const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
@@ -52,7 +60,7 @@ export class AttackService {
         player.dashDir = { x: dx / len, y: dy / len };
 
         // Paramètres du dash
-        player.dashTimer = player.dashDuration;    
+        player.attackDashTimer = player.attackDashDuration;    
 
 
         player.pendingAttackDir = dir;
@@ -67,11 +75,14 @@ export class AttackService {
 
 
     public performAttack(player: Player, dir: number) {
+        if(!this._attackOnGoing)
+            return;
         player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
 
         this.network.attack({
             playerId: player.id,
+            knockbackStrength:15, // TODO CHANGE WHEN CHANGING ATTACK
             position: { ...player.position },
             rotation: dir,
             hitbox,
@@ -79,4 +90,10 @@ export class AttackService {
         });
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
     }
+
+    
+    public get attackOngoing() : boolean {
+        return this._attackOnGoing;
+    }
+    
 }

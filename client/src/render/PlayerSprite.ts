@@ -83,7 +83,7 @@ export default class PlayerSprite {
         this.uniqueAnimationPlaying = true;
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
-        this.currentAnimation.animationSpeed = 0.3;
+        this.currentAnimation.animationSpeed = 0.4;
         this.currentAnimation.currentFrame = 0;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;

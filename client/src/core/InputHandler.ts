@@ -2,12 +2,16 @@ export class InputHandler {
     private keysPressed: Set<string> = new Set();
     private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
     private attackPressed: boolean = false;
+    private stopAttackPressed: boolean = false;
 
     constructor() {
         this.setupEventListeners();
     }
 
     private setupEventListeners() {
+        window.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        });
         window.addEventListener("keydown", (e) => {
             this.keysPressed.add(e.key.toLowerCase());
         });
@@ -24,6 +28,10 @@ export class InputHandler {
             if (e.button === 0) {
                 this.attackPressed = true;
             }
+            if (e.button === 2) {
+               this.stopAttackPressed = true;
+            }
+        
         });
     }
 
@@ -38,6 +46,12 @@ export class InputHandler {
     public consumeAttack(): boolean {
         const wasPressed = this.attackPressed;
         this.attackPressed = false;
+        return wasPressed;
+    }
+
+    public consumeRightClick(): boolean{
+        const wasPressed = this.stopAttackPressed;
+        this.stopAttackPressed = false;
         return wasPressed;
     }
 

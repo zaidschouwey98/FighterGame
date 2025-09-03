@@ -70,27 +70,75 @@ export class GameController {
         })
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
-            for (const player of attackResult.hitPlayers) {
-                this.gameState.updatePlayer(player);
-                if (player.id == this.localPlayerId) {
-                    // todo Handle damage taken
-                    console.log("I GOT HIT")
+            const hitPlayers = attackResult.hitPlayers;
+
+            for (const hit of hitPlayers) {
+                this.gameState.updatePlayer(hit);
+                if (hit.id === this.localPlayerId) {
+
+                    this.handleAttackReceived(attackResult);
+
+
                 }
             }
-            this.renderer.playerRenderer.updatePlayers(attackResult.hitPlayers);
+
+            this.renderer.playerRenderer.updatePlayers(hitPlayers);
         });
     }
 
+
+    public handleAttackReceived(attackResult: AttackResult) {
+        const attacker = this.gameState.players.get(attackResult.attackerId);
+        const player = this.gameState.players.get(this.localPlayerId!);
+        if (!player) throw new Error("Player not in game received damage.");
+
+        if (!attacker) return;
+
+        const dx = player.position.x - attacker.position.x;
+        const dy = player.position.y - attacker.position.y;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        const knockbackStrength = attackResult.knockbackStrength; // Ajuste pour feeling
+        player.knockbackReceived = {
+            x: (dx / len) * knockbackStrength,
+            y: (dy / len) * knockbackStrength,
+        };
+        player.knockbackTimer = 20; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
+    }
+
     public update(delta: number) {
+
         if (!this.localPlayerId) return;
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
+
         this.renderer.updateCamera(player.position)
-        if (player.dashTimer && player.dashTimer > 0) {
+        if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceived) {
+            player.position.x += player.knockbackReceived.x * delta;
+            player.position.y += player.knockbackReceived.y * delta;
+
+            // Ralentissement progressif
+            player.knockbackReceived.x *= 0.85;
+            player.knockbackReceived.y *= 0.85;
+
+            player.knockbackTimer--;
+            if (player.knockbackTimer <= 0) {
+                player.knockbackReceived = undefined;
+                player.knockbackTimer = undefined;
+            }
+        }
+        if (player.attackDashTimer && player.attackDashTimer > 0) {
             this.handleDash(player);
         } else {
             this.movementService.handleMovement(player, delta);
         }
+
+        if (this.attackService.attackOngoing && this.inputHandler.consumeRightClick()) {
+            this.attackService.stopAttack();
+        } else if (this.inputHandler.consumeRightClick()) {
+            // todo parade
+        }
+
         if (this.inputHandler.consumeAttack()) {
             this.renderer.worldRenderer.update(player.position);
             this.attackService.initiateAttack(player);
@@ -102,13 +150,13 @@ export class GameController {
     }
 
     private handleDash(player: Player) {
-        if (!player.dashTimer || player.dashTimer <= 0) return;
+        if (!player.attackDashTimer || player.attackDashTimer <= 0) return;
 
         // Progression totale du dash (0 → 1)
-        const t = 1 - player.dashTimer / player.dashDuration;
+        const t = 1 - player.attackDashTimer / player.attackDashDuration;
 
         // Fonction mathématique avec freeze
-        const freezeRatio = 15 / player.dashDuration; // 15 premières frames sans mouvement
+        const freezeRatio = 15 / player.attackDashDuration; // 15 premières frames sans mouvement
         const p = 3; // contrôle la douceur
         let speedFactor = 0;
 
@@ -117,18 +165,18 @@ export class GameController {
             speedFactor = Math.pow(4, p) * Math.pow(tPrime, p) * Math.pow(1 - tPrime, p);
         }
 
-        const speed = player.dashMaxSpeed * speedFactor;
+        const speed = player.attackDashMaxSpeed * speedFactor;
 
         // Déplacement
         player.position.x += player.dashDir.x * speed;
         player.position.y += player.dashDir.y * speed;
 
-        player.dashTimer--;
+        player.attackDashTimer--;
         player.currentAction = DashHelper.getDashActionByVector(player.dashDir);
 
         this.network.move({ ...player.position }, player.currentAction);
 
-        if (player.dashTimer <= 0 && player.pendingAttack) {
+        if (player.attackDashTimer <= 0 && player.pendingAttack) {
             this.attackService.performAttack(player, player.pendingAttackDir!);
             player.pendingAttack = false;
         }

@@ -9,13 +9,15 @@ export default class PlayerRenderer {
     private spriteSheets:Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
     private players: Map<string, Player>;
-    private globalContainer: Container;
-    constructor(globalContainer: Container, spriteSheets:Spritesheet[]) {
+    private playerContainer: Container;
+    private staticEffectContainer: Container;
+    constructor(playerContainer: Container, spriteSheets:Spritesheet[], staticEffectContainer: Container) {
         this.spriteSheets = spriteSheets;
+        this.staticEffectContainer = staticEffectContainer
         this.playerContainers = new Map();
         this.playerSprites = new Map();
         this.players = new Map();
-        this.globalContainer = globalContainer;
+        this.playerContainer = playerContainer;
     }
 
     public addNewPlayer(player: Player) {
@@ -23,12 +25,12 @@ export default class PlayerRenderer {
         newPlayerContainer.label = player.id;
         
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets,this.globalContainer);
+        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets,this.staticEffectContainer);
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
 
-        this.globalContainer.addChild(newPlayerContainer);
+        this.playerContainer.addChild(newPlayerContainer);
     }
 
     public removePlayer(playerId: string) {
@@ -41,7 +43,7 @@ export default class PlayerRenderer {
 
         if (container) {
             container.destroy({ children: true });
-            this.globalContainer.removeChild(container);
+            this.playerContainer.removeChild(container);
         }
 
         this.playerContainers.delete(playerId);

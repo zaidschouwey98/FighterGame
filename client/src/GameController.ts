@@ -9,8 +9,8 @@ import { GameState } from "./core/GameState";
 import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "./core/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
-import PlayerRenderer from "./render/PlayerRenderer";
 import DashDirection from "./helper/DashDirection";
+import { Renderer } from "./render/Renderer";
 
 
 export class GameController {
@@ -18,7 +18,7 @@ export class GameController {
     private eventBus = new EventBus();
     private inputHandler = new InputHandler();
     private coordinateService: CoordinateService;
-    private renderer: PlayerRenderer;
+    private renderer: Renderer;
     private network: NetworkClient;
     private movementService: MovementService;
     private attackService: AttackService;
@@ -26,7 +26,7 @@ export class GameController {
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
         this.coordinateService = new CoordinateService(app);
-        this.renderer = new PlayerRenderer(globalContainer, spriteSheets);
+        this.renderer = new Renderer(globalContainer,spriteSheets);
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.movementService = new MovementService(this.inputHandler, this.network);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
@@ -40,30 +40,30 @@ export class GameController {
 
         this.eventBus.on("players:update", (players: Player[]) => {
             this.gameState.updatePlayers(players);
-            this.renderer.updatePlayers(players);
+            this.renderer.playerRenderer.updatePlayers(players);
         });
 
         this.eventBus.on("player:joined", (player: Player) => {
             this.gameState.updatePlayer(player);
-            this.renderer.updatePlayers([player]);
+            this.renderer.playerRenderer.updatePlayers([player]);
         });
 
         this.eventBus.on("player:left", (playerId: string) => {
             this.gameState.removePlayer(playerId);
-            this.renderer.removePlayer(playerId);
+            this.renderer.playerRenderer.removePlayer(playerId);
         });
 
         this.eventBus.on("player:moved", (player: Player) => {
             this.gameState.updatePlayer(player);
-            this.renderer.updatePlayers([player]);
+            this.renderer.playerRenderer.updatePlayers([player]);
         });
 
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
-            this.renderer.showAttackEffect(attackData);
+            this.renderer.playerRenderer.showAttackEffect(attackData);
         });
 
         this.eventBus.on("player:dashed", (player:Player)=>{
-            this.renderer.overridePlayerAnimation(player);
+            this.renderer.playerRenderer.overridePlayerAnimation(player);
         })
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
@@ -74,7 +74,7 @@ export class GameController {
                     console.log("I GOT HIT")
                 }
             }
-            this.renderer.updatePlayers(attackResult.hitPlayers);
+            this.renderer.playerRenderer.updatePlayers(attackResult.hitPlayers);
         });
     }
 
@@ -86,6 +86,7 @@ export class GameController {
         if (player.dashTimer && player.dashTimer > 0 && player.dashVelocity) {
             this.handleDash(player);
         } else {
+            this.renderer.worldRenderer.update({x:0,y:0})
             this.movementService.handleMovement(player, delta);
         }
         if (this.inputHandler.consumeAttack()) {

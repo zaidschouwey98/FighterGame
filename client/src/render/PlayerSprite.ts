@@ -12,10 +12,10 @@ export default class PlayerSprite {
     private currentAction?: Action;
     private spriteSheets: Spritesheet[];
     private attackEffectRenderer: AttackEffectRenderer;
-    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[], globalContainer: Container) {
+    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[], staticEffectsContainer: Container) {
         this.playerContainer = playerContainer;
         this.spriteSheets = spriteSheet;
-        this.attackEffectRenderer = new AttackEffectRenderer(this.spriteSheets, this.playerContainer, globalContainer);
+        this.attackEffectRenderer = new AttackEffectRenderer(this.spriteSheets, this.playerContainer, staticEffectsContainer);
         this.animations[Action.IDLE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle")!);
         this.animations[Action.IDLE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle_right")!);
 

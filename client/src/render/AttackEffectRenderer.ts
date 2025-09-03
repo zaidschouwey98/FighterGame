@@ -6,10 +6,10 @@ import type Position from "../../../shared/Position";
 export class AttackEffectRenderer {
     private animations: Partial<Record<Action, AnimatedSprite>> = {};
     private attackEffectContainer: Container;
-    private globalContainer:Container;
+    private staticEffectsContainer:Container;
     private spriteSheets:Spritesheet[];
-    constructor(spriteSheets: Spritesheet[], playerContainer: Container, globalContainer: Container) {
-        this.globalContainer = globalContainer;
+    constructor(spriteSheets: Spritesheet[], playerContainer: Container, staticEffectsContainer: Container) {
+        this.staticEffectsContainer = staticEffectsContainer;
         this.spriteSheets = spriteSheets;
         this.attackEffectContainer = new Container();
         playerContainer.addChild(this.attackEffectContainer);
@@ -36,7 +36,7 @@ export class AttackEffectRenderer {
         newDashCloud.currentFrame = 0;
         newDashCloud.play();
         newDashCloud.onComplete = () => { newDashCloud.destroy() }
-        this.globalContainer.addChild(newDashCloud)
+        this.staticEffectsContainer.addChild(newDashCloud)
     }
 
     renderAttackEffect(action: Action, rotation: number) {

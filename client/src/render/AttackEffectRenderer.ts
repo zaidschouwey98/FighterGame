@@ -6,17 +6,20 @@ import type Position from "../../../shared/Position";
 export class AttackEffectRenderer {
     private animations: Partial<Record<Action, AnimatedSprite>> = {};
     private dashCloud: AnimatedSprite;
+    private dashCloudContainer:Container;
     private attackEffectContainer: Container;
     constructor(spriteSheets: Spritesheet[], playerContainer: Container, globalContainer: Container) {
         this.attackEffectContainer = new Container();
+        this.dashCloudContainer = new Container();
         playerContainer.addChild(this.attackEffectContainer);
-
+        globalContainer.addChild(this.dashCloudContainer);
         this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
         this.animations[Action.ATTACK_2] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
         this.dashCloud = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_effect")!);
+
         this.dashCloud.visible = false;
         this.dashCloud.anchor.set(0.5);
-        globalContainer.addChild(this.dashCloud);
+        this.dashCloudContainer.addChild(this.dashCloud);
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.5;
@@ -27,9 +30,6 @@ export class AttackEffectRenderer {
 
 
     renderDashCloud(playerPos: Position) {
-        if (this.dashCloud.playing) {
-            return;
-        }
         this.dashCloud.x = playerPos.x;
         this.dashCloud.y = playerPos.y;
         this.dashCloud.visible = true;

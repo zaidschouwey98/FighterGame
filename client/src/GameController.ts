@@ -88,14 +88,8 @@ export class GameController {
             this.attackService.initiateAttack(player);
         }
 
-        if (player.attackIndex != 0)
-            this.attackService.attackTimer -= delta;
-
-        if (this.attackService.attackTimer <= 0 || player.attackIndex == 0) {
-            player.attackIndex = 0;
-            this.attackService.attackTimer = 30;
-        }
-
+    
+        this.attackService.update(delta,player);
         this.gameState.updatePlayer(player);
     }
 

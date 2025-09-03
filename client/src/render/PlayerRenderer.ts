@@ -65,7 +65,6 @@ export default class PlayerRenderer {
             // Mise à jour de la position
             playerContainer.x = player.position.x;
             playerContainer.y = player.position.y;
-            console.log(player.position)
             // Mise à jour de l'animation
             
             playerSprite.playAnimation(player.currentAction, player);

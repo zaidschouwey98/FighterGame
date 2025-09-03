@@ -82,7 +82,6 @@ export default class PlayerSprite {
 
 
     public playAnimation(action: Action, player: Player) {
-        // Vérifie si c'est une animation unique (un dash)
         const isUnique = [
             Action.ATTACK_DASH_BOTTOM,
             Action.ATTACK_DASH_TOP,
@@ -93,35 +92,24 @@ export default class PlayerSprite {
             Action.ATTACK_DASH_BOTTOM_LEFT,
             Action.ATTACK_DASH_TOP_LEFT,
         ].includes(action);
-
-        // Si c'est une animation normale et qu'un dash est en cours → on ignore
-        if (!isUnique && this.uniqueAnimationPlaying) {
+        
+        if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
-        }
-
-        // Si on rejoue la même action → inutile
-        if (action === this.currentAction && !isUnique) {
-            return;
-        }
-
-        // Nettoie l'ancienne anim
+        this.currentAction = action;
         if (this.currentAnimation) {
             this.currentAnimation.visible = false;
             this.currentAnimation.stop();
         }
 
-        this.currentAction = action;
-
-        if (isUnique) {
-            this.playUniqueAnimation(action, player);
-        } else {
+        if (isUnique)
+            this.playUniqueAnimation(action, player)
+        else {
             this.currentAnimation = this.animations[action];
-            if (this.currentAnimation) {
-                this.currentAnimation.visible = true;
-                this.currentAnimation.play();
-            }
+            this.currentAnimation!.visible = true;
+            this.currentAnimation?.play();
         }
     }
+
 
 
     public playAttackAnimation(action: Action, attackRotation: number) {

@@ -1,4 +1,5 @@
 import { Action } from "./Action";
+import { Direction } from "./Direction";
 import Position from "./Position";
 
 export default class Player{
@@ -7,11 +8,13 @@ export default class Player{
     public speed: number;
     public id:string;
     public currentAction:Action;
+    public currentDirection?: Direction;
     public dashVelocity?: { x: number, y: number }; // vitesse actuelle du dash
     public dashTimer?: number; // durée restante du dash
     public pendingAttackDir?: number;
     public pendingAttack?: boolean;
     public attackIndex:number = 0;
+    public dashPositionStart?:Position;
     constructor(position: Position, hp: number, speed: number, id:string) {
         this.id = id;
         this.position = position;

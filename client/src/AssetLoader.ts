@@ -15,7 +15,9 @@ export type AnimationName =
     "player_dash_attack_effect" |
     "player_dash_attack_right" |
     "player_dash_attack_bottom_right" |
-    "player_dash_attack_top_right"
+    "player_dash_attack_top_right"|
+    "player_dash_attack_top"|
+    "player_dash_attack_bottom"
 
     ;
 
@@ -167,7 +169,27 @@ export type TextureName =
     "dash_attack_bottom_right_7" |
     "dash_attack_bottom_right_8" |
     "dash_attack_bottom_right_9" |
-    "dash_attack_bottom_right_10";
+    "dash_attack_bottom_right_10"|
+    "dash_attack_top_1" |
+    "dash_attack_top_2" |
+    "dash_attack_top_3" |
+    "dash_attack_top_4" |
+    "dash_attack_top_5" |
+    "dash_attack_top_6" |
+    "dash_attack_top_7" |
+    "dash_attack_top_8" |
+    "dash_attack_top_9" |
+    "dash_attack_top_10"|
+    "dash_attack_bottom_1" |
+    "dash_attack_bottom_2" |
+    "dash_attack_bottom_3" |
+    "dash_attack_bottom_4" |
+    "dash_attack_bottom_5" |
+    "dash_attack_bottom_6" |
+    "dash_attack_bottom_7" |
+    "dash_attack_bottom_8" |
+    "dash_attack_bottom_9" |
+    "dash_attack_bottom_10";
 
 export const findTexture = (spriteSheets: Spritesheet[], texture: TextureName) => {
     return spriteSheets.find((spritesheet) => spritesheet.textures[texture])?.textures[texture];
@@ -318,6 +340,34 @@ const atlas = [
         "dash_attack_right_10",
     ], {
         player_dash_attack_right: ["dash_attack_right_1", "dash_attack_right_2", "dash_attack_right_3", "dash_attack_right_4", "dash_attack_right_5", "dash_attack_right_6", "dash_attack_right_7", "dash_attack_right_8", "dash_attack_right_9", "dash_attack_right_10"]
+    }),
+    generateAtlas("/assets/dash_attack_top.png", { w: 10, h: 1 }, { w: 32, h: 32 }, [
+        "dash_attack_top_1",
+        "dash_attack_top_2",
+        "dash_attack_top_3",
+        "dash_attack_top_4",
+        "dash_attack_top_5",
+        "dash_attack_top_6",
+        "dash_attack_top_7",
+        "dash_attack_top_8",
+        "dash_attack_top_9",
+        "dash_attack_top_10",
+    ], {
+        player_dash_attack_top: ["dash_attack_top_1", "dash_attack_top_2", "dash_attack_top_3", "dash_attack_top_4", "dash_attack_top_5", "dash_attack_top_6", "dash_attack_top_7", "dash_attack_top_8", "dash_attack_top_9", "dash_attack_top_10"]
+    }),
+    generateAtlas("/assets/dash_attack_bottom.png", { w: 10, h: 1 }, { w: 32, h: 32 }, [
+        "dash_attack_bottom_1",
+        "dash_attack_bottom_2",
+        "dash_attack_bottom_3",
+        "dash_attack_bottom_4",
+        "dash_attack_bottom_5",
+        "dash_attack_bottom_6",
+        "dash_attack_bottom_7",
+        "dash_attack_bottom_8",
+        "dash_attack_bottom_9",
+        "dash_attack_bottom_10",
+    ], {
+        player_dash_attack_bottom: ["dash_attack_bottom_1", "dash_attack_bottom_2", "dash_attack_bottom_3", "dash_attack_bottom_4", "dash_attack_bottom_5", "dash_attack_bottom_6", "dash_attack_bottom_7", "dash_attack_bottom_8", "dash_attack_bottom_9", "dash_attack_bottom_10"]
     }),
     generateAtlas("/assets/dash_attack_top_right.png", { w: 10, h: 1 }, { w: 32, h: 32 }, [
         "dash_attack_top_right_1",

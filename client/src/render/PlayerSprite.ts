@@ -37,6 +37,12 @@ export default class PlayerSprite {
         this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
         this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT].loop = false;
 
+        this.animations[Action.ATTACK_DASH_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top")!);
+        this.animations[Action.ATTACK_DASH_TOP].loop = false;
+
+        this.animations[Action.ATTACK_DASH_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom")!);
+        this.animations[Action.ATTACK_DASH_BOTTOM].loop = false;
+
         this.animations[Action.ATTACK_DASH_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
         this.animations[Action.ATTACK_DASH_LEFT].loop = false;
         this.animations[Action.ATTACK_DASH_LEFT].scale.x *= -1;

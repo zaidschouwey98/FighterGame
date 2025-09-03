@@ -81,7 +81,7 @@ export class GameController {
 
                 }
             }
-
+            // TODO play receive damage animation
             this.renderer.playerRenderer.updatePlayers(hitPlayers);
         });
     }

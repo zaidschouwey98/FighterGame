@@ -38,8 +38,12 @@ export class AttackService {
     }
 
     public stopAttack(){
-        if(this._attackOnGoing)
+        if(this._attackOnGoing){
             this._attackOnGoing = false;
+            this.isAttackReady = true;
+        }
+            
+        
     }
 
     public initiateAttack(player: Player) {

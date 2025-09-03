@@ -102,7 +102,8 @@ io.on("connection", (socket) => {
     // Envoyer les résultats à tous les clients
     io.emit("attackResult", {
       attackerId: data.playerId,
-      hitPlayers: attackResults
+      hitPlayers: attackResults,
+      knockbackStrength: data.knockbackStrength
     }  as AttackResult);
   });
 

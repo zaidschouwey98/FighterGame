@@ -14,10 +14,13 @@ export default class Player{
     public pendingAttack?: boolean;
     public attackIndex:number = 0;
 
-    public dashTimer?: number; // d urée restante du dash
-    public dashDuration = 50; // durée en frames
+    public attackDashTimer?: number; // durée restante du dash
+    public attackDashDuration = 40; // durée en frames
     public dashDir = {x: 0, y: 0};
-    public dashMaxSpeed = 3;
+    public attackDashMaxSpeed = 3;
+
+    public knockbackReceived?: { x: number; y: number };
+    public knockbackTimer?: number;
     constructor(position: Position, hp: number, speed: number, id:string) {
         this.id = id;
         this.position = position;

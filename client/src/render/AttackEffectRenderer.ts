@@ -5,21 +5,17 @@ import type Position from "../../../shared/Position";
 
 export class AttackEffectRenderer {
     private animations: Partial<Record<Action, AnimatedSprite>> = {};
-    private dashCloud: AnimatedSprite;
-    private dashCloudContainer:Container;
     private attackEffectContainer: Container;
+    private globalContainer:Container;
+    private spriteSheets:Spritesheet[];
     constructor(spriteSheets: Spritesheet[], playerContainer: Container, globalContainer: Container) {
+        this.globalContainer = globalContainer;
+        this.spriteSheets = spriteSheets;
         this.attackEffectContainer = new Container();
-        this.dashCloudContainer = new Container();
         playerContainer.addChild(this.attackEffectContainer);
-        globalContainer.addChild(this.dashCloudContainer);
         this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
         this.animations[Action.ATTACK_2] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
-        this.dashCloud = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_effect")!);
 
-        this.dashCloud.visible = false;
-        this.dashCloud.anchor.set(0.5);
-        this.dashCloudContainer.addChild(this.dashCloud);
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
             anim.animationSpeed = 0.5;
@@ -29,15 +25,18 @@ export class AttackEffectRenderer {
     }
 
 
-    renderDashCloud(playerPos: Position) {
-        this.dashCloud.x = playerPos.x;
-        this.dashCloud.y = playerPos.y;
-        this.dashCloud.visible = true;
-        this.dashCloud.loop = false;
-        this.dashCloud.animationSpeed = 0.4;
-        this.dashCloud.currentFrame = 2;
-        this.dashCloud.play();
-        this.dashCloud.onComplete = () => { this.dashCloud.visible = false }
+    renderAttackDashCloud(playerPos: Position) {
+        const newDashCloud = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_effect")!);
+        newDashCloud.anchor.set(0.5)
+        newDashCloud.x = playerPos.x;
+        newDashCloud.y = playerPos.y;
+        newDashCloud.visible = true;
+        newDashCloud.loop = false;
+        newDashCloud.animationSpeed = 0.2;
+        newDashCloud.currentFrame = 0;
+        newDashCloud.play();
+        newDashCloud.onComplete = () => { newDashCloud.destroy() }
+        this.globalContainer.addChild(newDashCloud)
     }
 
     renderAttackEffect(action: Action, rotation: number) {

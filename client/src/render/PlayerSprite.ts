@@ -88,7 +88,7 @@ export default class PlayerSprite {
             this.uniqueAnimationPlaying = false;
         };
         this.currentAnimation.play();
-        this.attackEffectRenderer?.renderDashCloud(player.position);
+        this.attackEffectRenderer?.renderAttackDashCloud(player.position);
     }
 
 

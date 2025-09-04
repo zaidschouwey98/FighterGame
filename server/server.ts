@@ -64,7 +64,28 @@ io.on("connection", (socket) => {
       socket.emit("playerDashed", players[socket.id]);
     }
   });
+  socket.on("block", (player:Player) => {
+    if (players[socket.id]) {
+      players[socket.id].position.x = player.position.x;
+      players[socket.id].position.y = player.position.y;
+      players[socket.id].currentAction = player.currentAction;
+      socket.broadcast.emit("playerIsBlocking", players[socket.id]);
 
+      // Renvoyer aussi au joueur qui bouge pour synchronisation
+      socket.emit("playerIsBlocking", players[socket.id]);
+    }
+  });
+  socket.on("blockEnd", (player:Player) => {
+    if (players[socket.id]) {
+      players[socket.id].position.x = player.position.x;
+      players[socket.id].position.y = player.position.y;
+      players[socket.id].currentAction = player.currentAction;
+      socket.broadcast.emit("playerIsBlocking", players[socket.id]);
+
+      // Renvoyer aussi au joueur qui bouge pour synchronisation
+      socket.emit("playerBlockingEnded", players[socket.id]);
+    }
+  });
   socket.on("attack", (data: AttackData) => {
     const attacker = players[data.playerId];
     if (!attacker) return;

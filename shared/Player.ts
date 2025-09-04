@@ -14,6 +14,9 @@ export default class Player{
     public pendingAttack?: boolean;
     public attackIndex:number = 0;
 
+    public blockTimer?: number;   // Frames restantes de block
+    public isBlocking?: boolean;  // True si le joueur bloque
+
     public attackDashTimer?: number; // durée restante du dash
     public attackDashDuration = 40; // durée en frames
     public dashDir = {x: 0, y: 0};

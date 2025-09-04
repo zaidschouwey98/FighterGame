@@ -27,6 +27,7 @@ export default class PlayerSprite {
         this.animations[Action.MOVE_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_left")!);
         this.animations[Action.MOVE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_down")!);
         this.animations[Action.MOVE_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_up")!);
+        this.animations[Action.BLOCK] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom")!);
 
         this.animations[Action.ATTACK_DASH_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
         this.animations[Action.ATTACK_DASH_RIGHT].loop = false;

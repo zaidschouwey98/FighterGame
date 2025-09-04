@@ -22,6 +22,8 @@ export class NetworkClient {
         this.socket.on("playerAttacks", (player:Player)=> this.eventBus.emit("player:attacks", player));
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
+        this.socket.on("playerIsBlocking", (player:Player)=> this.eventBus.emit("player:isBlocking", player));
+        this.socket.on("playerBlockingEnded", (player:Player)=> this.eventBus.emit("player:blockingEnded", player));
         this.socket.on("currentPlayers", (players: Record<string, Player>) => {
             const playersArray = Object.values(players);
             this.eventBus.emit("players:update", playersArray);
@@ -48,6 +50,16 @@ export class NetworkClient {
             y: position.y,
             action: action
         })
+    }
+
+    block(player:Player){
+        console.log("blocking..")
+        this.socket.emit("block",player);
+    }
+
+    blockEnd(player:Player){
+        this.socket.emit("blockEnd",player);
+        console.log("blocking ended")
     }
 
     attack(attackData:AttackData){

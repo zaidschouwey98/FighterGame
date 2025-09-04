@@ -11,6 +11,7 @@ import { MovementService } from "./core/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import DashHelper from "./helper/DashHelper";
 import { Renderer } from "./render/Renderer";
+import { BlockService } from "./core/BlockService";
 
 
 export class GameController {
@@ -22,6 +23,7 @@ export class GameController {
     private network: NetworkClient;
     private movementService: MovementService;
     private attackService: AttackService;
+    private blockService: BlockService
     private localPlayerId: string | null = null;
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
@@ -32,7 +34,7 @@ export class GameController {
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.movementService = new MovementService(this.inputHandler, this.network);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
-
+        this.blockService = new BlockService(this.network);
         this.setupEventListeners();
     }
 
@@ -69,6 +71,14 @@ export class GameController {
             this.renderer.playerRenderer.overridePlayerAnimation(player);
         })
 
+        this.eventBus.on("player:isBlocking", (player:Player)=>{
+            this.renderer.playerRenderer.updatePlayers([player]);
+        })
+        this.eventBus.on("player:blockingEnded", (player:Player)=>{
+            this.gameState.updatePlayer(player);
+            this.renderer.playerRenderer.updatePlayers([player]);
+        })
+
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
 
@@ -88,6 +98,7 @@ export class GameController {
 
 
     public handleAttackReceived(attackResult: AttackResult) {
+        // todo IF BLOCKING APPLY KNOCKBACK TO ATTACKER
         const attacker = this.gameState.players.get(attackResult.attackerId);
         const player = this.gameState.players.get(this.localPlayerId!);
         if (!player) throw new Error("Player not in game received damage.");
@@ -136,7 +147,8 @@ export class GameController {
         if (this.attackService.attackOngoing && this.inputHandler.consumeRightClick()) {
             this.attackService.stopAttack();
         } else if (this.inputHandler.consumeRightClick()) {
-            // todo parade
+            this.blockService.startBlock(player);
+
         }
 
         if (this.inputHandler.consumeAttack()) {
@@ -144,7 +156,7 @@ export class GameController {
             this.attackService.initiateAttack(player);
         }
 
-
+        this.blockService.update(player);
         this.attackService.update(delta, player);
         this.gameState.updatePlayer(player);
     }

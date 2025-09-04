@@ -13,15 +13,8 @@ export class Minimap {
     this.container.x = this.app.canvas.width - this.mapSize - 100; // Haut droite
     this.container.y = 20;
 
-//     const graphics = new PIXI.Graphics();
-
-//   // Rectangle
-//     graphics.rect(this.app.canvas.width - this.mapSize - 20, 20, 100, 100);
-//     graphics.fill(0xde3249);
-//     uiContainer.addChild(graphics)
-    // Fond semi-transparent
     this.background = new PIXI.Graphics();
-    // 
+
     this.background.rect(0, 0, this.mapSize, this.mapSize);
     this.background.fill({color:0x000000, alpha:0.5});
     this.container.addChild(this.background);
@@ -37,7 +30,7 @@ export class Minimap {
   }
 
   update(playerX: number, playerY: number, players: any[]) { // TODO CHANGE ANY
-    const scale = 0.1; // Ajuste selon ta map
+    const scale = 0.1;
 
     const centerX = this.mapSize / 2;
     const centerY = this.mapSize / 2;

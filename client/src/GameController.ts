@@ -15,7 +15,7 @@ import { BlockService } from "./core/BlockService";
 import type { LocalPlayer } from "./core/LocalPlayer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { Action } from "../../shared/Action";
-import { TILE_SIZE } from "./constantes";
+import { CHUNK_SIZE, TILE_SIZE } from "./constantes";
 
 
 export class GameController {
@@ -235,8 +235,8 @@ export class GameController {
         // render world
         const tileX = Math.floor(player.position.x / TILE_SIZE);
         const tileY = Math.floor(player.position.y / TILE_SIZE);
-        const chunkX = Math.floor(tileX / 16);
-        const chunkY = Math.floor(tileY / 16);
+        const chunkX = Math.floor(tileX / CHUNK_SIZE);
+        const chunkY = Math.floor(tileY / CHUNK_SIZE);
         if(chunkX != this.currentChunkX || chunkY != this.currentChunkY){
             this.currentChunkX = chunkX;
             this.currentChunkY = chunkY;

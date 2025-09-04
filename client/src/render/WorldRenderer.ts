@@ -31,18 +31,35 @@ export class WorldRenderer {
     }
 
     public update(cx: number, cy: number) {
+        const visibleChunks = new Set<string>();
+
+        // Charger les chunks visibles
         for (let dx = -RENDER_DISTANCE; dx <= RENDER_DISTANCE; dx++) {
             for (let dy = -RENDER_DISTANCE; dy <= RENDER_DISTANCE; dy++) {
                 const chunkX = cx + dx;
                 const chunkY = cy + dy;
+                const key = `${chunkX}_${chunkY}`;
+                visibleChunks.add(key);
                 this.generateChunk(chunkX, chunkY, CHUNK_SIZE);
+            }
+        }
+
+        // Décharger les chunks hors de portée
+        for (const [key, sprites] of this._loadedChunks) {
+            if (!visibleChunks.has(key)) {
+                // Supprimer tous les sprites du container
+                for (const sprite of sprites) {
+                    this._tilesContainer.removeChild(sprite);
+                    sprite.destroy();
+                }
+                this._loadedChunks.delete(key);
             }
         }
     }
 
     private generateChunk(cx: number, cy: number, size: number) {
         let chunkTextures: Sprite[] = [];
-        if(this._loadedChunks.has(`${cx}_${cy}`)){
+        if (this._loadedChunks.has(`${cx}_${cy}`)) {
             // Chunk already loaded
             return;
         }
@@ -71,6 +88,6 @@ export class WorldRenderer {
             }
         }
 
-        this._loadedChunks.set(`${cx}_${cy}`,chunkTextures)
+        this._loadedChunks.set(`${cx}_${cy}`, chunkTextures)
     }
 }

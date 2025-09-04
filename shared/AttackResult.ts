@@ -1,7 +1,7 @@
-import Player from "./Player";
+import { PlayerInfo } from "./PlayerInfo";
 
 export interface AttackResult{
-    hitPlayers:Player[];
+    hitPlayers:PlayerInfo[];
     attackerId:string;
     knockbackStrength:number;
 }

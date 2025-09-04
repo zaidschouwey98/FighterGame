@@ -1,4 +1,5 @@
 import Player from "../shared/Player";
+import PlayerInfo from "../shared/PlayerInfo"
 
 // server/HitboxValidationService.ts
 export class HitboxValidationService {
@@ -27,7 +28,7 @@ export class HitboxValidationService {
 
     static getTargetsInHitbox(
         hitbox: any,
-        players: Record<string, Player>,
+        players: Record<string, PlayerInfo>,
         excludePlayerId: string
     ): string[] {
         const hitPlayers: string[] = [];

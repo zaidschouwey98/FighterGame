@@ -85,7 +85,7 @@ export default class PlayerSprite {
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
         this.currentAnimation.animationSpeed = 0.4;
-        this.currentAnimation.currentFrame = 0;
+        this.currentAnimation.currentFrame = 1;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
         };
@@ -94,7 +94,7 @@ export default class PlayerSprite {
     }
 
 
-    public playAnimation(action: Action) {
+    public playRepeatableAnimation(action: Action) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
         this.currentAction = action;

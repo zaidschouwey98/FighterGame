@@ -12,10 +12,12 @@ import { NetworkClient } from "./network/NetworkClient";
 import DashHelper from "./helper/DashHelper";
 import { Renderer } from "./render/Renderer";
 import { BlockService } from "./core/BlockService";
+import type { LocalPlayer } from "./core/LocalPlayer";
+import type PlayerInfo from "../../shared/PlayerInfo";
 
 
 export class GameController {
-    private gameState = new GameState();
+    private gameState = GameState.instance;
     private eventBus = new EventBus();
     private inputHandler = new InputHandler();
     private coordinateService: CoordinateService;
@@ -43,14 +45,15 @@ export class GameController {
             this.localPlayerId = playerId;
         });
 
-        this.eventBus.on("players:update", (players: Player[]) => {
-            this.gameState.updatePlayers(players);
-            this.renderer.playerRenderer.updatePlayers(players);
+        this.eventBus.on("players:update", (info: {playerArray:Player[],localPlayer:LocalPlayer}) => {
+            this.gameState.restorePlayerState(info.playerArray,info.localPlayer);
+            this.renderer.playerRenderer.updatePlayers(info.playerArray);
         });
 
-        this.eventBus.on("player:joined", (player: Player) => {
-            this.gameState.updatePlayer(player);
-            this.renderer.playerRenderer.updatePlayers([player]);
+        this.eventBus.on("player:joined", (player: PlayerInfo) => {
+            this.gameState.addPlayer(player);
+            let joinedPlayer = this.gameState.players.get(player.id)
+            this.renderer.playerRenderer.updatePlayers([joinedPlayer!]);
         });
 
         this.eventBus.on("player:left", (playerId: string) => {
@@ -58,36 +61,45 @@ export class GameController {
             this.renderer.playerRenderer.removePlayer(playerId);
         });
 
-        this.eventBus.on("player:moved", (player: Player) => {
+        this.eventBus.on("player:moved", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
-            this.renderer.playerRenderer.updatePlayers([player]);
+            let movingPlayer = this.gameState.players.get(player.id)
+            this.renderer.playerRenderer.updatePlayers([movingPlayer!]);
         });
 
-        this.eventBus.on("player:stopMoving", (player: Player) => {
+        this.eventBus.on("player:stopMoving", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
-            this.renderer.playerRenderer.updatePlayers([player]);
+            let p = this.gameState.players.get(player.id)
+            this.renderer.playerRenderer.updatePlayers([p!]);
+        });
+
+        this.eventBus.on("player:actionUpdated", (player: PlayerInfo) => {
+            this.gameState.updatePlayer(player);
+            let p = this.gameState.players.get(player.id)
+            this.renderer.playerRenderer.updatePlayers([p!]); // Todo remove "!"
         });
 
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
             this.renderer.playerRenderer.showAttackEffect(attackData);
         });
 
-        this.eventBus.on("player:dashed", (player: Player) => {
-            this.renderer.playerRenderer.overridePlayerAnimation(player);
+        this.eventBus.on("player:dashed", (player: PlayerInfo) => {
+            this.gameState.updatePlayer(player);
+            let p = this.gameState.players.get(player.id)
+            this.renderer.playerRenderer.overridePlayerAnimation(p!);
         })
 
-        this.eventBus.on("player:isBlocking", (player:Player)=>{
+        this.eventBus.on("player:isBlocking", (player:PlayerInfo)=>{
             this.gameState.updatePlayer(player);
-            this.renderer.playerRenderer.updatePlayers([player]);
+            // this.renderer.playerRenderer.updatePlayers([player]);
         })
-        this.eventBus.on("player:blockingEnded", (player:Player)=>{
+        this.eventBus.on("player:blockingEnded", (player:PlayerInfo)=>{
             this.gameState.updatePlayer(player);
-            this.renderer.playerRenderer.updatePlayers([player]);
+            // this.renderer.playerRenderer.updatePlayers([player]);
         })
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
-
             for (const hit of hitPlayers) {
                 this.gameState.updatePlayer(hit);
                 if (hit.id === this.localPlayerId) {
@@ -98,7 +110,7 @@ export class GameController {
                 }
             }
             // TODO play receive damage animation
-            this.renderer.playerRenderer.updatePlayers(hitPlayers);
+            // this.renderer.playerRenderer.updatePlayers(hitPlayers);
         });
     }
 
@@ -128,7 +140,7 @@ export class GameController {
         if (!this.localPlayerId) return;
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
-        console.log(player.currentAction)
+
         this.renderer.updateCamera(player.position)
         if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceived) {
             player.position.x += player.knockbackReceived.x * delta;
@@ -164,7 +176,6 @@ export class GameController {
 
         this.blockService.update(player);
         this.attackService.update(delta, player);
-        this.gameState.updatePlayer(player);
     }
 
     private handleDash(player: Player) {

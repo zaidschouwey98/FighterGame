@@ -48,28 +48,20 @@ export class AttackService {
 
     public initiateAttack(player: Player) {
         if (!this.isAttackReady) return;
-
         this._attackOnGoing = true;
-
         const mousePos = this.inputHandler.getMousePosition();
         const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
         const dx = worldMousePos.x - player.position.x;
         const dy = worldMousePos.y - player.position.y;
         let dir = Math.atan2(dy, dx);
-
-  
         const len = Math.sqrt(dx * dx + dy * dy);
-
         // Direction du dash
         player.dashDir = { x: dx / len, y: dy / len };
-
         // Paramètres du dash
         player.attackDashTimer = player.attackDashDuration;    
-
-
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
-        
+        player.currentAction = DashHelper.getDashActionByVector(player.dashDir)
         this.network.dash({x:player.position.x, y:player.position.y}, DashHelper.getDashActionByVector(player.dashDir))
 
         this.isAttackReady = false;
@@ -93,6 +85,8 @@ export class AttackService {
             playerAction: player.currentAction
         });
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
+        player.currentAction = Action.IDLE_DOWN;
+        this._attackOnGoing = false;
 
     }
 

@@ -7,6 +7,7 @@ import { Action } from "../shared/Action";
 import { AttackData } from "../shared/AttackData";
 import { HitboxValidationService } from "./HitboxValidationService";
 import { AttackResult } from "../shared/AttackResult";
+import PlayerInfo from "../shared/PlayerInfo"
 
 const app = express();
 const server = http.createServer(app);
@@ -18,7 +19,7 @@ const io = new Server(server, {
 const PORT = 3000;
 
 
-const players: Record<string, Player> = {};
+const players: Record<string, PlayerInfo> = {};
 
 io.on("connection", (socket) => {
   console.log(`Player connected: ${socket.id}`);
@@ -26,11 +27,13 @@ io.on("connection", (socket) => {
   // Ajouter le joueur avec une position aléatoire
   const startX = 0;
   const startY = 0
-  players[socket.id] = new Player(new Position(startX, startY), 100, 10, socket.id);
-
+  const newPlayer = new Player(new Position(startX, startY), 100, 10, socket.id);
+  players[socket.id] = newPlayer.toInfo();
+  socket.emit("localPlayer", players[socket.id]);
   // Envoyer l'état initial au nouveau joueur
   socket.emit("currentPlayers", players);
-
+  
+  
   // Notifier tous les autres joueurs
   socket.broadcast.emit("newPlayer", players[socket.id]);
 
@@ -39,7 +42,7 @@ io.on("connection", (socket) => {
     if (players[socket.id]) {
       players[socket.id].position.x = data.x;
       players[socket.id].position.y = data.y;
-      players[socket.id].currentAction = data.action;
+      players[socket.id]._currentAction = data.action;
       // Différenciez l'action selon le mouvement
       // (Vous devrez implémenter cette logique)
       // Notifier tous les autres joueurs 
@@ -54,7 +57,7 @@ io.on("connection", (socket) => {
     if (players[socket.id]) {
       players[socket.id].position.x = data.x;
       players[socket.id].position.y = data.y;
-      players[socket.id].currentAction = data.action;
+      players[socket.id]._currentAction = data.action;
       // Différenciez l'action selon le mouvement
       // (Vous devrez implémenter cette logique)
       // Notifier tous les autres joueurs 
@@ -68,7 +71,7 @@ io.on("connection", (socket) => {
     if (players[socket.id]) {
       players[socket.id].position.x = player.position.x;
       players[socket.id].position.y = player.position.y;
-      players[socket.id].currentAction = player.currentAction;
+      players[socket.id]._currentAction = player.currentAction;
       socket.broadcast.emit("playerIsBlocking", players[socket.id]);
 
       // Renvoyer aussi au joueur qui bouge pour synchronisation
@@ -78,9 +81,17 @@ io.on("connection", (socket) => {
 
   socket.on("stopMoving", (action: Action) => {
     if (players[socket.id]) {
-      players[socket.id].currentAction = action;
+      players[socket.id]._currentAction = action;
       socket.broadcast.emit("playerStoppedMoving", players[socket.id]);
       socket.emit("playerStoppedMoving", players[socket.id]);
+    }
+  })
+
+  socket.on("actionUpdated", (action: Action) => {
+    if (players[socket.id]) {
+      players[socket.id]._currentAction = action;
+      socket.broadcast.emit("actionUpdated", players[socket.id]);
+      socket.emit("actionUpdated", players[socket.id]);
     }
   })
 
@@ -88,11 +99,11 @@ io.on("connection", (socket) => {
     if (players[socket.id]) {
       players[socket.id].position.x = player.position.x;
       players[socket.id].position.y = player.position.y;
-      players[socket.id].currentAction = player.currentAction;
+      players[socket.id]._currentAction = player.currentAction;
       socket.broadcast.emit("playerIsBlocking", players[socket.id]);
 
       // Renvoyer aussi au joueur qui bouge pour synchronisation
-      socket.emit("playerBlockingEnded", players[socket.id]);
+      socket.emit("playerBlockingEnded", players[socket.id] as PlayerInfo);
     }
   });
   socket.on("attack", (data: AttackData) => {
@@ -102,7 +113,7 @@ io.on("connection", (socket) => {
     socket.emit("playerAttacks", data);
     // Mettre à jour l'état du joueur
     attacker.position = data.position;
-    attacker.currentAction = data.playerAction;
+    attacker._currentAction = data.playerAction;
 
     // Trouver les joueurs touchés
     const hitPlayerIds = HitboxValidationService.getTargetsInHitbox(

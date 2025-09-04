@@ -4,7 +4,7 @@ import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 1000; // frames todo CONSTANTE
+  private blockDuration = 20; // frames todo CONSTANTE fix aussi pour par qu'on puisse faire autre chose (marche pas quand set a 10000)
   private blockCooldown = 20;
   constructor(private network: NetworkClient) {}
 

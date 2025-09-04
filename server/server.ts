@@ -32,8 +32,8 @@ io.on("connection", (socket) => {
   socket.emit("localPlayer", players[socket.id]);
   // Envoyer l'état initial au nouveau joueur
   socket.emit("currentPlayers", players);
-  
-  
+
+
   // Notifier tous les autres joueurs
   socket.broadcast.emit("newPlayer", players[socket.id]);
 
@@ -67,11 +67,9 @@ io.on("connection", (socket) => {
       socket.emit("playerDashed", players[socket.id]);
     }
   });
-  socket.on("block", (player: Player) => {
+  socket.on("block", (action: Action) => {
     if (players[socket.id]) {
-      players[socket.id].position.x = player.position.x;
-      players[socket.id].position.y = player.position.y;
-      players[socket.id]._currentAction = player.currentAction;
+      players[socket.id]._currentAction = action;
       socket.broadcast.emit("playerIsBlocking", players[socket.id]);
 
       // Renvoyer aussi au joueur qui bouge pour synchronisation
@@ -129,15 +127,14 @@ io.on("connection", (socket) => {
       const target = players[targetId];
       if (!target) continue;
 
-      const damage = 20;
+      const damage = 20; // todo CHANGE THIS
       target.hp -= damage;
 
       attackResults.push(target);
 
       // Vérifier la mort
-      if (target.hp <= 0) {
-        console.log("player's dead")
-        // this.handlePlayerDeath(targetId);
+      if (target.hp <= 0 && !target.isDead) {
+        handlePlayerDeath(target.id);
       }
     }
     // Envoyer les résultats à tous les clients
@@ -154,6 +151,36 @@ io.on("connection", (socket) => {
     delete players[socket.id];
     io.emit("playerDisconnected", socket.id);
   });
+
+  function handlePlayerDeath(playerId: string) {
+    const player = players[playerId];
+    if (!player) return;
+
+    console.log(`Player ${playerId} is dead`);
+
+    player.isDead = true;
+    player._currentAction = Action.DIE; // Assure-toi que "DEAD" est dans ton enum Action
+
+    // Notifier tous les clients
+    io.emit("playerDied", player);
+
+    // Optionnel : Respawn après 3s
+    setTimeout(() => {
+      respawnPlayer(playerId);
+    }, 4000);
+  }
+
+  function respawnPlayer(playerId: string) {
+    const player = players[playerId];
+    if (!player) return;
+    player.hp = 100; 
+    player.isDead = false;
+    player.position = { x: 0, y: 0 }; // Spawn point
+    player._currentAction = Action.IDLE_DOWN;
+    io.emit("playerRespawned", player);
+  }
 });
+
+
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

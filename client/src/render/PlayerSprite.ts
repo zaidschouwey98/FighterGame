@@ -41,6 +41,17 @@ export default class PlayerSprite {
         this.animations[Action.ATTACK_DASH_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top")!);
         this.animations[Action.ATTACK_DASH_TOP].loop = false;
 
+        this.animations[Action.TOOK_HIT_FROM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
+        this.animations[Action.TOOK_HIT_FROM_RIGHT].onComplete = ()=>{this.playRepeatableAnimation(Action.IDLE_DOWN)}
+        this.animations[Action.TOOK_HIT_FROM_RIGHT].loop = false;
+
+        this.animations[Action.TOOK_HIT_FROM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
+        this.animations[Action.TOOK_HIT_FROM_LEFT].loop = false;
+        this.animations[Action.TOOK_HIT_FROM_LEFT].scale.x *= -1;
+
+        this.animations[Action.DIE] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_die")!);
+        this.animations[Action.DIE].loop = false;
+
         this.animations[Action.ATTACK_DASH_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom")!);
         this.animations[Action.ATTACK_DASH_BOTTOM].loop = false;
 

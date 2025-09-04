@@ -24,4 +24,6 @@ export default interface PlayerInfo {
 
     knockbackReceived?: { x: number; y: number };
     knockbackTimer?: number;
+    isDead:boolean;
+    hitFlashTimer?: number;
 }

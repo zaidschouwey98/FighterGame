@@ -50,6 +50,24 @@ const atlasConfig = [
         } as const
     },
     {
+        file: "/assets/player_death.png",
+        spriteAmount: { w: 9, h: 1 },
+        assetDimensions: { w: 16, h: 32 },
+        textures: ["player_death_1","player_death_2","player_death_3","player_death_4","player_death_5","player_death_6","player_death_7","player_death_8","player_death_9"] as const,
+        animations: {
+            player_die: ["player_death_1","player_death_2","player_death_3","player_death_4","player_death_5","player_death_6","player_death_7","player_death_8","player_death_9"]
+        } as const
+    },
+    {
+        file: "/assets/player_took_hit_from_right_side.png",
+        spriteAmount: { w: 5, h: 1 },
+        assetDimensions: { w: 32, h: 32 },
+        textures: ["player_took_hit_from_right_side_1","player_took_hit_from_right_side_2","player_took_hit_from_right_side_3","player_took_hit_from_right_side_4","player_took_hit_from_right_side_5"] as const,
+        animations: {
+            player_took_hit_from_right_side: ["player_took_hit_from_right_side_1","player_took_hit_from_right_side_2","player_took_hit_from_right_side_3","player_took_hit_from_right_side_4","player_took_hit_from_right_side_5"]
+        } as const
+    },
+    {
         file: "/assets/attack_effect_right_1.png",
         spriteAmount: { w: 2, h: 2 },
         assetDimensions: { w: 128, h: 128 },

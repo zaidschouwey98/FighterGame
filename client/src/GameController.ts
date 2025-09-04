@@ -202,8 +202,8 @@ export class GameController {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
             }
-            player.currentAction = Action.IDLE_TOP; // todo should be stumble
-            this.network.move({ x: player.position.x, y: player.position.y }, Action.IDLE_TOP); // todo Action should be stumble  
+            player.currentAction = Action.TOOK_HIT_FROM_RIGHT; // todo should be stumble
+            this.network.move({ x: player.position.x, y: player.position.y }, Action.TOOK_HIT_FROM_RIGHT); // todo Action should be stumble  
             return; // No action possible during knockback  
 
         }

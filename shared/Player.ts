@@ -3,6 +3,7 @@ import { Direction } from "./Direction";
 import PlayerInfo from "./PlayerInfo";
 import Position from "./Position";
 
+// WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
     public position: Position;
     public hp: number;
@@ -22,10 +23,12 @@ export default class Player {
     public attackDashDuration = 40; // durée en frames
     public dashDir = { x: 0, y: 0 };
     public attackDashMaxSpeed = 3;
+    public isDead:boolean = false;
 
     public knockbackReceived?: { x: number; y: number };
     public knockbackTimer?: number;
 
+    public hitFlashTimer?: number;
     constructor(
         position: Position,
         hp: number = 100,
@@ -68,7 +71,9 @@ export default class Player {
             dashDir: this.dashDir,
             attackDashMaxSpeed: this.attackDashMaxSpeed,
             knockbackReceived: this.knockbackReceived,
-            knockbackTimer: this.knockbackTimer
+            knockbackTimer: this.knockbackTimer,
+            hitFlashTimer: this.hitFlashTimer,
+            isDead: this.isDead
         };
     }
 

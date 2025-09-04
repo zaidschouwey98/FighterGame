@@ -4,7 +4,7 @@ import type { NetworkClient } from "../network/NetworkClient";
 
 
 export class BlockService {
-  private blockDuration = 20; // frames todo CONSTANTE
+  private blockDuration = 60; // frames todo CONSTANTE
   private blockCooldown = 20;
   constructor(private network: NetworkClient) {}
 
@@ -30,6 +30,7 @@ export class BlockService {
       // Fin du block
       player.isBlocking = false;
       player.blockTimer = undefined;
+      player.currentAction = Action.IDLE_DOWN
       this.network.blockEnd(player);
     }
   }

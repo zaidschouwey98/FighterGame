@@ -93,6 +93,7 @@ export class AttackService {
             playerAction: player.currentAction
         });
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
+
     }
 
     

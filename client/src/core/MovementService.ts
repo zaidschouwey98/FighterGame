@@ -4,6 +4,7 @@ import { NetworkClient } from "../network/NetworkClient";
 import { InputHandler } from "./InputHandler";
 
 export class MovementService {
+    private isMoving:boolean = false;
     constructor(private inputHandler: InputHandler, private network: NetworkClient) {}
 
     public handleMovement(player: Player, delta: number) {
@@ -17,6 +18,7 @@ export class MovementService {
         let newAction = player.currentAction;
 
         if (dx !== 0 || dy !== 0) {
+            this.isMoving = true;
             const length = Math.sqrt(dx * dx + dy * dy);
             dx /= length;
             dy /= length;
@@ -28,12 +30,19 @@ export class MovementService {
             else if (dx < 0) newAction = Action.MOVE_LEFT;
             else if (dy > 0) newAction = Action.MOVE_DOWN;
             else if (dy < 0) newAction = Action.MOVE_TOP;
+            this.network.move({ x: player.position.x, y: player.position.y }, newAction);    
         } else {
-            newAction = this.computeIdleAction(player.currentAction);
+            
+            if(this.isMoving){
+                this.isMoving = false;
+                newAction = this.computeIdleAction(player.currentAction);
+                this.network.stopMoving(newAction);
+            }
+            
         }
 
         player.currentAction = newAction;
-        this.network.move({ x: player.position.x, y: player.position.y }, player.currentAction);
+        
     }
 
     private computeIdleAction(currentAction: Action): Action {

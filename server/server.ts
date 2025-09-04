@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
       socket.emit("playerDashed", players[socket.id]);
     }
   });
-  socket.on("block", (player:Player) => {
+  socket.on("block", (player: Player) => {
     if (players[socket.id]) {
       players[socket.id].position.x = player.position.x;
       players[socket.id].position.y = player.position.y;
@@ -75,7 +75,16 @@ io.on("connection", (socket) => {
       socket.emit("playerIsBlocking", players[socket.id]);
     }
   });
-  socket.on("blockEnd", (player:Player) => {
+
+  socket.on("stopMoving", (action: Action) => {
+    if (players[socket.id]) {
+      players[socket.id].currentAction = action;
+      socket.broadcast.emit("playerStoppedMoving", players[socket.id]);
+      socket.emit("playerStoppedMoving", players[socket.id]);
+    }
+  })
+
+  socket.on("blockEnd", (player: Player) => {
     if (players[socket.id]) {
       players[socket.id].position.x = player.position.x;
       players[socket.id].position.y = player.position.y;
@@ -125,7 +134,7 @@ io.on("connection", (socket) => {
       attackerId: data.playerId,
       hitPlayers: attackResults,
       knockbackStrength: data.knockbackStrength
-    }  as AttackResult);
+    } as AttackResult);
   });
 
   // Déconnexion

@@ -3,7 +3,7 @@ import { GameController } from './GameController';
 import { getSpritesheets } from './AssetLoader';
 import { initDevtools } from '@pixi/devtools';
 
-
+// TOdo add credits song for my death, but I refused
 (async () => {
   const app = new Application();
   await app.init({ 

@@ -8,7 +8,7 @@ import type { AttackResult } from "../../../shared/AttackResult";
 export class NetworkClient {
     private socket: Socket;
     public playerId: string | undefined = undefined;
-
+    public player: Player | undefined;
     constructor(serverUrl: string, private eventBus: EventBus) {
         this.socket = io(serverUrl);
 
@@ -22,6 +22,7 @@ export class NetworkClient {
         this.socket.on("playerAttacks", (player:Player)=> this.eventBus.emit("player:attacks", player));
         this.socket.on("players", (players: Player[]) => this.eventBus.emit("players:update", players));
         this.socket.on("playerMoved", (player: Player) => this.eventBus.emit("player:moved", player));
+        this.socket.on("playerStoppedMoving", (player: Player) => this.eventBus.emit("player:stopMoving", player));
         this.socket.on("playerIsBlocking", (player:Player)=> this.eventBus.emit("player:isBlocking", player));
         this.socket.on("playerBlockingEnded", (player:Player)=> this.eventBus.emit("player:blockingEnded", player));
         this.socket.on("currentPlayers", (players: Record<string, Player>) => {
@@ -37,11 +38,16 @@ export class NetworkClient {
     }
 
     move(position: { x: number, y: number }, action: Action) {
+        console.log("move() : ", action)
         this.socket.emit("move", {
             x: position.x,
             y: position.y,
             action: action
         });
+    }
+
+    stopMoving(action:Action){
+        this.socket.emit("stopMoving", action);
     }
 
     dash(position: { x: number, y: number }, action:Action){

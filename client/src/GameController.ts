@@ -63,6 +63,11 @@ export class GameController {
             this.renderer.playerRenderer.updatePlayers([player]);
         });
 
+        this.eventBus.on("player:stopMoving", (player: Player) => {
+            this.gameState.updatePlayer(player);
+            this.renderer.playerRenderer.updatePlayers([player]);
+        });
+
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
             this.renderer.playerRenderer.showAttackEffect(attackData);
         });
@@ -72,6 +77,7 @@ export class GameController {
         })
 
         this.eventBus.on("player:isBlocking", (player:Player)=>{
+            this.gameState.updatePlayer(player);
             this.renderer.playerRenderer.updatePlayers([player]);
         })
         this.eventBus.on("player:blockingEnded", (player:Player)=>{
@@ -118,11 +124,11 @@ export class GameController {
     }
 
     public update(delta: number) {
-
+    
         if (!this.localPlayerId) return;
         const player = this.gameState.players.get(this.localPlayerId);
         if (!player) return;
-
+        console.log(player.currentAction)
         this.renderer.updateCamera(player.position)
         if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceived) {
             player.position.x += player.knockbackReceived.x * delta;

@@ -1,7 +1,6 @@
 import { Container, Sprite, Spritesheet, tilingBit } from "pixi.js";
 import seedrandom from "seedrandom";
 import * as Simplex from "simplex-noise";
-import type Position from "../../../shared/Position";
 import { findTexture, type TextureName } from "../AssetLoader";
 import { CHUNK_SIZE, MAP_FREQUENCY, RENDER_DISTANCE, TILE_SIZE } from "../constantes";
 

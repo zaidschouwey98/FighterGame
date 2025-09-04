@@ -206,8 +206,8 @@ export class GameController {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
             }
-            player.currentAction = Action.TOOK_HIT_FROM_RIGHT; // todo should be stumble
-            this.network.move({ x: player.position.x, y: player.position.y }, Action.TOOK_HIT_FROM_RIGHT); // todo Action should be stumble  
+            player.currentAction = Action.TOOK_HIT_FROM_RIGHT;  // todo change side on direction
+            this.network.move({ x: player.position.x, y: player.position.y }, Action.TOOK_HIT_FROM_RIGHT);
             return; // No action possible during knockback  
 
         }
@@ -242,6 +242,9 @@ export class GameController {
             this.currentChunkY = chunkY;
             this.renderer.worldRenderer.update(chunkX, chunkY);
         }
+
+        // Minimap
+        this.renderer.updateMinimap(this.localPlayerId);
         
         this.blockService.update(player);
         this.attackService.update(delta, player);

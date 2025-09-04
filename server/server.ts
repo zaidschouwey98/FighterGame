@@ -126,9 +126,10 @@ io.on("connection", (socket) => {
     for (const targetId of hitPlayerIds) {
       const target = players[targetId];
       if (!target) continue;
-
+      
       const damage = 20; // todo CHANGE THIS
-      target.hp -= damage;
+      if(target._currentAction != Action.BLOCK)
+        target.hp -= damage;
 
       attackResults.push(target);
 

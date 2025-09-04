@@ -120,7 +120,7 @@ export class GameController {
             const hitPlayers = attackResult.hitPlayers;
             for (const hit of hitPlayers) {
                 hit.hitFlashTimer = 10; // frames de rouge // todo finir ça et mettre avec animation
-                this.gameState.updatePlayer(hit);
+                this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER  
                 if (hit.id === this.localPlayerId) {
                     console.log(hit.hp);
                     console.log(hit.isDead);
@@ -215,7 +215,7 @@ export class GameController {
         // Handle attack dash if ongoing
         if (player.attackDashTimer && player.attackDashTimer > 0) {
             this.handleAttackDash(player);
-        } else {
+        } else if (!player.isBlocking) {
             this.movementService.handleMovement(player, delta);
         }
 
@@ -224,11 +224,10 @@ export class GameController {
             this.attackService.stopAttack();
         } else if (this.inputHandler.consumeRightClick()) {
             this.blockService.startBlock(player);
-
         }
 
         // handle attack
-        if (this.inputHandler.consumeAttack()) {
+        if (this.inputHandler.consumeAttack() && !player.isBlocking) {
             this.attackService.initiateAttack(player);
         }
 
@@ -246,7 +245,7 @@ export class GameController {
         // Minimap
         this.renderer.updateMinimap(this.localPlayerId);
         
-        this.blockService.update(player);
+        this.blockService.update(player,delta);
         this.attackService.update(delta, player);
     }
 

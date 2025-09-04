@@ -40,7 +40,7 @@ export class GameController {
         this.network = new NetworkClient(serverUrl, this.eventBus);
         this.movementService = new MovementService(this.inputHandler, this.network);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
-        this.blockService = new BlockService(this.network);
+        this.blockService = new BlockService(this.inputHandler,this.coordinateService,this.network);
         this.setupEventListeners();
     }
 
@@ -149,7 +149,11 @@ export class GameController {
             return;
         }
         // If player is blocking
-        if (player.currentAction === Action.BLOCK) // todo check if in correction direction
+        if (player.currentAction === Action.BLOCK_BOTTOM 
+            || player.currentAction === Action.BLOCK_LEFT
+            || player.currentAction === Action.BLOCK_RIGHT
+            || player.currentAction === Action.BLOCK_TOP
+        ) // todo check if in correction direction
             return;
 
         const dx = player.position.x - attacker.position.x;

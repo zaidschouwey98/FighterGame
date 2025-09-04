@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import type PlayerInfo from "../../../shared/PlayerInfo";
 
 
 export class Minimap {

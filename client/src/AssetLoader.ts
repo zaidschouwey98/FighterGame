@@ -44,9 +44,9 @@ const atlasConfig = [
         file: "/assets/player_block_right.png",
         spriteAmount: { w: 1, h: 1 },
         assetDimensions: { w: 16, h: 16 },
-        textures: ["player_block_1"] as const,
+        textures: ["player_block_right_1"] as const,
         animations: {
-            player_block: ["player_block_1"]
+            player_block_right: ["player_block_right_1"]
         } as const
     },
     {

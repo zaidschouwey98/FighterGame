@@ -16,6 +16,7 @@ export default class Player {
     public pendingAttack?: boolean;
     public attackIndex: number = 0;
 
+    public blockDir?:{x:number,y:number};
     public blockTimer?: number;   // Frames restantes de block
     public isBlocking?: boolean;  // True si le joueur bloque
 
@@ -73,7 +74,8 @@ export default class Player {
             knockbackReceived: this.knockbackReceived,
             knockbackTimer: this.knockbackTimer,
             hitFlashTimer: this.hitFlashTimer,
-            isDead: this.isDead
+            isDead: this.isDead,
+            blockDir:this.blockDir
         };
     }
 

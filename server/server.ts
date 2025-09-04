@@ -128,7 +128,11 @@ io.on("connection", (socket) => {
       if (!target) continue;
       
       const damage = 20; // todo CHANGE THIS
-      if(target._currentAction != Action.BLOCK)
+      if(target._currentAction != Action.BLOCK_BOTTOM
+        && target._currentAction != Action.BLOCK_LEFT
+        && target._currentAction != Action.BLOCK_RIGHT
+        && target._currentAction != Action.BLOCK_TOP
+      )
         target.hp -= damage;
 
       attackResults.push(target);

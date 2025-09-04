@@ -14,6 +14,7 @@ export default interface PlayerInfo {
     pendingAttack?: boolean;
     attackIndex: number;
 
+    blockDir?:{x:number,y:number};
     blockTimer?: number;        // Frames restantes de block
     isBlocking?: boolean;       // True si le joueur bloque
 

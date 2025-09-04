@@ -15,6 +15,7 @@ import { BlockService } from "./core/BlockService";
 import type { LocalPlayer } from "./core/LocalPlayer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { Action } from "../../shared/Action";
+import { TILE_SIZE } from "./constantes";
 
 
 export class GameController {
@@ -28,6 +29,8 @@ export class GameController {
     private attackService: AttackService;
     private blockService: BlockService
     private localPlayerId: string | null = null;
+    private currentChunkX?:number;
+    private currentChunkY?:number;
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
 
@@ -226,11 +229,20 @@ export class GameController {
 
         // handle attack
         if (this.inputHandler.consumeAttack()) {
-            this.renderer.worldRenderer.update(player.position);
             this.attackService.initiateAttack(player);
         }
 
-
+        // render world
+        const tileX = Math.floor(player.position.x / TILE_SIZE);
+        const tileY = Math.floor(player.position.y / TILE_SIZE);
+        const chunkX = Math.floor(tileX / 16);
+        const chunkY = Math.floor(tileY / 16);
+        if(chunkX != this.currentChunkX || chunkY != this.currentChunkY){
+            this.currentChunkX = chunkX;
+            this.currentChunkY = chunkY;
+            this.renderer.worldRenderer.update(chunkX, chunkY);
+        }
+        
         this.blockService.update(player);
         this.attackService.update(delta, player);
     }

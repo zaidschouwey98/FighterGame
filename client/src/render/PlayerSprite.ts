@@ -66,8 +66,8 @@ export default class PlayerSprite {
         }
     }
 
-    overrideCurrentAnimation(action: Action, player: Player){
-        this.playUniqueAnimation(action,player);
+    overrideCurrentAnimation(action: Action, player: Player) {
+        this.playUniqueAnimation(action, player);
     }
 
 
@@ -103,14 +103,12 @@ export default class PlayerSprite {
             this.currentAnimation.stop();
         }
 
-     
+
         this.currentAnimation = this.animations[action];
         this.currentAnimation!.visible = true;
         this.currentAnimation?.play();
-        
+
     }
-
-
 
     public playAttackAnimation(action: Action, attackRotation: number) {
         this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);

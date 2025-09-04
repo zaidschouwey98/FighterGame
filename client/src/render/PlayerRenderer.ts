@@ -5,14 +5,14 @@ import type { AttackData } from "../../../shared/AttackData";
 import { Action } from "../../../shared/Action";
 
 export default class PlayerRenderer {
-    
+
     private playerContainers: Map<string, Container>;
-    private spriteSheets:Spritesheet[];
+    private spriteSheets: Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
     private players: Map<string, Player>;
     private playerContainer: Container;
     private staticEffectContainer: Container;
-    constructor(playerContainer: Container, spriteSheets:Spritesheet[], staticEffectContainer: Container) {
+    constructor(playerContainer: Container, spriteSheets: Spritesheet[], staticEffectContainer: Container) {
         this.spriteSheets = spriteSheets;
         this.staticEffectContainer = staticEffectContainer
         this.playerContainers = new Map();
@@ -24,9 +24,9 @@ export default class PlayerRenderer {
     public addNewPlayer(player: Player) {
         const newPlayerContainer = new Container();
         newPlayerContainer.label = player.id;
-        
+
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer,this.spriteSheets,this.staticEffectContainer);
+        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets, this.staticEffectContainer);
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
@@ -79,28 +79,28 @@ export default class PlayerRenderer {
                 case Action.ATTACK_DASH_RIGHT:
                 case Action.ATTACK_DASH_LEFT:
                 case Action.ATTACK_DASH_TOP_LEFT:
-                case Action.ATTACK_DASH_TOP_RIGHT:    
-                case Action.ATTACK_DASH_BOTTOM_LEFT:    
-                case Action.ATTACK_DASH_BOTTOM_RIGHT:    
+                case Action.ATTACK_DASH_TOP_RIGHT:
+                case Action.ATTACK_DASH_BOTTOM_LEFT:
+                case Action.ATTACK_DASH_BOTTOM_RIGHT:
                     break;
                 default:
                     playerSprite.playRepeatableAnimation(player.currentAction);
                     break;
             }
-            
+
 
             this.players.set(player.id, player);
         }
     }
-    
+
     public overridePlayerAnimation(player: Player) {
         let playerSprite = this.playerSprites.get(player.id);
-        playerSprite?.overrideCurrentAnimation(player.currentAction,player);
+        playerSprite?.overrideCurrentAnimation(player.currentAction, player);
     }
 
-    public showAttackEffect(attackData:AttackData): void {
+    public showAttackEffect(attackData: AttackData): void {
         let playerSprite = this.playerSprites.get(attackData.playerId);
         playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation);
-        
+
     }
 }

@@ -14,6 +14,7 @@ import { Renderer } from "./render/Renderer";
 import { BlockService } from "./core/BlockService";
 import type { LocalPlayer } from "./core/LocalPlayer";
 import type PlayerInfo from "../../shared/PlayerInfo";
+import { Action } from "../../shared/Action";
 
 
 export class GameController {
@@ -45,8 +46,8 @@ export class GameController {
             this.localPlayerId = playerId;
         });
 
-        this.eventBus.on("players:update", (info: {playerArray:Player[],localPlayer:LocalPlayer}) => {
-            this.gameState.restorePlayerState(info.playerArray,info.localPlayer);
+        this.eventBus.on("players:update", (info: { playerArray: Player[], localPlayer: LocalPlayer }) => {
+            this.gameState.restorePlayerState(info.playerArray, info.localPlayer);
             this.renderer.playerRenderer.updatePlayers(info.playerArray);
         });
 
@@ -59,6 +60,19 @@ export class GameController {
         this.eventBus.on("player:left", (playerId: string) => {
             this.gameState.removePlayer(playerId);
             this.renderer.playerRenderer.removePlayer(playerId);
+        });
+
+        this.eventBus.on("player:died", (player: PlayerInfo) => {
+            this.gameState.updatePlayer(player);
+            if(player.id == this.localPlayerId){
+                this.gameState.getLocalPlayer().isDead = true;
+            }
+            // todo add animation, and let corps rot
+        });
+
+        this.eventBus.on("player:respawn", (player: PlayerInfo) => {
+            this.gameState.updatePlayer(player);
+            
         });
 
         this.eventBus.on("player:moved", (player: PlayerInfo) => {
@@ -89,11 +103,11 @@ export class GameController {
             this.renderer.playerRenderer.overridePlayerAnimation(p!);
         })
 
-        this.eventBus.on("player:isBlocking", (player:PlayerInfo)=>{
+        this.eventBus.on("player:isBlocking", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
             // this.renderer.playerRenderer.updatePlayers([player]);
         })
-        this.eventBus.on("player:blockingEnded", (player:PlayerInfo)=>{
+        this.eventBus.on("player:blockingEnded", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
             // this.renderer.playerRenderer.updatePlayers([player]);
         })
@@ -101,9 +115,11 @@ export class GameController {
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
             for (const hit of hitPlayers) {
+                hit.hitFlashTimer = 10; // frames de rouge // todo finir ça et mettre avec animation
                 this.gameState.updatePlayer(hit);
                 if (hit.id === this.localPlayerId) {
-
+                    console.log(hit.hp);
+                    console.log(hit.isDead);
                     this.handleAttackReceived(attackResult);
 
 
@@ -116,12 +132,21 @@ export class GameController {
 
 
     public handleAttackReceived(attackResult: AttackResult) {
+        // Hp already set by the server
         // todo IF BLOCKING APPLY KNOCKBACK TO ATTACKER
         const attacker = this.gameState.players.get(attackResult.attackerId);
         const player = this.gameState.players.get(this.localPlayerId!);
         if (!player) throw new Error("Player not in game received damage.");
 
         if (!attacker) return;
+
+        if(player.isDead){
+            this.handleDeath(player);
+            return;
+        }
+        // If player is blocking
+        if (player.currentAction === Action.BLOCK) // todo check if in correction direction
+            return;
 
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;
@@ -135,13 +160,35 @@ export class GameController {
         player.knockbackTimer = 20; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
     }
 
+    private handleDeath(player: Player) {
+        player.currentAction = Action.DIE;
+
+        console.log(`${player.id} est mort`);
+
+        // Désactiver mouvements et attaques
+        // this.attackService.stopAttack();
+        // this.blockService.stopBlock?.(player); // Si tu implémentes stopBlock
+
+        // Jouer animation de mort
+        // this.renderer.playerRenderer.playDeathAnimation(player); TODO
+
+        // TODO: éventuellement respawn après délai
+    }
+
+
     public update(delta: number) {
-    
+
         if (!this.localPlayerId) return;
         const player = this.gameState.players.get(this.localPlayerId);
-        if (!player) return;
 
+        if (!player) return;
+        if (player.isDead) {
+            // Pas d'inputs ni de mouvements
+            return;
+        }
         this.renderer.updateCamera(player.position)
+
+        // Receive knockback
         if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceived) {
             player.position.x += player.knockbackReceived.x * delta;
             player.position.y += player.knockbackReceived.y * delta;
@@ -155,13 +202,20 @@ export class GameController {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
             }
+            player.currentAction = Action.IDLE_TOP; // todo should be stumble
+            this.network.move({ x: player.position.x, y: player.position.y }, Action.IDLE_TOP); // todo Action should be stumble  
+            return; // No action possible during knockback  
+
         }
+
+        // Handle attack dash if ongoing
         if (player.attackDashTimer && player.attackDashTimer > 0) {
-            this.handleDash(player);
+            this.handleAttackDash(player);
         } else {
             this.movementService.handleMovement(player, delta);
         }
 
+        // Handle block and canceling attack
         if (this.attackService.attackOngoing && this.inputHandler.consumeRightClick()) {
             this.attackService.stopAttack();
         } else if (this.inputHandler.consumeRightClick()) {
@@ -169,16 +223,18 @@ export class GameController {
 
         }
 
+        // handle attack
         if (this.inputHandler.consumeAttack()) {
             this.renderer.worldRenderer.update(player.position);
             this.attackService.initiateAttack(player);
         }
 
+
         this.blockService.update(player);
         this.attackService.update(delta, player);
     }
 
-    private handleDash(player: Player) {
+    private handleAttackDash(player: Player) {
         if (!player.attackDashTimer || player.attackDashTimer <= 0) return;
 
         // Progression totale du dash (0 → 1)

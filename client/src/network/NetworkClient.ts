@@ -19,6 +19,7 @@ export class NetworkClient {
             this.playerId = this.socket.id;
             this.eventBus.emit("connected", this.socket.id);
         });
+        // TODO CHANGE PLAYER TO PLAYERINFO
         this.socket.on("localPlayer",(player:Player)=>{
             this.player = new LocalPlayer(player.position,player.hp,player.speed,this.socket.id!);
             this.player.networkClient = this;
@@ -43,6 +44,14 @@ export class NetworkClient {
         this.socket.on("playerBlockingEnded", (player:Player)=> this.eventBus.emit("player:blockingEnded", player));
         this.socket.on("newPlayer", (player: Player) => {
             this.eventBus.emit("player:joined", player);
+        });
+
+        
+        this.socket.on("playerDied", (player: Player) => {
+            this.eventBus.emit("player:died", player);
+        });
+        this.socket.on("playerRespawned", (player: Player) => {
+            this.eventBus.emit("player:respawn", player);
         });
         this.socket.on("playerDisconnected", (playerId: string) => {
             this.eventBus.emit("player:left", playerId);
@@ -70,13 +79,13 @@ export class NetworkClient {
     }
 
     block(player:Player){
-        console.log("blocking..")
-        // this.socket.emit("block",player);
+        // console.log("blocking..")
+        // this.socket.emit("block", player.currentAction);
     }
 
     blockEnd(player:Player){
         // this.socket.emit("blockEnd",player);
-        console.log("blocking ended")
+        // console.log("blocking ended")
     }
 
     attack(attackData:AttackData){

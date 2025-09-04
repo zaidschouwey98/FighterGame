@@ -1,27 +1,26 @@
 import { Action } from "../../../shared/Action";
-import type Player from "../../../shared/Player";
 import type { NetworkClient } from "../network/NetworkClient";
+import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 60; // frames todo CONSTANTE
+  private blockDuration = 1000; // frames todo CONSTANTE
   private blockCooldown = 20;
   constructor(private network: NetworkClient) {}
 
-  public startBlock(player: Player) {
+  public startBlock(player: LocalPlayer) {
     if (player.isBlocking) return;
 
     player.blockTimer = this.blockDuration;
     player.isBlocking = true;
 
     
-    player.currentAction = Action.BLOCK;
-
+    player.currentAction = Action.BLOCK; // TOdo block_right, left, top, down
     // Réseau : informer les autres joueurs
     this.network.block(player);
   }
 
-  public update(player: Player) {
+  public update(player: LocalPlayer) {
     if (!player.isBlocking) return;
 
     if (player.blockTimer && player.blockTimer > 0) {
@@ -30,7 +29,7 @@ export class BlockService {
       // Fin du block
       player.isBlocking = false;
       player.blockTimer = undefined;
-      player.currentAction = Action.IDLE_DOWN
+      player.currentAction = Action.IDLE_DOWN // todo idle in direction of last block
       this.network.blockEnd(player);
     }
   }

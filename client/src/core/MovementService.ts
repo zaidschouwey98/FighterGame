@@ -30,6 +30,7 @@ export class MovementService {
             else if (dx < 0) newAction = Action.MOVE_LEFT;
             else if (dy > 0) newAction = Action.MOVE_DOWN;
             else if (dy < 0) newAction = Action.MOVE_TOP;
+            player.currentAction = newAction;
             this.network.move({ x: player.position.x, y: player.position.y }, newAction);    
         } else {
             
@@ -37,11 +38,12 @@ export class MovementService {
                 this.isMoving = false;
                 newAction = this.computeIdleAction(player.currentAction);
                 this.network.stopMoving(newAction);
+                player.currentAction = newAction;
             }
             
         }
 
-        player.currentAction = newAction;
+        
         
     }
 

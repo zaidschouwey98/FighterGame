@@ -46,9 +46,10 @@ export class GameController {
             this.localPlayerId = playerId;
         });
 
-        this.eventBus.on("players:update", (info: { playerArray: Player[], localPlayer: LocalPlayer }) => {
+        this.eventBus.on("players:update", (info: { playerArray: PlayerInfo[], localPlayer: LocalPlayer }) => {
             this.gameState.restorePlayerState(info.playerArray, info.localPlayer);
-            this.renderer.playerRenderer.updatePlayers(info.playerArray);
+            const playersArray = Array.from(this.gameState.players.values());
+            this.renderer.playerRenderer.updatePlayers(playersArray);
         });
 
         this.eventBus.on("player:joined", (player: PlayerInfo) => {

@@ -64,7 +64,7 @@ export class GameState {
         }
     }
 
-    restorePlayerState(players: Player[], localPlayer:LocalPlayer) {
+    restorePlayerState(players: PlayerInfo[], localPlayer:LocalPlayer) {
         this.players.clear();
         for(const newPlayer of players){
             if(newPlayer.id == localPlayer.id){
@@ -77,7 +77,7 @@ export class GameState {
             playerObj.attackDashTimer = newPlayer.attackDashTimer;
             playerObj.attackIndex = newPlayer.attackIndex;
             playerObj.blockTimer = newPlayer.blockTimer;
-            playerObj.currentAction = newPlayer.currentAction;
+            playerObj.currentAction = newPlayer._currentAction;
             playerObj.currentDirection = newPlayer.currentDirection;
             playerObj.dashDir = newPlayer.dashDir;
             playerObj.hp = newPlayer.hp;

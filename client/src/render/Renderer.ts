@@ -45,7 +45,7 @@ export class Renderer {
 
         this._minimap = new Minimap(app, this._uiContainer, 200);
 
-        this._playerRenderer = new PlayerRenderer(this._objectContainer, spriteSheets, this._overlayContainer);
+        this._playerRenderer = new PlayerRenderer(this._objectContainer, spriteSheets,this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
 

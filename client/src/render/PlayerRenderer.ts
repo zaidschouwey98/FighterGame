@@ -11,7 +11,7 @@ export default class PlayerRenderer {
     private players: Map<string, Player>;
     private playerContainer: Container;
     private staticEffectContainer: Container;
-    constructor(playerContainer: Container, spriteSheets: Spritesheet[], staticEffectContainer: Container) {
+    constructor(playerContainer: Container, spriteSheets: Spritesheet[],private _terrainContainer:Container ,staticEffectContainer: Container) {
         this.spriteSheets = spriteSheets;
         this.staticEffectContainer = staticEffectContainer
         this.playerContainers = new Map();
@@ -25,7 +25,7 @@ export default class PlayerRenderer {
         newPlayerContainer.label = player.id;
 
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets, this.staticEffectContainer);
+        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets,this._terrainContainer , this.staticEffectContainer);
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
@@ -98,7 +98,7 @@ export default class PlayerRenderer {
     }
     public renderDyingPlayer(player: Player) {
         let playerSprite = this.playerSprites.get(player.id);
-        playerSprite?.playDyingAnimation();
+        playerSprite?.playDyingAnimation(player.position);
     }
 
     public playDashAttackAnimation(player: Player) {

@@ -14,9 +14,11 @@ export default class PlayerSprite {
     private currentAction?: Action;
     private spriteSheets: Spritesheet[];
     private EffectRenderer: EffectRenderer;
-    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[], staticEffectsContainer: Container) {
+    private _terrainContainer:Container;
+    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[],terrainContainer:Container, staticEffectsContainer: Container) {
         this.playerContainer = playerContainer;
         this.spriteSheets = spriteSheet;
+        this._terrainContainer = terrainContainer;
         this.EffectRenderer = new EffectRenderer(this.spriteSheets, this.playerContainer, staticEffectsContainer);
         this.animations[Action.IDLE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle")!);
         this.animations[Action.IDLE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle_right")!);
@@ -60,9 +62,6 @@ export default class PlayerSprite {
         this.animations[Action.TOOK_HIT_FROM_LEFT].onComplete = ()=>{this.playAnimation(Action.IDLE_DOWN)}
         this.animations[Action.TOOK_HIT_FROM_LEFT].loop = false;
         this.animations[Action.TOOK_HIT_FROM_LEFT].scale.x *= -1;
-
-        this.animations[Action.DIE] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_die")!);
-        this.animations[Action.DIE].loop = false;
 
         this.animations[Action.ATTACK_DASH_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom")!);
         this.animations[Action.ATTACK_DASH_BOTTOM].loop = false;
@@ -117,17 +116,22 @@ export default class PlayerSprite {
         this.EffectRenderer?.renderAttackDashCloud(player.position);
     }
 
-    public playDyingAnimation(){
+    public playDyingAnimation(playerPos:Position){
         this.uniqueAnimationPlaying = true;
         if (this.currentAnimation) {
             this.currentAnimation.stop();
             this.currentAnimation.visible = false;
         }
-        this.currentAnimation = this.animations[Action.DIE];
-        this.currentAnimation!.visible = true;
-        this.currentAnimation!.animationSpeed = 0.1;
-        this.currentAnimation!.currentFrame = 0;
-        this.currentAnimation!.play();
+
+        const dyingAnim = new AnimatedSprite(findAnimation(this.spriteSheets, "player_die")!);
+        dyingAnim.x = playerPos.x;
+        dyingAnim.y = playerPos.y;
+        this._terrainContainer.addChild(dyingAnim);
+        dyingAnim.loop = false;
+        dyingAnim.visible = true;
+        dyingAnim.animationSpeed = 0.1;
+        dyingAnim.currentFrame = 0;
+        dyingAnim.play();
     }
 
     public playAnimation(action: Action) {

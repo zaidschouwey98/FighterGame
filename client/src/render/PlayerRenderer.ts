@@ -5,7 +5,6 @@ import type { AttackData } from "../../../shared/AttackData";
 import { Action } from "../../../shared/Action";
 
 export default class PlayerRenderer {
-
     private playerContainers: Map<string, Container>;
     private spriteSheets: Spritesheet[];
     private playerSprites: Map<string, PlayerSprite>;
@@ -82,7 +81,7 @@ export default class PlayerRenderer {
                 case Action.ATTACK_DASH_TOP_RIGHT:
                 case Action.ATTACK_DASH_BOTTOM_LEFT:
                 case Action.ATTACK_DASH_BOTTOM_RIGHT:
-                
+                case Action.DIE:
                     break;
                 case Action.TELEPORT:
                     playerSprite.playTeleportCloud(player.position);
@@ -96,6 +95,10 @@ export default class PlayerRenderer {
 
             this.players.set(player.id, player);
         }
+    }
+    public renderDyingPlayer(player: Player) {
+        let playerSprite = this.playerSprites.get(player.id);
+        playerSprite?.playDyingAnimation();
     }
 
     public playDashAttackAnimation(player: Player) {

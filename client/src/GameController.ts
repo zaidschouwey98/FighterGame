@@ -76,7 +76,7 @@ export class GameController {
             }
             let dead = this.gameState.players.get(player.id!)
             if(!dead) return;
-            this.renderer.playerRenderer.updatePlayers([dead])
+            this.handleDeath(dead);
             // todo let corps rot
         });
 
@@ -134,11 +134,7 @@ export class GameController {
                 hit.hitFlashTimer = 10; // frames de rouge // todo REMOVE 
                 this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER HP
                 if (hit.id === this.localPlayerId) {
-                    console.log(hit.hp);
-                    console.log(hit.isDead);
                     this.handleAttackReceived(attackResult);
-
-
                 }
             }
         });
@@ -155,7 +151,7 @@ export class GameController {
         if (!attacker) return;
         let didBlock = false;
         if(player.isDead){
-            this.handleDeath(player);
+            // this.handleDeath(player);
             return;
         }
         // If player is blocking
@@ -183,18 +179,7 @@ export class GameController {
     }
 
     private handleDeath(player: Player) {
-        // player.currentAction = Action.DIE;
-
-        // console.log(`${player.id} est mort`);
-
-        // Désactiver mouvements et attaques
-        // this.attackService.stopAttack();
-        // this.blockService.stopBlock?.(player); // Si tu implémentes stopBlock
-
-        // Jouer animation de mort
-        // this.renderer.playerRenderer.playDeathAnimation(player); TODO
-
-        // TODO: éventuellement respawn après délai
+        this.renderer.playerRenderer.renderDyingPlayer(player);
     }
 
 

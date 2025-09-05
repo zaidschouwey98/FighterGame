@@ -116,6 +116,18 @@ export default class PlayerSprite {
         this.EffectRenderer?.renderAttackDashCloud(player.position);
     }
 
+    public playDyingAnimation(){
+        this.uniqueAnimationPlaying = true;
+        if (this.currentAnimation) {
+            this.currentAnimation.stop();
+            this.currentAnimation.visible = false;
+        }
+        this.currentAnimation = this.animations[Action.DIE];
+        this.currentAnimation!.visible = true;
+        this.currentAnimation!.animationSpeed = 0.1;
+        this.currentAnimation!.currentFrame = 0;
+        this.currentAnimation!.play();
+    }
 
     public playAnimation(action: Action) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)

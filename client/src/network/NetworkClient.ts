@@ -79,11 +79,13 @@ export class NetworkClient {
     }
 
     block(player:Player){
+        console.debug(player)
         // console.log("blocking..")
         // this.socket.emit("block", player.currentAction);
     }
 
     blockEnd(player:Player){
+        console.debug(player)
         // this.socket.emit("blockEnd",player);
         // console.log("blocking ended")
     }

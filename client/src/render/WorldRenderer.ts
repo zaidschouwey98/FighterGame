@@ -1,4 +1,4 @@
-import { Container, Sprite, Spritesheet, tilingBit } from "pixi.js";
+import { Container, Sprite, Spritesheet } from "pixi.js";
 import seedrandom from "seedrandom";
 import * as Simplex from "simplex-noise";
 import { findTexture, type TextureName } from "../AssetLoader";
@@ -7,11 +7,14 @@ import { CHUNK_SIZE, MAP_FREQUENCY, RENDER_DISTANCE, TILE_SIZE } from "../consta
 
 export class WorldRenderer {
     private _tilesContainer: Container;
+    // @ts-ignore
     private _terrainContainer: Container;
+    // @ts-ignore
     private _objectContainer: Container;
 
     private _loadedChunks: Map<string, Sprite[]>;
 
+    // @ts-ignore
     private seed: string;
     private rng: seedrandom.PRNG;
     private noiseFunc: Simplex.NoiseFunction2D;

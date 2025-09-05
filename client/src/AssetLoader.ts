@@ -228,7 +228,7 @@ type ExtractAnimations<T> = T extends { animations: Record<string, readonly stri
 export type AnimationName = ExtractAnimations<Atlas>;
 
 // Générateur
-const generateAtlas = (config: Atlas) => {
+const generateAtlas = (config: AtlasConfig) => {
     const { file, spriteAmount, assetDimensions, textures, animations } = config;
     return {
         meta: {
@@ -259,7 +259,7 @@ export const getSpritesheets = async () => {
     const assets = await Promise.all(
         atlases.map((atlas) => Assets.load({ src: atlas.meta.image, data: { scaleMode: "nearest" } }))
     );
-    const sheets = assets.map((a, i) => new Spritesheet(a, atlases[i]));
+    const sheets = assets.map((a, i) => new Spritesheet(a, atlases[i] as any));
     await Promise.all(sheets.map((s) => s.parse()));
     return sheets;
 };

@@ -1,6 +1,6 @@
 import { Action } from "./Action";
 import { Direction } from "./Direction";
-import PlayerInfo from "./PlayerInfo";
+import type PlayerInfo from "./PlayerInfo";
 import Position from "./Position";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE

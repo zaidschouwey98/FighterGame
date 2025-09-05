@@ -8,9 +8,16 @@ import { AttackData } from "../shared/AttackData";
 import { HitboxValidationService } from "./HitboxValidationService";
 import { AttackResult } from "../shared/AttackResult";
 import PlayerInfo from "../shared/PlayerInfo"
+import path from "path";
 
 const app = express();
 const server = http.createServer(app);
+// Servir le build du client
+app.use(express.static(path.join(__dirname, "../../client/dist")));
+
+app.get(/.*/, (_, res) => {
+  res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
+});
 
 const io = new Server(server, {
   cors: { origin: "*" } // Pour le dev avec Vite

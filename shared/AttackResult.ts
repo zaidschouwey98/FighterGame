@@ -1,4 +1,4 @@
-import PlayerInfo from "./PlayerInfo";
+import type PlayerInfo from "./PlayerInfo";
 
 export interface AttackResult{
     hitPlayers:PlayerInfo[];

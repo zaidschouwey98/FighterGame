@@ -82,9 +82,10 @@ export default class PlayerRenderer {
                 case Action.ATTACK_DASH_TOP_RIGHT:
                 case Action.ATTACK_DASH_BOTTOM_LEFT:
                 case Action.ATTACK_DASH_BOTTOM_RIGHT:
+                
                     break;
                 default:
-                    playerSprite.playRepeatableAnimation(player.currentAction);
+                    playerSprite.playAnimation(player.currentAction);
                     break;
             }
 
@@ -93,7 +94,7 @@ export default class PlayerRenderer {
         }
     }
 
-    public overridePlayerAnimation(player: Player) {
+    public playDashAttackAnimation(player: Player) {
         let playerSprite = this.playerSprites.get(player.id);
         playerSprite?.overrideCurrentAnimation(player.currentAction, player);
     }

@@ -48,10 +48,11 @@ export default class PlayerSprite {
         this.animations[Action.ATTACK_DASH_TOP].loop = false;
 
         this.animations[Action.TOOK_HIT_FROM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
-        this.animations[Action.TOOK_HIT_FROM_RIGHT].onComplete = ()=>{this.playRepeatableAnimation(Action.IDLE_DOWN)}
+        this.animations[Action.TOOK_HIT_FROM_RIGHT].onComplete = ()=>{this.playAnimation(Action.IDLE_DOWN)}
         this.animations[Action.TOOK_HIT_FROM_RIGHT].loop = false;
 
         this.animations[Action.TOOK_HIT_FROM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
+        this.animations[Action.TOOK_HIT_FROM_LEFT].onComplete = ()=>{this.playAnimation(Action.IDLE_DOWN)}
         this.animations[Action.TOOK_HIT_FROM_LEFT].loop = false;
         this.animations[Action.TOOK_HIT_FROM_LEFT].scale.x *= -1;
 
@@ -105,13 +106,14 @@ export default class PlayerSprite {
         this.currentAnimation.currentFrame = 1;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
+            this.playAnimation(player.currentAction);
         };
         this.currentAnimation.play();
         this.attackEffectRenderer?.renderAttackDashCloud(player.position);
     }
 
 
-    public playRepeatableAnimation(action: Action) {
+    public playAnimation(action: Action) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
         this.currentAction = action;
@@ -122,6 +124,7 @@ export default class PlayerSprite {
 
 
         this.currentAnimation = this.animations[action];
+        this.currentAnimation!.currentFrame = 0;
         this.currentAnimation!.visible = true;
         this.currentAnimation?.play();
 

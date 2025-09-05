@@ -23,7 +23,7 @@ const io = new Server(server, {
   cors: { origin: "*" } // Pour le dev avec Vite
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 
 const players: Record<string, PlayerInfo> = {};

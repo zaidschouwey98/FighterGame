@@ -4,9 +4,10 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "ts-node-dev server/server.ts",
     "build:client": "cd client && npm install && npm run build",
     "build:server": "tsc",
-    "dev": "ts-node-dev server/server.ts",
     "build": "npm run build:client && npm run build:server",
     "start": "node dist/server/server.js"
   },

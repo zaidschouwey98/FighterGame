@@ -71,7 +71,7 @@ export class GameController {
             if(player.id == this.localPlayerId){
                 this.gameState.getLocalPlayer().isDead = true;
             }
-            // todo add animation, and let corps rot
+            // todo let corps rot
         });
 
         this.eventBus.on("player:respawn", (player: PlayerInfo) => {
@@ -104,7 +104,7 @@ export class GameController {
         this.eventBus.on("player:dashed", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
             let p = this.gameState.players.get(player.id)
-            this.renderer.playerRenderer.overridePlayerAnimation(p!);
+            this.renderer.playerRenderer.playDashAttackAnimation(p!);
         })
 
         this.eventBus.on("player:isBlocking", (player: PlayerInfo) => {
@@ -119,8 +119,9 @@ export class GameController {
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
             for (const hit of hitPlayers) {
+                
                 hit.hitFlashTimer = 10; // frames de rouge // todo finir ça et mettre avec animation
-                this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER  
+                this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER HP
                 if (hit.id === this.localPlayerId) {
                     console.log(hit.hp);
                     console.log(hit.isDead);
@@ -129,8 +130,6 @@ export class GameController {
 
                 }
             }
-            // TODO play receive damage animation
-            // this.renderer.playerRenderer.updatePlayers(hitPlayers);
         });
     }
 
@@ -143,7 +142,7 @@ export class GameController {
         if (!player) throw new Error("Player not in game received damage.");
 
         if (!attacker) return;
-
+        let didBlock = false;
         if(player.isDead){
             this.handleDeath(player);
             return;
@@ -153,8 +152,11 @@ export class GameController {
             || player.currentAction === Action.BLOCK_LEFT
             || player.currentAction === Action.BLOCK_RIGHT
             || player.currentAction === Action.BLOCK_TOP
-        ) // todo check if in correction direction
-            return;
+        ) // todo check if in correction direction serverside
+        {
+            didBlock = true;
+           
+        }
 
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;
@@ -165,7 +167,8 @@ export class GameController {
             x: (dx / len) * knockbackStrength,
             y: (dy / len) * knockbackStrength,
         };
-        player.knockbackTimer = 20; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
+        //  player.currentAction = player.knockbackReceived.x >= 0 ? Action.TOOK_HIT_FROM_LEFT : Action.TOOK_HIT_FROM_RIGHT;
+        player.knockbackTimer = 10; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
     }
 
     private handleDeath(player: Player) {
@@ -209,9 +212,11 @@ export class GameController {
             if (player.knockbackTimer <= 0) {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
+                return;
             }
-            player.currentAction = Action.TOOK_HIT_FROM_RIGHT;  // todo change side on direction
-            this.network.move({ x: player.position.x, y: player.position.y }, Action.TOOK_HIT_FROM_RIGHT);
+   player.currentAction = player.knockbackReceived.x >= 0 ? Action.TOOK_HIT_FROM_LEFT : Action.TOOK_HIT_FROM_RIGHT;
+              // todo change side on direction
+            this.network.move({ x: player.position.x, y: player.position.y }, player.currentAction);
             return; // No action possible during knockback  
 
         }

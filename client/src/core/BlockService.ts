@@ -6,7 +6,7 @@ import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 60; // frames todo CONSTANTE 
+  private blockDuration = 90; // frames todo CONSTANTE 
   private blockCooldown = 25;
   constructor(
     private inputHandler: InputHandler,

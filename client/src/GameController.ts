@@ -74,6 +74,9 @@ export class GameController {
             if(player.id == this.localPlayerId){
                 this.gameState.getLocalPlayer().isDead = true;
             }
+            let dead = this.gameState.players.get(player.id!)
+            if(!dead) return;
+            this.renderer.playerRenderer.updatePlayers([dead])
             // todo let corps rot
         });
 
@@ -103,6 +106,8 @@ export class GameController {
         this.eventBus.on("player:attacks", (attackData: AttackData) => {
             this.renderer.playerRenderer.showAttackEffect(attackData);
         });
+
+        
 
         this.eventBus.on("player:dashed", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
@@ -178,9 +183,9 @@ export class GameController {
     }
 
     private handleDeath(player: Player) {
-        player.currentAction = Action.DIE;
+        // player.currentAction = Action.DIE;
 
-        console.log(`${player.id} est mort`);
+        // console.log(`${player.id} est mort`);
 
         // Désactiver mouvements et attaques
         // this.attackService.stopAttack();

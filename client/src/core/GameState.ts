@@ -58,6 +58,7 @@ export class GameState {
             existing.currentAction = player._currentAction;
             existing.speed = player.speed;
             existing.hp = player.hp;
+            existing.isDead = player.isDead;
         } else {
             throw new Error("updating player not in gamestate");
             // this.players.set(player.id, player);

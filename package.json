@@ -4,9 +4,10 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "tsc",
     "dev": "ts-node-dev server/server.ts",
-    "build": "tsc",
+    "build": "npm run build:client && npm run build:server",
     "start": "node dist/server/server.js"
   },
   "author": "",

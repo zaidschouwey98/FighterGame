@@ -19,7 +19,7 @@ export default interface PlayerInfo {
     isBlocking?: boolean;       // True si le joueur bloque
 
     attackDashTimer?: number;   // Durée restante du dash
-    attackDashDuration: number; // Durée en frames
+    attackDashDuration?: number; // Durée en frames
     dashDir: { x: number; y: number };
     attackDashMaxSpeed: number;
 

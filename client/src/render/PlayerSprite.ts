@@ -4,6 +4,7 @@ import { findAnimation } from "../AssetLoader";
 import { EffectRenderer } from "./AttackEffectRenderer";
 import type Player from "../../../shared/Player";
 import type Position from "../../../shared/Position";
+import { DASH_ATTACK_DURATION } from "../constantes";
 
 export default class PlayerSprite {
     private uniqueAnimationPlaying: boolean = false;
@@ -106,7 +107,7 @@ export default class PlayerSprite {
         this.uniqueAnimationPlaying = true;
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
-        this.currentAnimation.animationSpeed = 0.5;
+        this.currentAnimation.animationSpeed = Math.round(((this.currentAnimation.totalFrames - 4) / DASH_ATTACK_DURATION) * 100) / 100
         this.currentAnimation.currentFrame = 1;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;

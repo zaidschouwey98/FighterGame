@@ -6,7 +6,7 @@ import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
 import DashHelper from "../helper/DashHelper";
 import { GameState } from "./GameState";
-import { ATTACK_COOLDOWN, ATTACK_RESET, ATTACK_SEQUENCE, KNOCKBACK_TIMER } from "../constantes";
+import { ATTACK_COOLDOWN, ATTACK_RESET, ATTACK_SEQUENCE, DASH_ATTACK_DURATION, KNOCKBACK_TIMER } from "../constantes";
 
 export class AttackService {
     private attackResetTimer: number = ATTACK_RESET;
@@ -56,6 +56,7 @@ export class AttackService {
         // Direction du dash
         player.dashDir = { x: dx / len, y: dy / len };
         // Paramètres du dash
+        player.attackDashDuration = DASH_ATTACK_DURATION; // TODO CONSTANTE
         player.attackDashTimer = player.attackDashDuration;
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
@@ -98,8 +99,8 @@ export class AttackService {
 
 
         attacker.knockbackReceived = {
-            x: (dx / len) * totalKnockbackStrength,
-            y: (dy / len) * totalKnockbackStrength,
+            x: (dx / len) * totalKnockbackStrength*2,
+            y: (dy / len) * totalKnockbackStrength*2,
         };
         attacker.knockbackTimer = KNOCKBACK_TIMER*2;
     }

@@ -214,7 +214,7 @@ export class GameController {
 
         // Handle attack dash if ongoing
         if (player.attackDashTimer && player.attackDashTimer > 0) {
-            this.handleAttackDash(player);
+            this.handleAttackDash(player, delta);
         } else if (!player.isBlocking) {
             this.movementService.handleMovement(player, delta);
         }
@@ -249,15 +249,15 @@ export class GameController {
         this.attackService.update(delta, player);
     }
 
-    private handleAttackDash(player: Player) {
+    private handleAttackDash(player: Player, delta:number) {
         if (!player.attackDashTimer || player.attackDashTimer <= 0) return;
-
+    
         // Progression totale du dash (0 → 1)
-        const t = 1 - player.attackDashTimer / player.attackDashDuration;
+        const t = 1 - player.attackDashTimer / player.attackDashDuration!;
 
-        // Fonction mathématique avec freeze
-        const freezeRatio = 15 / player.attackDashDuration; // 15 premières frames sans mouvement
-        const p = 3; // contrôle la douceur
+        // Fonction mathématique     avec freeze
+        const freezeRatio = 10 / player.attackDashDuration!; // 15 premières frames sans mouvement
+        const p = 9; // contrôle la douceur
         let speedFactor = 0;
 
         if (t >= freezeRatio) {
@@ -271,7 +271,7 @@ export class GameController {
         player.position.x += player.dashDir.x * speed;
         player.position.y += player.dashDir.y * speed;
 
-        player.attackDashTimer--;
+        player.attackDashTimer -= delta;
         player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir);
 
         this.network.move({ ...player.position }, player.currentAction);

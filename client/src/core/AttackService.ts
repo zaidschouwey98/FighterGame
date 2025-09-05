@@ -101,7 +101,7 @@ export class AttackService {
             x: (dx / len) * totalKnockbackStrength,
             y: (dy / len) * totalKnockbackStrength,
         };
-        attacker.knockbackTimer = KNOCKBACK_TIMER / 2;
+        attacker.knockbackTimer = KNOCKBACK_TIMER*2;
     }
 
 

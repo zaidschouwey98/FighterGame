@@ -128,7 +128,7 @@ io.on("connection", (socket) => {
     );
 
     const attackResults = [];
-
+    let blockedBy:PlayerInfo | undefined;
     // Appliquer les dégâts
     for (const targetId of hitPlayerIds) {
       const target = players[targetId];
@@ -139,8 +139,12 @@ io.on("connection", (socket) => {
         && target._currentAction != Action.BLOCK_LEFT
         && target._currentAction != Action.BLOCK_RIGHT
         && target._currentAction != Action.BLOCK_TOP
-      )
+      ){
         target.hp -= damage;
+      } else {
+        blockedBy = target;
+      }
+        
 
       attackResults.push(target);
 
@@ -153,7 +157,8 @@ io.on("connection", (socket) => {
     io.emit("attackResult", {
       attackerId: data.playerId,
       hitPlayers: attackResults,
-      knockbackStrength: data.knockbackStrength
+      knockbackStrength: data.knockbackStrength,
+      blockedBy:blockedBy
     } as AttackResult);
   });
 

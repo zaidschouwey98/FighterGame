@@ -6,8 +6,8 @@ import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 40; // frames todo CONSTANTE fix aussi pour par qu'on puisse faire autre chose (marche pas quand set a 10000)
-  private blockCooldown = 40;
+  private blockDuration = 10000; // frames todo CONSTANTE 
+  private blockCooldown = 25;
   constructor(
     private inputHandler: InputHandler,
     private coordinateService: CoordinateService,
@@ -31,9 +31,30 @@ export class BlockService {
     // Direction du dash
     player.blockDir = { x: dx / len, y: dy / len };
 
-    player.currentAction = this.getBlockDirection(dx,dy); // TOdo block_right, left, top, down
-    // Réseau : informer les autres joueurs
+    player.currentAction = this.getBlockDirection(dx, dy); // TOdo block_right, left, top, down
+    // Réseau : informer les autres joueurs NOT USED FOR NOW, ALREADY SENDING WITH ONACTIONCHANGED
     this.network.block(player);
+  }
+
+  public playerSuccessfullyBlocked(player: LocalPlayer) {
+    player.blockTimer = 0;
+    switch (player.currentAction) {
+      case Action.BLOCK_BOTTOM:
+        player.currentAction = Action.IDLE_DOWN;
+        break;
+      case Action.BLOCK_TOP:
+        player.currentAction = Action.IDLE_TOP;
+        break;
+      case Action.BLOCK_LEFT:
+        player.currentAction = Action.IDLE_LEFT;
+        break;
+      case Action.BLOCK_RIGHT:
+        player.currentAction = Action.IDLE_RIGHT;
+        break;
+      default:
+        break;
+    }
+    this.blockCooldown = 0;
   }
 
   public update(player: LocalPlayer, detla: number) {

@@ -5,9 +5,9 @@ import { InputHandler } from "./InputHandler";
 import type Player from "../../../shared/Player";
 import { Action } from "../../../shared/Action";
 import DashHelper from "../helper/DashHelper";
-export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
-const ATTACK_COOLDOWN = 20;
-const ATTACK_RESET = 60;
+import { GameState } from "./GameState";
+import { ATTACK_COOLDOWN, ATTACK_RESET, ATTACK_SEQUENCE, KNOCKBACK_TIMER } from "../constantes";
+
 export class AttackService {
     private attackResetTimer: number = ATTACK_RESET;
     private attackCoolDownTimer: number = ATTACK_COOLDOWN;
@@ -37,13 +37,13 @@ export class AttackService {
         }
     }
 
-    public stopAttack(){
-        if(this._attackOnGoing){
+    public stopAttack() {
+        if (this._attackOnGoing) {
             this._attackOnGoing = false;
             this.isAttackReady = true;
         }
-            
-        
+
+
     }
 
     public initiateAttack(player: Player) {
@@ -58,11 +58,11 @@ export class AttackService {
         // Direction du dash
         player.dashDir = { x: dx / len, y: dy / len };
         // Paramètres du dash
-        player.attackDashTimer = player.attackDashDuration;    
+        player.attackDashTimer = player.attackDashDuration;
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
         player.currentAction = DashHelper.getDashActionByVector(player.dashDir)
-        this.network.dash({x:player.position.x, y:player.position.y}, DashHelper.getDashActionByVector(player.dashDir))
+        this.network.dash({ x: player.position.x, y: player.position.y }, DashHelper.getDashActionByVector(player.dashDir))
 
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;
@@ -71,14 +71,14 @@ export class AttackService {
 
 
     public performAttack(player: Player, dir: number) {
-        if(!this._attackOnGoing)
+        if (!this._attackOnGoing)
             return;
         player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
 
         this.network.attack({
             playerId: player.id,
-            knockbackStrength:15, // TODO CHANGE WHEN CHANGING ATTACK
+            knockbackStrength: 15, // TODO CHANGE WHEN CHANGING ATTACK
             position: { ...player.position },
             rotation: dir,
             hitbox,
@@ -90,9 +90,25 @@ export class AttackService {
 
     }
 
-    
-    public get attackOngoing() : boolean {
+    public attackGotBlocked(attacker: Player, blockerId:string, totalKnockbackStrength:number) {
+        const blocker = GameState.instance.players.get(blockerId);
+        if (!blocker) return;
+        this.attackCoolDownTimer = ATTACK_COOLDOWN;
+        const dx = attacker.position.x - blocker.position.x;
+        const dy = attacker.position.y - blocker.position.y;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+
+        attacker.knockbackReceived = {
+            x: (dx / len) * totalKnockbackStrength,
+            y: (dy / len) * totalKnockbackStrength,
+        };
+        attacker.knockbackTimer = KNOCKBACK_TIMER / 2;
+    }
+
+
+    public get attackOngoing(): boolean {
         return this._attackOnGoing;
     }
-    
+
 }

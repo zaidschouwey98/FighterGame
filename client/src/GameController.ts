@@ -15,7 +15,7 @@ import { BlockService } from "./core/BlockService";
 import type { LocalPlayer } from "./core/LocalPlayer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { Action } from "../../shared/Action";
-import { CHUNK_SIZE, TILE_SIZE } from "./constantes";
+import { CHUNK_SIZE, KNOCKBACK_TIMER, TILE_SIZE } from "./constantes";
 
 
 export class GameController {
@@ -118,9 +118,12 @@ export class GameController {
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
+            if(attackResult.blockedBy && attackResult.attackerId == this.localPlayerId){
+                this.attackService.attackGotBlocked(GameState.instance.getLocalPlayer(), attackResult.blockedBy.id, attackResult.knockbackStrength)
+            }
             for (const hit of hitPlayers) {
                 
-                hit.hitFlashTimer = 10; // frames de rouge // todo finir ça et mettre avec animation
+                hit.hitFlashTimer = 10; // frames de rouge // todo REMOVE 
                 this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER HP
                 if (hit.id === this.localPlayerId) {
                     console.log(hit.hp);
@@ -155,20 +158,20 @@ export class GameController {
         ) // todo check if in correction direction serverside
         {
             didBlock = true;
-           
+            this.blockService.playerSuccessfullyBlocked(player);
         }
 
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
 
-        const knockbackStrength = attackResult.knockbackStrength; // Ajuste pour feeling
+        const knockbackStrength = !didBlock ? attackResult.knockbackStrength : attackResult.knockbackStrength/2;
         player.knockbackReceived = {
             x: (dx / len) * knockbackStrength,
             y: (dy / len) * knockbackStrength,
         };
-        //  player.currentAction = player.knockbackReceived.x >= 0 ? Action.TOOK_HIT_FROM_LEFT : Action.TOOK_HIT_FROM_RIGHT;
-        player.knockbackTimer = 10; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
+        if(!didBlock) player.currentAction = player.knockbackReceived.x >= 0 ? Action.TOOK_HIT_FROM_LEFT : Action.TOOK_HIT_FROM_RIGHT;
+        player.knockbackTimer = KNOCKBACK_TIMER; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
     }
 
     private handleDeath(player: Player) {
@@ -203,7 +206,6 @@ export class GameController {
         if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceived) {
             player.position.x += player.knockbackReceived.x * delta;
             player.position.y += player.knockbackReceived.y * delta;
-
             // Ralentissement progressif
             player.knockbackReceived.x *= 0.85;
             player.knockbackReceived.y *= 0.85;
@@ -212,13 +214,9 @@ export class GameController {
             if (player.knockbackTimer <= 0) {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
-                return;
             }
-   player.currentAction = player.knockbackReceived.x >= 0 ? Action.TOOK_HIT_FROM_LEFT : Action.TOOK_HIT_FROM_RIGHT;
-              // todo change side on direction
             this.network.move({ x: player.position.x, y: player.position.y }, player.currentAction);
-            return; // No action possible during knockback  
-
+            return;
         }
 
         // Handle attack dash if ongoing

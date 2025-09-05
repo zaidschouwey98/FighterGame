@@ -77,6 +77,15 @@ const atlasConfig = [
         } as const
     },
     {
+        file: "/assets/took_hit_from_right_effect.png",
+        spriteAmount: { w: 5, h: 1 },
+        assetDimensions: { w: 64, h: 64 },
+        textures: ["took_hit_from_right_effect_1","took_hit_from_right_effect_2","took_hit_from_right_effect_3","took_hit_from_right_effect_4","took_hit_from_right_effect_5"] as const,
+        animations: {
+            took_hit_from_right_effect: ["took_hit_from_right_effect_1","took_hit_from_right_effect_2","took_hit_from_right_effect_3","took_hit_from_right_effect_4","took_hit_from_right_effect_5"]
+        } as const
+    },
+    {
         file: "/assets/player_took_hit_from_right_side.png",
         spriteAmount: { w: 5, h: 1 },
         assetDimensions: { w: 32, h: 32 },

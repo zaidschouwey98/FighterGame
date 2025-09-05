@@ -24,6 +24,20 @@ export class EffectRenderer {
         }
     }
 
+    renderBloodEffect(fromRightAttack:boolean, playerPos:Position){
+        const bloodEffect = new AnimatedSprite(findAnimation(this.spriteSheets, "took_hit_from_right_effect")!);
+        bloodEffect.scale.x = fromRightAttack ? 1 : -1;
+        bloodEffect.anchor.set(0.5)
+        bloodEffect.x = playerPos.x;
+        bloodEffect.y = playerPos.y;
+        bloodEffect.visible = true;
+        bloodEffect.loop = false;
+        bloodEffect.animationSpeed = 0.3;
+        bloodEffect.currentFrame = 0;
+        bloodEffect.play();
+        bloodEffect.onComplete = () => { bloodEffect.destroy() }
+        this.staticEffectsContainer.addChild(bloodEffect)
+    }
 
     renderAttackDashCloud(playerPos: Position) {
         const newDashCloud = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_effect")!);

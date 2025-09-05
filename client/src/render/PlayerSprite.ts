@@ -134,7 +134,7 @@ export default class PlayerSprite {
         dyingAnim.play();
     }
 
-    public playAnimation(action: Action) {
+    public playAnimation(action: Action, position?:Position) {
         if (action == this.currentAction || this.uniqueAnimationPlaying)
             return;
         this.currentAction = action;
@@ -148,7 +148,18 @@ export default class PlayerSprite {
         this.currentAnimation!.currentFrame = 0;
         this.currentAnimation!.visible = true;
         this.currentAnimation?.play();
-
+        if(!position) return;
+        switch (action) {
+            case Action.TOOK_HIT_FROM_LEFT:
+                this.EffectRenderer.renderBloodEffect(false,position);
+                break;
+            case Action.TOOK_HIT_FROM_RIGHT:
+                this.EffectRenderer.renderBloodEffect(true,position);
+                break;
+        
+            default:
+                break;
+        }
     }
 
     public playTeleportCloud(playerPos:Position){

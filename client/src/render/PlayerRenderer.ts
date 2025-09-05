@@ -85,10 +85,10 @@ export default class PlayerRenderer {
                     break;
                 case Action.TELEPORT:
                     playerSprite.playTeleportCloud(player.position);
-                    playerSprite.playAnimation(player.currentAction);
+                    playerSprite.playAnimation(player.currentAction, player.position);
                     break;
                 default:
-                    playerSprite.playAnimation(player.currentAction);
+                    playerSprite.playAnimation(player.currentAction, player.position);
                     break;
             }
 

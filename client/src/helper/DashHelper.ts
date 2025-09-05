@@ -1,7 +1,7 @@
 import { Action } from "../../../shared/Action";
 
 export default class DashHelper {
-    public static getDashActionByVector(vector: { x: number, y: number }): Action {
+    public static getDashAttackActionByVector(vector: { x: number, y: number }): Action {
         const angle = Math.atan2(vector.y, vector.x);
         const deg = (angle * 180) / Math.PI;
 

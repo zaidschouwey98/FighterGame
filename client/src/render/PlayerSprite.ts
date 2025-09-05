@@ -1,8 +1,9 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Action } from "../../../shared/Action";
 import { findAnimation } from "../AssetLoader";
-import { AttackEffectRenderer } from "./AttackEffectRenderer";
+import { EffectRenderer } from "./AttackEffectRenderer";
 import type Player from "../../../shared/Player";
+import type Position from "../../../shared/Position";
 
 export default class PlayerSprite {
     private uniqueAnimationPlaying: boolean = false;
@@ -11,11 +12,11 @@ export default class PlayerSprite {
     private currentAnimation?: AnimatedSprite;
     private currentAction?: Action;
     private spriteSheets: Spritesheet[];
-    private attackEffectRenderer: AttackEffectRenderer;
+    private EffectRenderer: EffectRenderer;
     constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[], staticEffectsContainer: Container) {
         this.playerContainer = playerContainer;
         this.spriteSheets = spriteSheet;
-        this.attackEffectRenderer = new AttackEffectRenderer(this.spriteSheets, this.playerContainer, staticEffectsContainer);
+        this.EffectRenderer = new EffectRenderer(this.spriteSheets, this.playerContainer, staticEffectsContainer);
         this.animations[Action.IDLE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle")!);
         this.animations[Action.IDLE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_idle_right")!);
 
@@ -34,6 +35,9 @@ export default class PlayerSprite {
         
         this.animations[Action.BLOCK_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
         this.animations[Action.BLOCK_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
+
+        this.animations[Action.TELEPORT] = new AnimatedSprite(findAnimation(this.spriteSheets, "after_tp_idle")!);
+
 
         this.animations[Action.ATTACK_DASH_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
         this.animations[Action.ATTACK_DASH_RIGHT].loop = false;
@@ -98,18 +102,18 @@ export default class PlayerSprite {
             this.currentAnimation.stop();
             this.currentAnimation.visible = false;
         }
-
+        
         this.uniqueAnimationPlaying = true;
         this.currentAnimation = anim;
         this.currentAnimation.visible = true;
-        this.currentAnimation.animationSpeed = 0.4;
+        this.currentAnimation.animationSpeed = 0.5;
         this.currentAnimation.currentFrame = 1;
         this.currentAnimation.onComplete = () => {
             this.uniqueAnimationPlaying = false;
-            this.playAnimation(player.currentAction);
+            //this.playAnimation(Action.IDLE_DOWN); // TO FIX
         };
         this.currentAnimation.play();
-        this.attackEffectRenderer?.renderAttackDashCloud(player.position);
+        this.EffectRenderer?.renderAttackDashCloud(player.position);
     }
 
 
@@ -130,8 +134,12 @@ export default class PlayerSprite {
 
     }
 
+    public playTeleportCloud(playerPos:Position){
+        this.EffectRenderer.renderTpEffect(playerPos);
+    }
+
     public playAttackAnimation(action: Action, attackRotation: number) {
-        this.attackEffectRenderer?.renderAttackEffect(action, attackRotation);
+        this.EffectRenderer?.renderAttackEffect(action, attackRotation);
     }
 
     public destroy() {

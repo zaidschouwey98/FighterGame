@@ -1,8 +1,10 @@
 export class InputHandler {
+
     private keysPressed: Set<string> = new Set();
     private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
     private attackPressed: boolean = false;
     private stopAttackPressed: boolean = false;
+    private spacePressed: boolean = false;
 
     constructor() {
         this.setupEventListeners();
@@ -14,7 +16,16 @@ export class InputHandler {
         });
         window.addEventListener("keydown", (e) => {
             this.keysPressed.add(e.key.toLowerCase());
+            const key = e.key.toLowerCase();
+            this.keysPressed.add(key);
+
+            // Détecter "space"
+            if (key === " ") { // e.key renvoie " " pour espace
+                this.spacePressed = true;
+            }
         });
+
+
 
         window.addEventListener("keyup", (e) => {
             this.keysPressed.delete(e.key.toLowerCase());
@@ -29,10 +40,16 @@ export class InputHandler {
                 this.attackPressed = true;
             }
             if (e.button === 2) {
-               this.stopAttackPressed = true;
+                this.stopAttackPressed = true;
             }
-        
+
         });
+    }
+
+    public consumeSpaceClick() {
+        const wasPressed = this.spacePressed;
+        this.spacePressed = false;
+        return wasPressed;
     }
 
     public getKeys(): Set<string> {
@@ -49,7 +66,7 @@ export class InputHandler {
         return wasPressed;
     }
 
-    public consumeRightClick(): boolean{
+    public consumeRightClick(): boolean {
         const wasPressed = this.stopAttackPressed;
         this.stopAttackPressed = false;
         return wasPressed;

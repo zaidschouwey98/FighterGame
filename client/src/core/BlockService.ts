@@ -6,7 +6,7 @@ import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 10000; // frames todo CONSTANTE 
+  private blockDuration = 40; // frames todo CONSTANTE 
   private blockCooldown = 25;
   constructor(
     private inputHandler: InputHandler,
@@ -16,13 +16,13 @@ export class BlockService {
 
 
   public startBlock(player: LocalPlayer) {
-    if (player.isBlocking) return;
+    // TODO CHANGE THIS CONDITION
+    if (player.isBlocking || player.currentAction == Action.ATTACK_1 || player.currentAction == Action.ATTACK_2) return;
     if (this.blockCooldown > 0) {
       return;
     }
     player.blockTimer = this.blockDuration;
     player.isBlocking = true;
-
     const mousePos = this.inputHandler.getMousePosition();
     const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
     const dx = worldMousePos.x - player.position.x;
@@ -67,7 +67,7 @@ export class BlockService {
 
     } else {
       // Fin du block
-      this.blockCooldown = 40;
+      this.blockCooldown = 25; // CONSTANTE
 
       player.isBlocking = false;
       player.blockTimer = undefined;

@@ -42,8 +42,6 @@ export class AttackService {
             this._attackOnGoing = false;
             this.isAttackReady = true;
         }
-
-
     }
 
     public initiateAttack(player: Player) {
@@ -61,8 +59,8 @@ export class AttackService {
         player.attackDashTimer = player.attackDashDuration;
         player.pendingAttackDir = dir;
         player.pendingAttack = true;
-        player.currentAction = DashHelper.getDashActionByVector(player.dashDir)
-        this.network.dash({ x: player.position.x, y: player.position.y }, DashHelper.getDashActionByVector(player.dashDir))
+        player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir)
+        this.network.dash({ x: player.position.x, y: player.position.y }, DashHelper.getDashAttackActionByVector(player.dashDir))
 
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;

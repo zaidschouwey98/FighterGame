@@ -84,6 +84,10 @@ export default class PlayerRenderer {
                 case Action.ATTACK_DASH_BOTTOM_RIGHT:
                 
                     break;
+                case Action.TELEPORT:
+                    playerSprite.playTeleportCloud(player.position);
+                    playerSprite.playAnimation(player.currentAction);
+                    break;
                 default:
                     playerSprite.playAnimation(player.currentAction);
                     break;

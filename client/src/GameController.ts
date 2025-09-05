@@ -16,6 +16,7 @@ import type { LocalPlayer } from "./core/LocalPlayer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { Action } from "../../shared/Action";
 import { CHUNK_SIZE, KNOCKBACK_TIMER, TILE_SIZE } from "./constantes";
+import { TeleportService } from "./core/TeleportService";
 
 
 export class GameController {
@@ -31,6 +32,7 @@ export class GameController {
     private localPlayerId: string | null = null;
     private currentChunkX?:number;
     private currentChunkY?:number;
+    private teleportService: TeleportService;
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
 
@@ -41,6 +43,7 @@ export class GameController {
         this.movementService = new MovementService(this.inputHandler, this.network);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
         this.blockService = new BlockService(this.inputHandler,this.coordinateService,this.network);
+        this.teleportService = new TeleportService(this.inputHandler,this.coordinateService,this.network);
         this.setupEventListeners();
     }
 
@@ -251,7 +254,7 @@ export class GameController {
 
         // Minimap
         this.renderer.updateMinimap(this.localPlayerId);
-        
+        this.teleportService.update(player,delta);
         this.blockService.update(player,delta);
         this.attackService.update(delta, player);
     }
@@ -279,7 +282,7 @@ export class GameController {
         player.position.y += player.dashDir.y * speed;
 
         player.attackDashTimer--;
-        player.currentAction = DashHelper.getDashActionByVector(player.dashDir);
+        player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir);
 
         this.network.move({ ...player.position }, player.currentAction);
 

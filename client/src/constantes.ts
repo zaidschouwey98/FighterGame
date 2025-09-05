@@ -7,3 +7,5 @@ export const KNOCKBACK_TIMER = 20;
 export const ATTACK_SEQUENCE = ["ATTACK_1", "ATTACK_2"];
 export const ATTACK_COOLDOWN = 25;
 export const ATTACK_RESET = 60;
+export const TP_COOLDOWN = 120;
+export const TP_DISTANCE = 120;

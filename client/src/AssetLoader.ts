@@ -59,6 +59,24 @@ const atlasConfig = [
         } as const
     },
     {
+        file: "/assets/after_tp_idle.png",
+        spriteAmount: { w: 2, h: 1 },
+        assetDimensions: { w: 32, h: 32 },
+        textures: ["after_tp_idle_1","after_tp_idle_2"] as const,
+        animations: {
+            after_tp_idle: ["after_tp_idle_1","after_tp_idle_2"]
+        } as const
+    },
+    {
+        file: "/assets/tp_effect.png",
+        spriteAmount: { w: 2, h: 3 },
+        assetDimensions: { w: 128, h: 128 },
+        textures: ["tp_effect_1","tp_effect_2","tp_effect_3","tp_effect_4","tp_effect_5","tp_effect_6"] as const,
+        animations: {
+            tp_effect: ["tp_effect_1","tp_effect_2","tp_effect_3","tp_effect_4","tp_effect_5","tp_effect_6"]
+        } as const
+    },
+    {
         file: "/assets/player_took_hit_from_right_side.png",
         spriteAmount: { w: 5, h: 1 },
         assetDimensions: { w: 32, h: 32 },

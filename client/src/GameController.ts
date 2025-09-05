@@ -212,6 +212,7 @@ export class GameController {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;
             }
+            this.renderer.playerRenderer.updatePlayers([player]);
             this.network.move({ x: player.position.x, y: player.position.y }, player.currentAction);
             return;
         }

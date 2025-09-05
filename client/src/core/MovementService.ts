@@ -1,11 +1,12 @@
 import { Action } from "../../../shared/Action";
 import type Player from "../../../shared/Player";
 import { NetworkClient } from "../network/NetworkClient";
+import type { Renderer } from "../render/Renderer";
 import { InputHandler } from "./InputHandler";
 
 export class MovementService {
     private isMoving:boolean = false;
-    constructor(private inputHandler: InputHandler, private network: NetworkClient) {}
+    constructor(private inputHandler: InputHandler, private network: NetworkClient, private renderer:Renderer) {}
 
     public handleMovement(player: Player, delta: number) {
         let dx = 0, dy = 0;
@@ -31,6 +32,7 @@ export class MovementService {
             else if (dy > 0) newAction = Action.MOVE_DOWN;
             else if (dy < 0) newAction = Action.MOVE_TOP;
             player.currentAction = newAction;
+            this.renderer.playerRenderer.updatePlayers([player]);
             this.network.move({ x: player.position.x, y: player.position.y }, newAction);    
         } else {
             
@@ -39,6 +41,8 @@ export class MovementService {
                 newAction = this.computeIdleAction(player.currentAction);
                 this.network.stopMoving(newAction);
                 player.currentAction = newAction;
+                this.renderer.playerRenderer.updatePlayers([player]);
+
             }
             
         }

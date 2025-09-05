@@ -40,7 +40,7 @@ export class GameController {
 
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.network = new NetworkClient(serverUrl, this.eventBus);
-        this.movementService = new MovementService(this.inputHandler, this.network);
+        this.movementService = new MovementService(this.inputHandler, this.network,this.renderer);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
         this.blockService = new BlockService(this.inputHandler,this.coordinateService,this.network);
         this.teleportService = new TeleportService(this.inputHandler,this.coordinateService,this.network);
@@ -88,7 +88,11 @@ export class GameController {
         this.eventBus.on("player:moved", (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
             let movingPlayer = this.gameState.players.get(player.id)
+            if(movingPlayer?.id == this.localPlayerId){
+                return;
+            }
             this.renderer.playerRenderer.updatePlayers([movingPlayer!]);
+
         });
 
         this.eventBus.on("player:stopMoving", (player: PlayerInfo) => {

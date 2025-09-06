@@ -129,6 +129,7 @@ io.on("connection", (socket) => {
 
     const attackResults = [];
     let blockedBy:PlayerInfo | undefined;
+    let killNumber:number = 0;
     // Appliquer les dégâts
     for (const targetId of hitPlayerIds) {
       const target = players[targetId];
@@ -151,6 +152,7 @@ io.on("connection", (socket) => {
       // Vérifier la mort
       if (target.hp <= 0 && !target.isDead) {
         attacker.hp +=20
+        killNumber ++;
         handlePlayerDeath(target.id);
       }
     }
@@ -159,7 +161,8 @@ io.on("connection", (socket) => {
       attackerId: data.playerId,
       hitPlayers: attackResults,
       knockbackStrength: data.knockbackStrength,
-      blockedBy:blockedBy
+      blockedBy:blockedBy,
+      killNumber: killNumber
     } as AttackResult);
   });
 

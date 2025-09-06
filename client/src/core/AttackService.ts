@@ -69,11 +69,21 @@ export class AttackService {
     }
 
 
-    public performAttack(player: Player, dir: number) {
+    public performAttack(player: Player, _Unuseddir: number) {
         if (!this._attackOnGoing)
             return;
         player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;
+        //// remove if too overpowered
+        const mousePos = this.inputHandler.getMousePosition();
+        const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
+        const dx = worldMousePos.x - player.position.x;
+        const dy = worldMousePos.y - player.position.y;
+        let dir = Math.atan2(dy, dx);
+        ////
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
+
+
+
 
         this.network.attack({
             playerId: player.id,

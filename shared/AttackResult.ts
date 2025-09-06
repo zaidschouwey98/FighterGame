@@ -5,4 +5,5 @@ export interface AttackResult{
     attackerId:string;
     knockbackStrength:number;
     blockedBy?:PlayerInfo;
+    killNumber:number;
 }

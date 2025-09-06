@@ -7,6 +7,7 @@ export default interface PlayerInfo {
     hp: number;
     speed: number;
     id: string;
+    name?:string;
     _currentAction: Action;
     currentDirection?: Direction;
 

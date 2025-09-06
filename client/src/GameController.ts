@@ -131,6 +131,10 @@ export class GameController {
 
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
+            if(attackResult.attackerId == this.localPlayerId && attackResult.killNumber > 0){
+                this.gameState.getLocalPlayer().hp += 20 * attackResult.killNumber;
+                this.renderer.updateHealthBar(this.gameState.getLocalPlayer().hp, 100);
+            }
             if(attackResult.blockedBy && attackResult.attackerId == this.localPlayerId){
                 this.attackService.attackGotBlocked(GameState.instance.getLocalPlayer(), attackResult.blockedBy.id, attackResult.knockbackStrength);
             }

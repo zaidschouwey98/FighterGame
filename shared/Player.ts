@@ -9,6 +9,7 @@ export default class Player {
     public hp: number;
     public speed: number;
     public id: string;
+    public name?:string;
     protected _currentAction: Action;
     public currentDirection?: Direction;
 
@@ -75,7 +76,8 @@ export default class Player {
             knockbackTimer: this.knockbackTimer,
             hitFlashTimer: this.hitFlashTimer,
             isDead: this.isDead,
-            blockDir:this.blockDir
+            blockDir:this.blockDir,
+            name:this.name
         };
     }
 

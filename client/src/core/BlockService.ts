@@ -63,7 +63,7 @@ export class BlockService {
     if (!player.isBlocking) return;
 
     if (player.blockTimer && player.blockTimer > 0) {
-      player.blockTimer--;
+      player.blockTimer-= detla;
 
     } else {
       // Fin du block

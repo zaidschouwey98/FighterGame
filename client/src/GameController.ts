@@ -132,13 +132,14 @@ export class GameController {
         this.eventBus.on("player:attackedResult", (attackResult: AttackResult) => {
             const hitPlayers = attackResult.hitPlayers;
             if(attackResult.blockedBy && attackResult.attackerId == this.localPlayerId){
-                this.attackService.attackGotBlocked(GameState.instance.getLocalPlayer(), attackResult.blockedBy.id, attackResult.knockbackStrength)
+                this.attackService.attackGotBlocked(GameState.instance.getLocalPlayer(), attackResult.blockedBy.id, attackResult.knockbackStrength);
             }
             for (const hit of hitPlayers) {
                 
                 hit.hitFlashTimer = 10; // frames de rouge // todo REMOVE 
                 this.gameState.updatePlayer(hit); // TODO FIX THIS CAUSE CAN'T UPDATE LOCAL PLAYER HP
                 if (hit.id === this.localPlayerId) {
+                    this.gameState.getLocalPlayer().hp = hit.hp;
                     this.handleAttackReceived(attackResult);
                 }
             }
@@ -169,7 +170,7 @@ export class GameController {
             didBlock = true;
             this.blockService.playerSuccessfullyBlocked(player);
         }
-
+        console.log(player.hp);
         this.renderer.updateHealthBar(player.hp,100);
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;

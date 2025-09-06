@@ -1,4 +1,5 @@
 import { Action } from "../../../shared/Action";
+import { BLOCK_COOLDOWN, BLOCK_DURATION } from "../constantes";
 import type { NetworkClient } from "../network/NetworkClient";
 import type { CoordinateService } from "./CoordinateService";
 import type { InputHandler } from "./InputHandler";
@@ -6,8 +7,8 @@ import type { LocalPlayer } from "./LocalPlayer";
 
 
 export class BlockService {
-  private blockDuration = 90; // frames todo CONSTANTE 
-  private blockCooldown = 25;
+  private blockDuration = BLOCK_DURATION; // frames todo CONSTANTE 
+  private blockCooldown = BLOCK_COOLDOWN;
   constructor(
     private inputHandler: InputHandler,
     private coordinateService: CoordinateService,

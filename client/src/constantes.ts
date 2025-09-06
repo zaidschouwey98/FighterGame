@@ -10,3 +10,5 @@ export const ATTACK_RESET = 60;
 export const TP_COOLDOWN = 120;
 export const TP_DISTANCE = 120;
 export const DASH_ATTACK_DURATION = 30;
+export const BLOCK_DURATION = 30;
+export const BLOCK_COOLDOWN = 30;

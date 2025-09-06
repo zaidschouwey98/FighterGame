@@ -44,6 +44,7 @@ export class GameController {
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.network);
         this.blockService = new BlockService(this.inputHandler,this.coordinateService,this.network);
         this.teleportService = new TeleportService(this.inputHandler,this.coordinateService,this.network);
+        
         this.setupEventListeners();
     }
 
@@ -169,6 +170,7 @@ export class GameController {
             this.blockService.playerSuccessfullyBlocked(player);
         }
 
+        this.renderer.updateHealthBar(player.hp,100);
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;
         const len = Math.sqrt(dx * dx + dy * dy) || 1;

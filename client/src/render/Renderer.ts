@@ -5,6 +5,7 @@ import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
 import { Minimap } from "./Minimap";
 import { GameState } from "../core/GameState";
+import { HpBar } from "./HpBar";
 
 export class Renderer {
 
@@ -23,6 +24,7 @@ export class Renderer {
     private _worldRenderer: WorldRenderer;
 
     private _camera: CameraService;
+    private _hpBar: HpBar;
 
     constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], seed: string = "seed") {
         this._camera = new CameraService();
@@ -30,11 +32,11 @@ export class Renderer {
         this._pixiApp = app;
 
         this._globalContainer = globalContainer;
-        this._tilesContainer = new Container({label:"tiles_container"});
-        this._terrainContainer = new Container({label:"terrain_container"});
-        this._objectContainer = new Container({label:"object_container"});
-        this._overlayContainer = new Container({label:"overlay_container"});
-        this._uiContainer = new Container({label:"ui_container"});
+        this._tilesContainer = new Container({ label: "tiles_container" });
+        this._terrainContainer = new Container({ label: "terrain_container" });
+        this._objectContainer = new Container({ label: "object_container" });
+        this._overlayContainer = new Container({ label: "overlay_container" });
+        this._uiContainer = new Container({ label: "ui_container" });
 
         globalContainer.scale.set(this._camera.zoom);
         globalContainer.addChild(this._tilesContainer);
@@ -44,31 +46,35 @@ export class Renderer {
         app.stage.addChild(this._uiContainer)
 
         this._minimap = new Minimap(app, this._uiContainer, 200);
-
-        this._playerRenderer = new PlayerRenderer(this._objectContainer, spriteSheets,this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
+        this._hpBar = new HpBar(this._uiContainer, 100, 100, 200, 60);
+        this._playerRenderer = new PlayerRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
 
     }
 
-    updateMinimap(localPlayerId:string) {
+    updateMinimap(localPlayerId: string) {
         // Dans ton update
         const localPlayer = GameState.instance.players.get(localPlayerId!);
         const playersArray = Array.from(GameState.instance.players.values()).map(p => ({
-        id: p.id,
-        x: p.position.x,
-        y: p.position.y,
-        isLocal: p.id === localPlayerId
+            id: p.id,
+            x: p.position.x,
+            y: p.position.y,
+            isLocal: p.id === localPlayerId
         }));
 
         if (localPlayer) {
-        this._minimap.update(
-            localPlayer.position.x,
-            localPlayer.position.y,
-            playersArray
-        );
+            this._minimap.update(
+                localPlayer.position.x,
+                localPlayer.position.y,
+                playersArray
+            );
         }
-            }
+    }
+
+    updateHealthBar(currentHealth:number, maxHealth:number){
+        this._hpBar.update(currentHealth, maxHealth)
+    }
 
     updateCamera(position: Position) {
         this._camera.follow(position, this._pixiApp.screen.width, this._pixiApp.screen.height);

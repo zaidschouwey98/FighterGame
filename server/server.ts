@@ -22,7 +22,7 @@ app.get(/.*/, (_, res) => {
 const io = new Server(server, {
   cors: { origin: "*" } // Pour le dev avec Vite
 });
-
+var counter = 1;
 const PORT = process.env.PORT || 3000;
 
 
@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
   const startY = 0
   const newPlayer = new Player(new Position(startX, startY), 100, 10, socket.id);
   players[socket.id] = newPlayer.toInfo();
+  players[socket.id].name = "player_" + counter++;
   socket.emit("localPlayer", players[socket.id]);
   // Envoyer l'état initial au nouveau joueur
   socket.emit("currentPlayers", players);

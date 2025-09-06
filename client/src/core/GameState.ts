@@ -44,6 +44,7 @@ export class GameState {
             playerObj.knockbackTimer = newPlayer.knockbackTimer;
             playerObj.pendingAttack = newPlayer.pendingAttack;
             playerObj.pendingAttackDir = newPlayer.pendingAttackDir;
+            playerObj.name = newPlayer.name;
         this.players.set(newPlayer.id, playerObj);
         
     }
@@ -87,6 +88,7 @@ export class GameState {
             playerObj.knockbackTimer = newPlayer.knockbackTimer;
             playerObj.pendingAttack = newPlayer.pendingAttack;
             playerObj.pendingAttackDir = newPlayer.pendingAttackDir;
+            playerObj.name = newPlayer.name;
             this.players.set(newPlayer.id, playerObj);
         }
     }

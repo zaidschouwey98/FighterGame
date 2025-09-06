@@ -22,6 +22,7 @@ export class NetworkClient {
         // TODO CHANGE PLAYER TO PLAYERINFO
         this.socket.on("localPlayer",(player:Player)=>{
             this.player = new LocalPlayer(player.position,player.hp,player.speed,this.socket.id!);
+            this.player.name = player.name;
             this.player.networkClient = this;
             GameState.instance.setLocalPlayer(this.player)
         });

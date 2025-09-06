@@ -15,7 +15,7 @@ export default class PlayerSprite {
     private spriteSheets: Spritesheet[];
     private EffectRenderer: EffectRenderer;
     private _terrainContainer:Container;
-    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[],terrainContainer:Container, staticEffectsContainer: Container) {
+    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[],terrainContainer:Container, staticEffectsContainer: Container, playerName:string) {
         this.playerContainer = playerContainer;
         this.spriteSheets = spriteSheet;
         this._terrainContainer = terrainContainer;
@@ -86,7 +86,7 @@ export default class PlayerSprite {
             fill: "#ffffff",
             stroke: "#000000",
         });
-        let name = new Text("bibite", style);
+        let name = new Text(playerName, style);
         name.anchor.set(0.5);
         name.resolution = 2;
         name.y = -20; // Position au-dessus du sprite

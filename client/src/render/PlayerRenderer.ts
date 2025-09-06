@@ -25,7 +25,7 @@ export default class PlayerRenderer {
         newPlayerContainer.label = player.id;
 
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets,this._terrainContainer , this.staticEffectContainer);
+        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets,this._terrainContainer , this.staticEffectContainer, player.name || "bibite");
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);

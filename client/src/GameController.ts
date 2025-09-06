@@ -207,7 +207,7 @@ export class GameController {
             player.knockbackReceived.x *= 0.85;
             player.knockbackReceived.y *= 0.85;
 
-            player.knockbackTimer--;
+            player.knockbackTimer-=delta;
             if (player.knockbackTimer <= 0) {
                 player.knockbackReceived = undefined;
                 player.knockbackTimer = undefined;

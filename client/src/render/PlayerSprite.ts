@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
+import { AnimatedSprite, Container, Spritesheet, TextStyle, Text } from "pixi.js";
 import { Action } from "../../../shared/Action";
 import { findAnimation } from "../AssetLoader";
 import { EffectRenderer } from "./AttackEffectRenderer";
@@ -79,6 +79,18 @@ export default class PlayerSprite {
         this.animations[Action.ATTACK_DASH_BOTTOM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
         this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].loop = false;
         this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].scale.x *= -1;
+
+        const style = new TextStyle({
+            fontFamily: "Arial",
+            fontSize: 8,
+            fill: "#ffffff",
+            stroke: "#000000",
+        });
+        let name = new Text("bibite", style);
+        name.anchor.set(0.5);
+        name.resolution = 2;
+        name.y = -20; // Position au-dessus du sprite
+        this.playerContainer.addChild(name);
 
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;

@@ -21,7 +21,7 @@ import { initDevtools } from '@pixi/devtools';
   app.stage.addChild(container);
 
   // Créez le contrôleur de jeu
-  const gameController = new GameController(container, window.location.origin, app,spritesheets);
+  const gameController = new GameController(container, "localhost:3000", app,spritesheets);
 
   // Animation loop
   app.ticker.add((delta) => {

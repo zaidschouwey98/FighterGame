@@ -232,8 +232,10 @@ export class GameController {
         }
 
         // handle attack
-        if (this.inputHandler.consumeAttack() && !player.isBlocking) {
+        if (this.inputHandler.consumeAttack() && !this.attackService.attackOngoing && !player.isBlocking) {
             this.attackService.initiateAttack(player);
+            this.renderer.playerRenderer.playDashAttackAnimation(player);
+
         }
 
         // render world
@@ -278,7 +280,6 @@ export class GameController {
 
         player.attackDashTimer -= delta;
         player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir);
-        this.renderer.playerRenderer.playDashAttackAnimation(player);
         this.network.move({ ...player.position }, player.currentAction);
 
         if (player.attackDashTimer <= 0 && player.pendingAttack) {

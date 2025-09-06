@@ -278,7 +278,7 @@ export class GameController {
 
         player.attackDashTimer -= delta;
         player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir);
-
+        this.renderer.playerRenderer.updatePlayers([player])
         this.network.move({ ...player.position }, player.currentAction);
 
         if (player.attackDashTimer <= 0 && player.pendingAttack) {

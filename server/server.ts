@@ -150,6 +150,7 @@ io.on("connection", (socket) => {
 
       // Vérifier la mort
       if (target.hp <= 0 && !target.isDead) {
+        attacker.hp +=20
         handlePlayerDeath(target.id);
       }
     }

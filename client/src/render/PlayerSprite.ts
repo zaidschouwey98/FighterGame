@@ -143,6 +143,7 @@ export default class PlayerSprite {
         dyingAnim.visible = true;
         dyingAnim.animationSpeed = 0.1;
         dyingAnim.currentFrame = 0;
+        dyingAnim.onComplete = () => {this.uniqueAnimationPlaying = false;}
         dyingAnim.play();
     }
 

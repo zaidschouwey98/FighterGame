@@ -82,8 +82,17 @@ export class GameController {
         });
 
         this.eventBus.on("player:respawn", (player: PlayerInfo) => {
+            if(player.id == this.gameState.getLocalPlayer().id){
+                this.gameState.getLocalPlayer().hp = player.hp;
+                this.gameState.getLocalPlayer().isDead = player.isDead;
+                this.gameState.getLocalPlayer().position = player.position;
+                this.gameState.getLocalPlayer().currentAction = player._currentAction;
+
+                // this.gameState.getLocalPlayer().hp = player.hp;
+
+            }
             this.gameState.updatePlayer(player);
-            
+            this.renderer.playerRenderer.updatePlayers([this.gameState.players.get(player.id)!])
         });
 
         this.eventBus.on("player:moved", (player: PlayerInfo) => {

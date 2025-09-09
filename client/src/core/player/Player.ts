@@ -1,13 +1,20 @@
 import { PlayerState } from "../../../../shared/PlayerState";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import Position from "../../../../shared/Position";
-import { FSM } from "./FSM";
 import { Direction } from "../../../../shared/Direction";
+import { BaseState } from "./states/BaseState";
+import { IdleState } from "./states/IdleState";
+import { MovingState } from "./states/MovingState";
+import type { EventBus } from "../EventBus";
+import { MovementService } from "../MovementService";
+import type { InputHandler } from "../InputHandler";
+import { AttackDashState } from "./states/AttackDashState";
+import { Attack1State } from "./states/Attack1State";
+import { AttackService } from "../AttackService";
+import { CoordinateService } from "../CoordinateService";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
-    private fsm: FSM;
-
     public hp: number;
     public speed: number;
     public id: string;
@@ -15,7 +22,9 @@ export default class Player {
     public isDead: boolean = false;
     public position: Position;
     public movingDirection: Direction = Direction.BOTTOM;
-    public mouseDirection: { x: number, y: number } = {x:0, y:0};
+    public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
+
+    
 
     public attackIndex: number = 0;
 
@@ -28,72 +37,53 @@ export default class Player {
     public knockbackReceivedVector?: { x: number; y: number };
     public knockbackTimer?: number;
 
+    public currentState: BaseState;
+    public idleState: IdleState;
+    public movingState: MovingState;
+    public attackDashState:AttackDashState;
+    public attack1State: Attack1State;
     constructor(
         playerName: string = "Unknown",
         position: Position,
         hp: number = 100,
         speed: number = 10,
-        id: string
+        id: string,
+        eventBus:EventBus,
+        inputHandler: InputHandler,
+        attackService: AttackService,
+        movementService: MovementService,
+
     ) {
         this.playerName = playerName
         this.id = id;
         this.position = new Position(position.x, position.y);
         this.hp = hp;
         this.speed = speed;
-        this.fsm = new FSM(PlayerState.IDLE);
 
-        this.fsm.allow(PlayerState.IDLE, PlayerState.ATTACK_DASH);
-        this.fsm.allow(PlayerState.IDLE, PlayerState.KNOCKBACK);
-        this.fsm.allow(PlayerState.IDLE, PlayerState.MOVING);
-        this.fsm.allow(PlayerState.MOVING, PlayerState.IDLE);
-        this.fsm.allow(PlayerState.IDLE, PlayerState.IDLE);
-        this.fsm.allow(PlayerState.MOVING, PlayerState.MOVING);
-        this.fsm.allow(PlayerState.ATTACK_DASH, PlayerState.IDLE);
-        this.fsm.allow(PlayerState.ATTACK_DASH, PlayerState.ATTACK_1);
-        this.fsm.allow(PlayerState.ATTACK_1, PlayerState.MOVING);
-        this.fsm.allow(PlayerState.ATTACK_1, PlayerState.IDLE);
-        this.fsm.allow(PlayerState.IDLE, PlayerState.BLOCKING);
-        this.fsm.allow(PlayerState.BLOCKING, PlayerState.IDLE);
-        this.fsm.allow(PlayerState.ANY, PlayerState.DEAD);
-        // hooks (exemple)
-        // this.fsm.addEnterHook(PlayerState.ATTACK_DASH, () => {
-        //     console.log("Player starts dash");
-        // });
+        this.idleState = new IdleState(this, inputHandler, eventBus);
+        this.currentState = this.idleState;
+        this.movingState = new MovingState(this,movementService,eventBus);
+        this.attackDashState = new AttackDashState(this, attackService, eventBus);
+        this.attack1State = new Attack1State(this,attackService, eventBus);
+
     }
 
-    public setState(state: PlayerState) {
-        this.fsm.tryTransition(state);
+    public update(delta: number) {
+        this.currentState.update(delta);
     }
 
-    public getState(): PlayerState {
-        return this.fsm.state;
+    public changeState(nextState:BaseState) {
+        this.currentState.exit();
+        nextState.enter();
+        this.currentState = nextState;
+        console.log(this.currentState.name)
     }
 
-
-    public static fromInfo(info: PlayerInfo): Player {
-        const player = new Player(
-            info.name ?? "Unknown",
-            info.position,
-            info.hp,
-            info.speed,
-            info.id
-        );
-
-        player.attackDashDuration = info.attackDashDuration;
-        player.attackDashMaxSpeed = info.attackDashMaxSpeed;
-        player.attackDashTimer = info.attackDashTimer;
-        player.attackIndex = info.attackIndex;
-        player.blockTimer = info.blockTimer;
-        player.mouseDirection = info.mouseDirection;
-        player.knockbackReceivedVector = info.knockbackReceivedVector;
-        player.knockbackTimer = info.knockbackTimer;
-        player.isDead = info.isDead;
-        player.movingDirection = info.movingDirection;
-        player.setState(info.state);
-
-        return player;
+    get state(): PlayerState {
+        return this.currentState.name;
     }
 
+    // Rarement utilisé
     public updateFromInfo(info: PlayerInfo) {
         this.position = info.position;
         this.hp = info.hp;
@@ -109,7 +99,7 @@ export default class Player {
         this.movingDirection = info.movingDirection;
 
         this.isDead = info.isDead;
-        this.setState(info.state);
+        // this.changeState(info.state);
     }
 
     public toInfo(): PlayerInfo {
@@ -128,7 +118,7 @@ export default class Player {
             movingDirection: this.movingDirection,
             isDead: this.isDead,
             id: this.id,
-            state: this.getState(),
+            state: this.state,
         };
     }
 }

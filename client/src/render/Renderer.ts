@@ -68,10 +68,7 @@ export class Renderer {
 
         // Quand un joueur est mis à jour
         this._eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
-            const updated = GameState.instance.players.get(player.id);
-            if (updated) {
-                this._playersRenderer.updatePlayers([updated]);
-            }
+            this._playersRenderer.updatePlayers([player]);
         });
 
         this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackResult: AttackResult) => {

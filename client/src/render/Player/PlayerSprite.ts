@@ -7,6 +7,7 @@ import { AttackDashAnim } from "./anim/AttackDashAnim";
 import { PlayerState } from "../../../../shared/PlayerState";
 import { EffectRenderer } from "../EffectRenderer";
 import { Attack1Anim } from "./anim/Attack1Anim";
+import type PlayerInfo from "../../../../shared/PlayerInfo";
 
 export default class PlayerSprite {
     private controller: AnimController;
@@ -44,7 +45,7 @@ export default class PlayerSprite {
         }, PlayerState.IDLE);
     }
 
-    public update(player: Player) {
+    public update(player: PlayerInfo) {
         this.controller.update(player);
     }
 

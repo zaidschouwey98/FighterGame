@@ -1,9 +1,8 @@
 import type PlayerInfo from "../../../shared/PlayerInfo";
-import Player from "./player/Player";
 
 export class GameState {
     private static _instance: GameState;
-    public players: Map<string, Player> = new Map();
+    public players: Map<string, PlayerInfo> = new Map();
 
     private constructor() { }
 
@@ -13,17 +12,17 @@ export class GameState {
     }
 
     addPlayer(info: PlayerInfo) {
-        this.players.set(info.id, Player.fromInfo(info));
+        this.players.set(info.id, info);
     }
 
     updatePlayer(info: PlayerInfo) {
-        const player = this.players.get(info.id);
+        let player = this.players.get(info.id);
         if (!player) {
             console.warn(`Player ${info.id} not found, creating it.`);
             // this.addPlayer(info);
             return;
         }
-        player.updateFromInfo(info);
+        player = info;
     }
 
     restorePlayers(infos: PlayerInfo[]) {
@@ -37,7 +36,7 @@ export class GameState {
         this.players.delete(id);
     }
 
-    getPlayer(id: string): Player | undefined {
+    getPlayer(id: string): PlayerInfo | undefined {
         return this.players.get(id);
     }
 }

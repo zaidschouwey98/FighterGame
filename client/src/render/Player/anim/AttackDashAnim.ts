@@ -5,6 +5,7 @@ import { findAnimation } from "../../../AssetLoader";
 import AnimHelper from "../../../helper/AnimHelper";
 import type { IAnimState } from "./IAnimState";
 import type { EffectRenderer } from "../../EffectRenderer";
+import type PlayerInfo from "../../../../../shared/PlayerInfo";
 
 
 
@@ -64,12 +65,12 @@ export class AttackDashAnim implements IAnimState{
   }
 
   /** À appeler quand on entre dans le state DASH (optionnel) */
-  public enter(player:Player) {
+  public enter(player:PlayerInfo) {
     this.effectRenderer.renderAttackDashCloud(player.position);
     this.lastDir = undefined; // force un choix/refresh à la première frame
   }
 
-  public play(player: Player) {
+  public play(player: PlayerInfo) {
     const vec = player.mouseDirection ?? { x: 1, y: 0 };
     const dir = AnimHelper.getDirectionByVector(vec, [
       Direction.TOP, Direction.TOP_RIGHT, Direction.RIGHT, Direction.BOTTOM_RIGHT,

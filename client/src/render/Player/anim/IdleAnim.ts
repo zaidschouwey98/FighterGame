@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
 import type { IAnimState } from "./IAnimState";
+import type PlayerInfo from "../../../../../shared/PlayerInfo";
 
 export class IdleAnim implements IAnimState{
   private animations = new Map<Direction, AnimatedSprite>();
@@ -30,7 +30,7 @@ export class IdleAnim implements IAnimState{
     this.animations.set(Direction.LEFT, left);
   }
 
-  public play(player: Player) {
+  public play(player: PlayerInfo) {
     const dir = player.movingDirection ?? Direction.BOTTOM;
     if (dir === this.lastDir && this.current) {
       return;

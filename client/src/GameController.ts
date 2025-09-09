@@ -11,7 +11,6 @@ import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
 import { BlockService } from "./core/BlockService";
 import type PlayerInfo from "../../shared/PlayerInfo";
-import { PlayerState } from "../../shared/PlayerState";
 import { CHUNK_SIZE, KNOCKBACK_TIMER, TILE_SIZE } from "./constantes";
 import { TeleportService } from "./core/TeleportService";
 
@@ -20,16 +19,18 @@ export class GameController {
     private gameState: GameState;
     private eventBus = new EventBus();
     private inputHandler = new InputHandler();
-    private coordinateService: CoordinateService;
     private renderer: Renderer;
-    private movementService: MovementService;
-    private attackService: AttackService;
-    private blockService: BlockService
     private localPlayerId: string | null = null;
     private currentChunkX?: number;
     private currentChunkY?: number;
-    private teleportService: TeleportService;
+    private localPlayer: Player | undefined;
 
+    // Services
+    private coordinateService: CoordinateService;
+    private attackService: AttackService;
+    private blockService: BlockService
+    private teleportService: TeleportService;
+    private movementService: MovementService;
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
         this.setupEventListeners();
         new NetworkClient(serverUrl, this.eventBus);
@@ -37,7 +38,7 @@ export class GameController {
         this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         
-        this.movementService = new MovementService(this.inputHandler,this.eventBus);
+        this.movementService = new MovementService(this.inputHandler);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.eventBus);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
         this.teleportService = new TeleportService(this.inputHandler, this.coordinateService, this.eventBus);
@@ -54,6 +55,9 @@ export class GameController {
         // Snapshot complet au spawn
         this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
             this.gameState.restorePlayers(players);
+            this.localPlayer = new Player("",{x:0,y:0},100,10,this.localPlayerId!,this.eventBus,this.inputHandler, this.attackService,this.movementService);
+            let localPlayer = this.gameState.getPlayer(this.localPlayerId!);
+            this.localPlayer.updateFromInfo(localPlayer!);
         });
 
         // MAJ unique pour tout changement de joueur
@@ -90,11 +94,11 @@ export class GameController {
 
         // Knockback si bloqué
         if (attackResult.blockedBy && attackResult.attackerId === this.localPlayerId) {
-            this.attackService.attackGotBlocked(
-                this.gameState.players.get(this.localPlayerId)!, //todo remove "!"
-                attackResult.blockedBy.id,
-                attackResult.knockbackStrength
-            );
+            // this.attackService.attackGotBlocked(
+            //     // this.gameState.players.get(this.localPlayerId)!, //todo remove "!"
+            //     attackResult.blockedBy.id,
+            //     attackResult.knockbackStrength
+            // );
         }
 
         // MAJ des joueurs touchés
@@ -120,10 +124,10 @@ export class GameController {
             return;
         }
         // If player is blocking
-        if (player.getState() === PlayerState.BLOCKING) // todo check if in correction direction serverside
-        {
-            didBlock = true;
-        }
+        // if (player.getState() === PlayerState.BLOCKING) // todo check if in correction direction serverside
+        // {
+        //     didBlock = true;
+        // }
         this.renderer.updateHealthBar(player.hp, 100);
         const dx = player.position.x - attacker.position.x;
         const dy = player.position.y - attacker.position.y;
@@ -134,7 +138,7 @@ export class GameController {
             x: (dx / len) * knockbackStrength,
             y: (dy / len) * knockbackStrength,
         };
-        if (!didBlock) player.setState(PlayerState.HIT);
+        // if (!didBlock) player.setState(PlayerState.HIT);
         player.knockbackTimer = KNOCKBACK_TIMER; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
     }
 
@@ -161,7 +165,7 @@ export class GameController {
         player.position.y += player.mouseDirection.y * speed;
 
         player.attackDashTimer -= delta;
-        player.setState(PlayerState.ATTACK_DASH);
+        // player.setState(PlayerState.ATTACK_DASH);
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
         if (player.attackDashTimer <= 0) {
@@ -172,67 +176,35 @@ export class GameController {
     }
 
 
-
-    public getPlayerState(playerId: string): Player | undefined {
-        return this.gameState.players.get(playerId);
-    }
-
-    public getLocalPlayerId(): string | null {
-        return this.localPlayerId;
-    }
-
     public update(delta: number) {
 
-        if (!this.localPlayerId) return;
-        const player = this.gameState.players.get(this.localPlayerId);
+        if (!this.localPlayer) return;
+        
 
-        if (!player) return;
-        if (player.isDead) {
-            // Pas d'inputs ni de mouvements
-            return;
-        }
-        this.renderer.updateCamera(player.position)
+        // // Receive knockback
+        // if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceivedVector) {
+        //     player.position.x += player.knockbackReceivedVector.x * delta;
+        //     player.position.y += player.knockbackReceivedVector.y * delta;
+        //     // Ralentissement progressif
+        //     player.knockbackReceivedVector.x *= 0.85;
+        //     player.knockbackReceivedVector.y *= 0.85;
 
-        // Receive knockback
-        if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceivedVector) {
-            player.position.x += player.knockbackReceivedVector.x * delta;
-            player.position.y += player.knockbackReceivedVector.y * delta;
-            // Ralentissement progressif
-            player.knockbackReceivedVector.x *= 0.85;
-            player.knockbackReceivedVector.y *= 0.85;
+        //     player.knockbackTimer -= delta;
+        //     if (player.knockbackTimer <= 0) {
+        //         player.knockbackReceivedVector = undefined;
+        //         player.knockbackTimer = undefined;
+        //     }
+        //     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
-            player.knockbackTimer -= delta;
-            if (player.knockbackTimer <= 0) {
-                player.knockbackReceivedVector = undefined;
-                player.knockbackTimer = undefined;
-            }
-            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
-
-            return;
-        }
+        //     return;
+        // }
 
         // Handle attack dash if ongoing
-        if (player.attackDashTimer && player.attackDashTimer > 0) {
-            this.handleAttackDash(player, delta);
-        } else if (player.blockTimer == undefined || player.blockTimer < 0) {
-            this.movementService.handleMovement(player, delta);
-        }
-
-        // Handle block and canceling attack
-        if (this.attackService.attackOngoing && this.inputHandler.consumeRightClick()) {
-            this.attackService.stopAttack();
-        } else if (this.inputHandler.consumeRightClick()) {
-            this.blockService.startBlock(player);
-        }
-
-        // handle attack
-        if (this.inputHandler.consumeAttack() && !this.attackService.attackOngoing/* && !player.blockTimer < 0*/) {
-            this.attackService.initiateAttack(player);
-        }
+        this.localPlayer.update(delta);
 
         // render world
-        const tileX = Math.floor(player.position.x / TILE_SIZE);
-        const tileY = Math.floor(player.position.y / TILE_SIZE);
+        const tileX = Math.floor(this.localPlayer.position.x / TILE_SIZE);
+        const tileY = Math.floor(this.localPlayer.position.y / TILE_SIZE);
         const chunkX = Math.floor(tileX / CHUNK_SIZE);
         const chunkY = Math.floor(tileY / CHUNK_SIZE);
         if (chunkX != this.currentChunkX || chunkY != this.currentChunkY) {
@@ -241,10 +213,12 @@ export class GameController {
             this.renderer.worldRenderer.update(chunkX, chunkY);
         }
 
+        this.renderer.updateCamera(this.localPlayer.position)
         // Minimap
-        this.renderer.updateMinimap(this.localPlayerId);
-        this.teleportService.update(player, delta);
-        this.blockService.update(player, delta);
-        this.attackService.update(delta, player);
+        this.inputHandler.update();
+        this.renderer.updateMinimap(this.localPlayer.id);
+        this.teleportService.update(this.localPlayer, delta);
+        this.blockService.update(this.localPlayer, delta);
+        this.attackService.update(delta, this.localPlayer);
     }
 }

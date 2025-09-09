@@ -1,7 +1,7 @@
 // anim/AnimController.ts
 
+import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { PlayerState } from "../../../../shared/PlayerState";
-import type Player from "../../core/player/Player";
 import type { IAnimState } from "./anim/IAnimState";
 
 
@@ -20,8 +20,8 @@ export class AnimController {
     private fallback: PlayerState = PlayerState.IDLE
   ) {}
 
-  public update(player: Player) {
-    const logical = player.getState();
+  public update(player: PlayerInfo) {
+    const logical = player.state;
 
     // Si l'état logique change -> transition visuelle
     if (logical !== this.currentLogical) {

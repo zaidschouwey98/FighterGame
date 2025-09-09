@@ -1,15 +1,37 @@
 // core/player/states/IdleState.ts
 import { BaseState } from "./BaseState";
 import { PlayerState } from "../../../../../shared/PlayerState";
+import type Player from "../Player";
+import type { InputHandler } from "../../InputHandler";
+import { EventBusMessage, type EventBus } from "../../EventBus";
 
 export class IdleState extends BaseState {
-  readonly name = PlayerState.IDLE;
+    readonly name = PlayerState.IDLE;
+    constructor(player: Player, private inputHandler: InputHandler, private eventBus:EventBus) {
+        super(player)
+    }
+    enter() {
+        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, this.player.toInfo());
+    }
 
-  enter() {
+    update(_delta: number) {
+        const keys = this.inputHandler.getKeys();
 
-  }
+        // Si des touches de mouvement sont pressées → passer en MovingState
+        if (keys.has("w") || keys.has("a") || keys.has("s") || keys.has("d")) {
+            this.player.changeState(this.player.movingState);
+            return;
+        }
 
-  update(delta: number) {
-    // On ne fait rien de spécial ici
-  }
+        // Si clic gauche → attaque
+        if (this.inputHandler.consumeAttack()) {
+            this.player.changeState(this.player.attackDashState);
+            return;
+        }
+
+        // Si espace → dash
+        if (this.inputHandler.consumeSpaceClick()) {
+            // this.player.changeState(this.player.dashState);
+        }
+    }
 }

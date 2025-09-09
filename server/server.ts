@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 3000;
 
 const players: Record<string, PlayerInfo> = {};
 
-io.on("connection", (socket) => {
+io.on("connection", (socket) => { // RESERVED MESSAGE
   console.log(`Player connected: ${socket.id}`);
 
   // Ajouter le joueur avec une position aléatoire
@@ -127,7 +127,7 @@ io.on("connection", (socket) => {
   });
 
   // Déconnexion
-  socket.on(ClientToSocketMsg.DISCONNECT, () => {
+  socket.on("disconnect", () => { // RESERVED MESSAGE
     console.log(`Player disconnected: ${socket.id}`);
     delete players[socket.id];
     io.emit(ServerToSocketMsg.DISCONNECT, socket.id);

@@ -7,6 +7,7 @@ import { HitboxValidationService } from "./HitboxValidationService";
 import { AttackResult } from "../shared/AttackResult";
 import PlayerInfo from "../shared/PlayerInfo"
 import path from "path";
+import { Direction } from "../shared/Direction";
 
 const app = express();
 const server = http.createServer(app);
@@ -38,6 +39,7 @@ io.on("connection", (socket) => {
     speed: 10,
     id: socket.id,
     state: PlayerState.IDLE,
+    movingDirection: Direction.BOTTOM,
     attackIndex: 0,
     dashDir: {
       x: 0,

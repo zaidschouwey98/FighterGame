@@ -74,7 +74,7 @@ export class Renderer {
             }
         });
 
-        this._eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
+        this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackResult: AttackResult) => {
             
         });
 

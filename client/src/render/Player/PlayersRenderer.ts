@@ -1,7 +1,6 @@
 import { Container, Spritesheet } from "pixi.js";
 import type Player from "../../core/player/Player";
 import PlayerSprite from "./PlayerSprite";
-import type { AttackData } from "../../../../shared/AttackData";
 
 export default class PlayersRenderer {
     private playerContainers: Map<string, Container>;

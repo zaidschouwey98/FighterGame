@@ -55,7 +55,7 @@ export class AttackService {
         // Direction du dash
         player.mouseDirection = { x: dx / len, y: dy / len };
         // Paramètres du dash
-        player.attackDashDuration = DASH_ATTACK_DURATION; // TODO CONSTANTE
+        player.attackDashDuration = DASH_ATTACK_DURATION;
         player.attackDashTimer = player.attackDashDuration;
         player.setState(PlayerState.ATTACK_DASH);
         this.isAttackReady = false;
@@ -90,8 +90,6 @@ export class AttackService {
         } as AttackData);
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
         this._attackOnGoing = false;
-        player.setState(PlayerState.IDLE);
-        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player.toInfo());
     }
 
     public attackGotBlocked(attacker: Player, blockerId: string, totalKnockbackStrength: number) {

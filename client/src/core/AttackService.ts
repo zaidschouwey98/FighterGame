@@ -33,7 +33,7 @@ export class AttackService {
         }
     }
 
-    /** Prépare une attaque (dash inclus) */
+    /** Prépare une attaque (dash) */
     public initiateAttack(player: Player) {
         if (!this.isAttackReady()) return;
 

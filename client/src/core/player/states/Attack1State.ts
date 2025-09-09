@@ -16,8 +16,9 @@ export class Attack1State extends BaseState {
   enter() {
     // Déclenchement attaque (hitbox envoyée)
     let attackData = this.attackService.performAttack(this.player);
-    if(!attackData) return;
+    if(!attackData) throw new Error("AttackData shouldn't be unset.");
     this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
+    this.eventBus.emit(EventBusMessage.PLAYER_UPDATED,this.player.toInfo());
     this.timer = 1; // court délai pour animer
   }
 

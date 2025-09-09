@@ -39,7 +39,7 @@ export class GameController {
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         
         this.movementService = new MovementService(this.inputHandler);
-        this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.eventBus);
+        this.attackService = new AttackService(this.inputHandler, this.coordinateService);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
         this.teleportService = new TeleportService(this.inputHandler, this.coordinateService, this.eventBus);
 

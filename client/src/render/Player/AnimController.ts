@@ -22,7 +22,7 @@ export class AnimController {
 
   public update(player: PlayerInfo) {
     const logical = player.state;
-
+    console.log(logical)
     // Si l'état logique change -> transition visuelle
     if (logical !== this.currentLogical) {
 

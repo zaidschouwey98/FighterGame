@@ -11,7 +11,7 @@ export class IdleState extends BaseState {
         super(player)
     }
     enter() {
-        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, this.player.toInfo());
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
 
     update(_delta: number) {

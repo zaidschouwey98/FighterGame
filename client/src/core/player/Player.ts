@@ -11,7 +11,6 @@ import type { InputHandler } from "../InputHandler";
 import { AttackDashState } from "./states/AttackDashState";
 import { Attack1State } from "./states/Attack1State";
 import { AttackService } from "../AttackService";
-import { CoordinateService } from "../CoordinateService";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -74,9 +73,8 @@ export default class Player {
 
     public changeState(nextState:BaseState) {
         this.currentState.exit();
-        nextState.enter();
         this.currentState = nextState;
-        console.log(this.currentState.name)
+        nextState.enter(); 
     }
 
     get state(): PlayerState {

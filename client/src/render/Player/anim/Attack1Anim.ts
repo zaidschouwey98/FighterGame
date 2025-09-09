@@ -4,20 +4,20 @@ import type { EffectRenderer } from "../../EffectRenderer";
 import { PlayerState } from "../../../../../shared/PlayerState";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
 
-export class Attack1Anim implements IAnimState{
+export class Attack1Anim implements IAnimState {
     constructor(
         spriteSheets: Spritesheet[],
         playerContainer: Container,
         private effectRenderer: EffectRenderer
-    ){
+    ) {
 
     }
-    
+
     play(player: PlayerInfo): void {
-        
+
     }
     stop(): void {
-        
+
     }
     enter?(player: PlayerInfo): void {
         this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.mouseDirection);

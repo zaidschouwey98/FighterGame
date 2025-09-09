@@ -1,11 +1,11 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
 import AnimHelper from "../../../helper/AnimHelper";
 import type { IAnimState } from "./IAnimState";
 import type { EffectRenderer } from "../../EffectRenderer";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import { DASH_ATTACK_DURATION } from "../../../constantes";
 
 
 
@@ -19,7 +19,6 @@ export class AttackDashAnim implements IAnimState{
     playerContainer: Container,
     private effectRenderer: EffectRenderer
   ) {
-    const speed = 0.25;
     const loop = false;
 
     // RIGHT
@@ -48,7 +47,7 @@ export class AttackDashAnim implements IAnimState{
     const all = [right, left, top, bottom, tr, tl, br, bl];
     for (const s of all) {
       s.visible = false;
-      s.animationSpeed = speed;
+      s.animationSpeed = s.totalFrames/DASH_ATTACK_DURATION;
       s.loop = loop;           // dash souvent one-shot => false par défaut
       s.anchor.set(0.5);
       playerContainer.addChild(s);

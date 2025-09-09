@@ -25,7 +25,6 @@ export class MovingState extends BaseState{
 
     if (dx === 0 && dy === 0) {
       this.player.changeState(this.player.idleState);
-      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
       return;
     }
 

@@ -35,10 +35,9 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
         })
 
-        // SENDING TO SOCKET
+        // SENDING TO SOCKET    
         this.eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attackData: AttackData) => {
             this.socket.emit(ClientToSocketMsg.ATTACK, attackData);
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, GameState.instance.getPlayer(attackData.playerId));
         });
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_UPDATED, (playerInfo) => {

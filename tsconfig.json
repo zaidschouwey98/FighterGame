@@ -8,5 +8,5 @@
     "outDir": "./dist",
     "rootDir": "./"
   },
-  "include": ["server/**/*.ts", "shared"]
+  "include": ["server/**/*.ts", "shared", "client/src/core/player/Player.ts"]
 }

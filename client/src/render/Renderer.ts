@@ -1,13 +1,17 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import PlayerRenderer from "./PlayerRenderer";
+import PlayersRenderer from "./Player/PlayersRenderer";
 import { WorldRenderer } from "./WorldRenderer";
 import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
-import { Minimap } from "./Minimap";
+import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
-import { HpBar } from "./HpBar";
+import { HpBar } from "./UI/HpBar";
+import type PlayerInfo from "../../../shared/PlayerInfo";
+import type { EventBus } from "../core/EventBus";
+import type { AttackData } from "../../../shared/AttackData";
 
 export class Renderer {
+    private _eventBus:EventBus;
 
     private _pixiApp: Application;
 
@@ -20,13 +24,14 @@ export class Renderer {
     private _overlayContainer: Container;
     private _uiContainer: Container;
 
-    private _playerRenderer: PlayerRenderer;
+    private _playersRenderer: PlayersRenderer;
     private _worldRenderer: WorldRenderer;
 
     private _camera: CameraService;
     private _hpBar: HpBar;
 
-    constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], seed: string = "seed") {
+    constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], eventBus:EventBus, seed: string = "seed") {
+        this._eventBus = eventBus;
         this._camera = new CameraService();
 
         this._pixiApp = app;
@@ -47,10 +52,41 @@ export class Renderer {
 
         this._minimap = new Minimap(app, this._uiContainer, 200);
         this._hpBar = new HpBar(this._uiContainer, 100, 100, 200, 60);
-        this._playerRenderer = new PlayerRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
+        this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
+        this.registerListeners();
+    }
 
+    private registerListeners() {
+        // Quand un joueur est mis à jour
+        this._eventBus.on("player:updated", (player: PlayerInfo) => {
+            const updated = GameState.instance.players.get(player.id);
+            if (updated) {
+                this._playersRenderer.updatePlayers([updated]);
+            }
+        });
+
+        // Nouvel arrivant
+        this._eventBus.on("player:joined", (player: PlayerInfo) => {
+            this._playersRenderer.addNewPlayer(GameState.instance.players.get(player.id)!);
+        });
+
+        // Joueur parti
+        this._eventBus.on("player:left", (playerId: string) => {
+            this._playersRenderer.removePlayer(playerId);
+        });
+
+        // Attaque effectuée
+        this._eventBus.on("attack:performed", (attackData: AttackData) => {
+            // this._playersRenderer.showAttackEffect(attackData);
+        });
+
+        // Joueur mort
+        this._eventBus.on("player:died", (player: PlayerInfo) => {
+            const dead = GameState.instance.players.get(player.id);
+            // if (dead) this._playersRenderer.renderDyingPlayer(dead);
+        });
     }
 
     updateMinimap(localPlayerId: string) {
@@ -72,7 +108,7 @@ export class Renderer {
         }
     }
 
-    updateHealthBar(currentHealth:number, maxHealth:number){
+    updateHealthBar(currentHealth: number, maxHealth: number) {
         this._hpBar.update(currentHealth, maxHealth)
     }
 
@@ -86,9 +122,11 @@ export class Renderer {
         return this._camera;
     }
 
-    public get playerRenderer(): PlayerRenderer {
-        return this._playerRenderer;
+    
+    public get playersRenderer() : PlayersRenderer {
+        return this.playersRenderer;
     }
+    
 
     public get worldRenderer(): WorldRenderer {
         return this._worldRenderer;

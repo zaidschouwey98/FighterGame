@@ -1,4 +1,4 @@
-import { Action } from "./Action";
+import { PlayerState } from "./PlayerState";
 
 export interface AttackData {
     playerId: string;
@@ -12,5 +12,5 @@ export interface AttackData {
         range: number;
         arcAngle: number;
     };
-    playerAction:Action;
+    playerAction:PlayerState;
 }

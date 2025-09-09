@@ -1,12 +1,12 @@
 import { AttackHitboxService } from "./AttackHitboxService";
-import { NetworkClient } from "../network/NetworkClient";
 import { CoordinateService } from "./CoordinateService";
 import { InputHandler } from "./InputHandler";
-import type Player from "../../../shared/Player";
-import { Action } from "../../../shared/Action";
-import DashHelper from "../helper/DashHelper";
+import type Player from "./player/Player";
+import { PlayerState } from "../../../shared/PlayerState";
 import { GameState } from "./GameState";
 import { ATTACK_COOLDOWN, ATTACK_RESET, ATTACK_SEQUENCE, DASH_ATTACK_DURATION, KNOCKBACK_TIMER } from "../constantes";
+import type { EventBus } from "./EventBus";
+import type { AttackData } from "../../../shared/AttackData";
 
 export class AttackService {
     private attackResetTimer: number = ATTACK_RESET;
@@ -17,7 +17,7 @@ export class AttackService {
     constructor(
         private inputHandler: InputHandler,
         private coordinateService: CoordinateService,
-        private network: NetworkClient
+        private eventBus: EventBus,
     ) { }
 
     public update(delta: number, player: Player) {
@@ -59,20 +59,19 @@ export class AttackService {
         player.attackDashDuration = DASH_ATTACK_DURATION; // TODO CONSTANTE
         player.attackDashTimer = player.attackDashDuration;
         player.pendingAttackDir = dir;
-        player.pendingAttack = true;
-        player.currentAction = DashHelper.getDashAttackActionByVector(player.dashDir)
-        this.network.dash({ x: player.position.x, y: player.position.y }, DashHelper.getDashAttackActionByVector(player.dashDir))
-
+        player.setState(PlayerState.ATTACK_DASH);
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;
         this.attackResetTimer = ATTACK_RESET;
+        this.eventBus.emit("player:updated", player);
     }
 
 
     public performAttack(player: Player, _Unuseddir: number) {
         if (!this._attackOnGoing)
             return;
-        player.currentAction = ATTACK_SEQUENCE[player.attackIndex] as Action;
+        player.setState(ATTACK_SEQUENCE[player.attackIndex] as PlayerState);
+
         //// remove if too overpowered
         const mousePos = this.inputHandler.getMousePosition();
         const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
@@ -81,38 +80,32 @@ export class AttackService {
         let dir = Math.atan2(dy, dx);
         ////
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
-
-
-
-
-        this.network.attack({
+        this.eventBus.emit("attack:performed", {
             playerId: player.id,
-            knockbackStrength: 15, // TODO CHANGE WHEN CHANGING ATTACK
-            position: { ...player.position },
+            position: {...player.position},
             rotation: dir,
-            hitbox,
-            playerAction: player.currentAction
-        });
+            knockbackStrength: 15,// TODO: constante/configurable
+            hitbox: hitbox,
+            playerAction: player.getState()
+
+        } as AttackData);
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
-        player.currentAction = Action.IDLE_DOWN;
         this._attackOnGoing = false;
 
     }
 
-    public attackGotBlocked(attacker: Player, blockerId:string, totalKnockbackStrength:number) {
+    public attackGotBlocked(attacker: Player, blockerId: string, totalKnockbackStrength: number) {
         const blocker = GameState.instance.players.get(blockerId);
         if (!blocker) return;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;
         const dx = attacker.position.x - blocker.position.x;
         const dy = attacker.position.y - blocker.position.y;
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-
-        attacker.knockbackReceived = {
-            x: (dx / len) * totalKnockbackStrength*2,
-            y: (dy / len) * totalKnockbackStrength*2,
+        attacker.knockbackReceivedVector = {
+            x: (dx / len) * totalKnockbackStrength * 2,
+            y: (dy / len) * totalKnockbackStrength * 2,
         };
-        attacker.knockbackTimer = KNOCKBACK_TIMER*2;
+        attacker.knockbackTimer = KNOCKBACK_TIMER * 2;
     }
 
 

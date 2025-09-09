@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../shared/Action.ts", "../shared/Player.ts", "../shared/Position.ts"]
+  "include": ["src", "../shared/PlayerState.ts", "src/core/player/Player.ts", "../shared/Position.ts"]
 }

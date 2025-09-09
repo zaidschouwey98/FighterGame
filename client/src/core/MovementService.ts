@@ -1,12 +1,12 @@
-import { Action } from "../../../shared/Action";
-import type Player from "../../../shared/Player";
+import { PlayerState } from "../../../shared/PlayerState";
+import type Player from "./player/Player";
 import { NetworkClient } from "../network/NetworkClient";
-import type { Renderer } from "../render/Renderer";
 import { InputHandler } from "./InputHandler";
+import { TILE_SIZE } from "../constantes";
 
 export class MovementService {
     private isMoving:boolean = false;
-    constructor(private inputHandler: InputHandler, private network: NetworkClient, private renderer:Renderer) {}
+    constructor(private inputHandler: InputHandler, private network: NetworkClient) {}
 
     public handleMovement(player: Player, delta: number) {
         let dx = 0, dy = 0;
@@ -16,47 +16,22 @@ export class MovementService {
         if (this.inputHandler.getKeys().has("a")) dx -= 1;
         if (this.inputHandler.getKeys().has("d")) dx += 1;
 
-        let newAction = player.currentAction;
-
         if (dx !== 0 || dy !== 0) {
             this.isMoving = true;
             const length = Math.sqrt(dx * dx + dy * dy);
             dx /= length;
             dy /= length;
-
-            player.position.x += dx * player.speed * 16 * delta / 60;
-            player.position.y += dy * player.speed * 16 * delta / 60;
-
-            if (dx > 0) newAction = Action.MOVE_RIGHT;
-            else if (dx < 0) newAction = Action.MOVE_LEFT;
-            else if (dy > 0) newAction = Action.MOVE_DOWN;
-            else if (dy < 0) newAction = Action.MOVE_TOP;
-            player.currentAction = newAction;
-            this.renderer.playerRenderer.updatePlayers([player]);
-            this.network.move({ x: player.position.x, y: player.position.y }, newAction);    
+            player.position.x += dx * player.speed * TILE_SIZE * delta / 60; 
+            player.position.y += dy * player.speed * TILE_SIZE * delta / 60;
+            player.setState(PlayerState.MOVING);
+            this.network.move({ x: player.position.x, y: player.position.y }, PlayerState.MOVING);    
         } else {
             
             if(this.isMoving){
                 this.isMoving = false;
-                newAction = this.computeIdleAction(player.currentAction);
-                this.network.stopMoving(newAction);
-                player.currentAction = newAction;
-                this.renderer.playerRenderer.updatePlayers([player]);
-
+                player.setState(PlayerState.IDLE);
+                this.network.stopMoving(player.getState());
             }
-            
-        }
-
-        
-        
-    }
-
-    private computeIdleAction(currentAction: Action): Action {
-        switch (currentAction) {
-            case Action.MOVE_RIGHT: return Action.IDLE_RIGHT;
-            case Action.MOVE_LEFT:  return Action.IDLE_LEFT;
-            case Action.MOVE_TOP:   return Action.IDLE_TOP;
-            default: return Action.IDLE_DOWN;
         }
     }
 }

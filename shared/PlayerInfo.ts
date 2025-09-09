@@ -1,4 +1,4 @@
-import { Action } from "./Action";
+import { PlayerState } from "./PlayerState";
 import { Direction } from "./Direction";
 import Position from "./Position";
 
@@ -8,8 +8,7 @@ export default interface PlayerInfo {
     speed: number;
     id: string;
     name?:string;
-    _currentAction: Action;
-    currentDirection?: Direction;
+    state:PlayerState;
 
     pendingAttackDir?: number;
     pendingAttack?: boolean;
@@ -24,7 +23,7 @@ export default interface PlayerInfo {
     dashDir: { x: number; y: number };
     attackDashMaxSpeed: number;
 
-    knockbackReceived?: { x: number; y: number };
+    knockbackReceivedVector?: { x: number; y: number };
     knockbackTimer?: number;
     isDead:boolean;
     hitFlashTimer?: number;

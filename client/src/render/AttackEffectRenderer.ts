@@ -1,10 +1,10 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Action } from "../../../shared/Action";
+import { PlayerState } from "../../../shared/PlayerState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
 
 export class EffectRenderer {
-    private animations: Partial<Record<Action, AnimatedSprite>> = {};
+    private animations: Partial<Record<PlayerState, AnimatedSprite>> = {};
     private attackEffectContainer: Container;
     private staticEffectsContainer:Container;
     private spriteSheets:Spritesheet[];
@@ -13,8 +13,8 @@ export class EffectRenderer {
         this.spriteSheets = spriteSheets;
         this.attackEffectContainer = new Container();
         playerContainer.addChild(this.attackEffectContainer);
-        this.animations[Action.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
-        this.animations[Action.ATTACK_2] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
+        this.animations[PlayerState.ATTACK_1] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
+        this.animations[PlayerState.ATTACK_2] = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
 
         for (const anim of Object.values(this.animations)) {
             anim.visible = false;
@@ -67,8 +67,8 @@ export class EffectRenderer {
         this.staticEffectsContainer.addChild(tp_effect)
     }
 
-    renderAttackEffect(action: Action, rotation: number) {
-        if (action != Action.ATTACK_1 && action != Action.ATTACK_2 && action != Action.ATTACK_3)
+    renderAttackEffect(action: PlayerState, rotation: number) {
+        if (action != PlayerState.ATTACK_1 && action != PlayerState.ATTACK_2 && action != PlayerState.ATTACK_3)
             return;
         this.animations[action]!.visible = true;
         this.animations[action]!.loop = false;

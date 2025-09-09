@@ -1,20 +1,20 @@
-import { Action } from "../../../shared/Action";
+import { PlayerState } from "../../../shared/PlayerState";
 
 export default class DashHelper {
-    public static getDashAttackActionByVector(vector: { x: number, y: number }): Action {
+    public static getDashAttackActionByVector(vector: { x: number, y: number }): PlayerState {
         const angle = Math.atan2(vector.y, vector.x);
         const deg = (angle * 180) / Math.PI;
 
-        if (deg >= -22.5 && deg < 22.5) return Action.ATTACK_DASH_RIGHT;
-        if (deg >= 22.5 && deg < 67.5) return Action.ATTACK_DASH_BOTTOM_RIGHT;
-        if (deg >= 67.5 && deg < 112.5) return Action.ATTACK_DASH_BOTTOM;
-        if (deg >= 112.5 && deg < 157.5) return Action.ATTACK_DASH_BOTTOM_LEFT;
-        if (deg >= 157.5 || deg < -157.5) return Action.ATTACK_DASH_LEFT;
-        if (deg >= -157.5 && deg < -112.5) return Action.ATTACK_DASH_TOP_LEFT;
-        if (deg >= -112.5 && deg < -67.5) return Action.ATTACK_DASH_TOP;
-        if (deg >= -67.5 && deg < -22.5) return Action.ATTACK_DASH_TOP_RIGHT;
+        if (deg >= -22.5 && deg < 22.5) return PlayerState.ATTACK_DASH_RIGHT;
+        if (deg >= 22.5 && deg < 67.5) return PlayerState.ATTACK_DASH_BOTTOM_RIGHT;
+        if (deg >= 67.5 && deg < 112.5) return PlayerState.ATTACK_DASH_BOTTOM;
+        if (deg >= 112.5 && deg < 157.5) return PlayerState.ATTACK_DASH_BOTTOM_LEFT;
+        if (deg >= 157.5 || deg < -157.5) return PlayerState.ATTACK_DASH_LEFT;
+        if (deg >= -157.5 && deg < -112.5) return PlayerState.ATTACK_DASH_TOP_LEFT;
+        if (deg >= -112.5 && deg < -67.5) return PlayerState.ATTACK_DASH_TOP;
+        if (deg >= -67.5 && deg < -22.5) return PlayerState.ATTACK_DASH_TOP_RIGHT;
 
-        return Action.ATTACK_DASH_RIGHT; // fallback
+        return PlayerState.ATTACK_DASH_RIGHT; // fallback
     }
 
     public static dashSpeedFactor(t: number, freezeRatio = 0.25, p = 3): number {

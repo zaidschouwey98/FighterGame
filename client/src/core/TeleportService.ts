@@ -1,9 +1,9 @@
-import { Action } from "../../../shared/Action";
+import { PlayerState } from "../../../shared/PlayerState";
 import { TP_COOLDOWN, TP_DISTANCE } from "../constantes";
-import type { NetworkClient } from "../network/NetworkClient";
 import type { CoordinateService } from "./CoordinateService";
+import type { EventBus } from "./EventBus";
 import type { InputHandler } from "./InputHandler";
-import type { LocalPlayer } from "./LocalPlayer";
+import type Player from "./player/Player";
 
 export class TeleportService {
   private teleportCooldown = TP_COOLDOWN;
@@ -12,30 +12,21 @@ export class TeleportService {
   constructor(
     private inputHandler: InputHandler,
     private coordinateService: CoordinateService,
-    private network: NetworkClient
+    private eventBus: EventBus
   ) {}
 
-  /**
-   * Appelé chaque frame
-   */
-  public update(player: LocalPlayer, delta: number) {
+  public update(player: Player, delta: number) {
     if (this.teleportCooldown > 0) {
       this.teleportCooldown -= delta;
       if (this.teleportCooldown < 0) this.teleportCooldown = 0;
     }
-
-    // Si espace est pressé et cooldown fini
     if (this.inputHandler.consumeSpaceClick() && this.teleportCooldown === 0) {
       this.teleportPlayer(player);
-      this.teleportCooldown = TP_COOLDOWN; // Reset cooldown
+      this.teleportCooldown = TP_COOLDOWN;
     }
   }
 
-  /**
-   * Téléporte le joueur dans la direction de la souris
-   */
-  private teleportPlayer(player: LocalPlayer) {
-    // Position souris dans le monde
+  private teleportPlayer(player: Player) {
     const mousePos = this.inputHandler.getMousePosition();
     const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
 
@@ -43,21 +34,13 @@ export class TeleportService {
     const dy = worldMousePos.y - player.position.y;
     const len = Math.sqrt(dx * dx + dy * dy);
 
-
-
-    // Calcul nouvelle position // LEN POUR NORMALISER
     const newX = player.position.x + (dx / len) * this.teleportDistance;
     const newY = player.position.y + (dy / len) * this.teleportDistance;
 
-    // Appliquer la position
     player.position.x = newX;
     player.position.y = newY;
     
-    // Déclencher animation/action
-    player.currentAction = Action.TELEPORT;
-
-    // Synchroniser avec le serveur
-    this.network.move({ x: newX, y: newY }, player.currentAction);
-
+    player.setState(PlayerState.TELEPORTING);
+    this.eventBus.emit("player:updated", player);
   }
 }

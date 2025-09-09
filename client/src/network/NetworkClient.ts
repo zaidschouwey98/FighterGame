@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import type { EventBus } from "../core/EventBus";
+import { EventBusMessage, type EventBus } from "../core/EventBus";
 import Player from "../core/player/Player";
 import type { PlayerState } from "../../../shared/PlayerState";
 import type { AttackData } from "../../../shared/AttackData";
@@ -12,28 +12,28 @@ export class NetworkClient {
         this.socket = io(serverUrl);
         this.socket.on("connect", () => {
             console.log("Connecté au serveur", this.socket.id);
-            this.eventBus.emit("connected", this.socket.id);
+            this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
         });
         this.socket.on("currentPlayers", (players: PlayerInfo[]) => {
                 
-                this.eventBus.emit("players:init", Object.values(players));
+                this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
             });
 
-        this.socket.on("attackResult", (attackResult: AttackResult) => this.eventBus.emit("player:attackedResult", attackResult));
+        // this.socket.on("attackResult", (attackResult: AttackResult) => this.eventBus.emit("player:attackedResult", attackResult));
         this.socket.on("newPlayer", (player: PlayerInfo) => {
-            this.eventBus.emit("player:joined", player);
+            this.eventBus.emit(EventBusMessage.PLAYER_JOINED, player);
         });
 
         this.socket.on("playerDisconnected", (playerId: string) => {
-            this.eventBus.emit("player:left", playerId);
+            this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
         });
 
         // SENDING TO SOCKET
-        this.eventBus.on("attack:performed", (attackData) => {
+        this.eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData) => {
             this.socket.emit("attack", attackData);
         });
 
-        this.eventBus.on("player:updated", (playerInfo) => {
+        this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (playerInfo) => {
             this.socket.emit("playerUpdate", playerInfo);
         });
     }

@@ -1,7 +1,7 @@
 import { PlayerState } from "../../../shared/PlayerState";
 import { TP_COOLDOWN, TP_DISTANCE } from "../constantes";
 import type { CoordinateService } from "./CoordinateService";
-import type { EventBus } from "./EventBus";
+import { EventBusMessage, type EventBus } from "./EventBus";
 import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
 
@@ -13,7 +13,7 @@ export class TeleportService {
     private inputHandler: InputHandler,
     private coordinateService: CoordinateService,
     private eventBus: EventBus
-  ) {}
+  ) { }
 
   public update(player: Player, delta: number) {
     if (this.teleportCooldown > 0) {
@@ -39,8 +39,9 @@ export class TeleportService {
 
     player.position.x = newX;
     player.position.y = newY;
-    
+
     player.setState(PlayerState.TELEPORTING);
-    this.eventBus.emit("player:updated", player);
+    this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+
   }
 }

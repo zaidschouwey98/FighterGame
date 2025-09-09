@@ -51,8 +51,22 @@ export default class PlayersRenderer {
 
     public updatePlayers(players: Player[]) {
         for (const player of players) {
-            const sprite = this.playerSprites.get(player.id);
-            if (sprite) sprite.update(player);
+            let playerContainer = this.playerContainers.get(player.id);
+            let playerSprite = this.playerSprites.get(player.id);
+
+            // Si le joueur n'existe pas encore, créez-le
+            if (!playerContainer || !playerSprite) {
+                this.addNewPlayer(player);
+                playerContainer = this.playerContainers.get(player.id);
+                playerSprite = this.playerSprites.get(player.id);
+            }
+
+            if (!playerContainer || !playerSprite) continue;
+
+            // Mise à jour de la position
+            playerContainer.x = player.position.x;
+            playerContainer.y = player.position.y;
+            if (playerSprite) playerSprite.update(player);
         }
     }
     // public renderDyingPlayer(player: Player) {

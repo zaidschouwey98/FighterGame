@@ -1,7 +1,7 @@
 import { PlayerState } from "../../../shared/PlayerState";
 import { BLOCK_COOLDOWN, BLOCK_DURATION } from "../constantes";
 import type { CoordinateService } from "./CoordinateService";
-import type { EventBus } from "./EventBus";
+import { EventBusMessage, type EventBus } from "./EventBus";
 import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
 
@@ -28,7 +28,7 @@ export class BlockService {
     const len = Math.sqrt(dx * dx + dy * dy);
     player.blockDir = { x: dx / len, y: dy / len };
     player.setState(PlayerState.BLOCKING);
-    this.eventBus.emit("player:updated", player);
+    this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
 
   }
 
@@ -49,7 +49,7 @@ export class BlockService {
       this.blockCooldown = BLOCK_COOLDOWN;
       player.blockTimer = undefined;
       player.setState(PlayerState.IDLE);
-      this.eventBus.emit("player:updated", player);
+      this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
     }
   }
 }

@@ -2,6 +2,7 @@ import { PlayerState } from "../../../../shared/PlayerState";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import Position from "../../../../shared/Position";
 import { FSM } from "./FSM";
+import { Direction } from "../../../../shared/Direction";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -13,6 +14,7 @@ export default class Player {
     public playerName?: string;
     public isDead: boolean = false;
     public position: Position;
+    public movingDirection: Direction = Direction.BOTTOM;
 
     public pendingAttackDir?: number;
     public attackIndex: number = 0;
@@ -44,6 +46,10 @@ export default class Player {
 
         this.fsm.allow(PlayerState.IDLE, PlayerState.ATTACK_DASH);
         this.fsm.allow(PlayerState.IDLE, PlayerState.KNOCKBACK);
+        this.fsm.allow(PlayerState.IDLE, PlayerState.MOVING);
+        this.fsm.allow(PlayerState.MOVING, PlayerState.IDLE);
+        this.fsm.allow(PlayerState.IDLE, PlayerState.IDLE);
+        this.fsm.allow(PlayerState.MOVING, PlayerState.MOVING);
         this.fsm.allow(PlayerState.ATTACK_DASH, PlayerState.IDLE);
         this.fsm.allow(PlayerState.IDLE, PlayerState.BLOCKING);
         this.fsm.allow(PlayerState.BLOCKING, PlayerState.IDLE);
@@ -84,6 +90,7 @@ export default class Player {
         player.knockbackTimer = info.knockbackTimer;
         player.pendingAttackDir = info.pendingAttackDir;
         player.isDead = info.isDead;
+        player.movingDirection = info.movingDirection;
         player.setState(info.state);
 
         return player;
@@ -102,6 +109,8 @@ export default class Player {
         this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.knockbackTimer = info.knockbackTimer;
         this.pendingAttackDir = info.pendingAttackDir;
+        this.movingDirection = info.movingDirection;
+
         this.isDead = info.isDead;
         this.setState(info.state);
     }

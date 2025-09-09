@@ -9,6 +9,7 @@ export default interface PlayerInfo {
     id: string;
     name?:string;
     state:PlayerState;
+    movingDirection:Direction;
 
     pendingAttackDir?: number;
     pendingAttack?: boolean;

@@ -7,7 +7,7 @@ import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
 import { HpBar } from "./UI/HpBar";
 import type PlayerInfo from "../../../shared/PlayerInfo";
-import type { EventBus } from "../core/EventBus";
+import { EventBusMessage, type EventBus } from "../core/EventBus";
 import type { AttackData } from "../../../shared/AttackData";
 
 export class Renderer {
@@ -59,8 +59,15 @@ export class Renderer {
     }
 
     private registerListeners() {
+        this._eventBus.on(EventBusMessage.PLAYERS_INIT, (players:PlayerInfo[])=>{
+            for(const player of players){
+                let p = GameState.instance.players.get(player.id);
+                if(p) this._playersRenderer.addNewPlayer(p);
+            }
+        })
+
         // Quand un joueur est mis à jour
-        this._eventBus.on("player:updated", (player: PlayerInfo) => {
+        this._eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
             const updated = GameState.instance.players.get(player.id);
             if (updated) {
                 this._playersRenderer.updatePlayers([updated]);
@@ -68,22 +75,22 @@ export class Renderer {
         });
 
         // Nouvel arrivant
-        this._eventBus.on("player:joined", (player: PlayerInfo) => {
+        this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this._playersRenderer.addNewPlayer(GameState.instance.players.get(player.id)!);
         });
 
         // Joueur parti
-        this._eventBus.on("player:left", (playerId: string) => {
+        this._eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
             this._playersRenderer.removePlayer(playerId);
         });
 
         // Attaque effectuée
-        this._eventBus.on("attack:performed", (attackData: AttackData) => {
+        this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData: AttackData) => {
             // this._playersRenderer.showAttackEffect(attackData);
         });
 
         // Joueur mort
-        this._eventBus.on("player:died", (player: PlayerInfo) => {
+        this._eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
             const dead = GameState.instance.players.get(player.id);
             // if (dead) this._playersRenderer.renderDyingPlayer(dead);
         });

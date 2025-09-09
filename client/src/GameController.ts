@@ -4,7 +4,7 @@ import type { AttackData } from "../../shared/AttackData";
 import type { AttackResult } from "../../shared/AttackResult";
 import { AttackService } from "./core/AttackService";
 import { CoordinateService } from "./core/CoordinateService";
-import { EventBus } from "./core/EventBus";
+import { EventBus, EventBusMessage } from "./core/EventBus";
 import { GameState } from "./core/GameState";
 import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "./core/MovementService";
@@ -33,53 +33,53 @@ export class GameController {
     private teleportService: TeleportService;
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
+        this.setupEventListeners();
 
         this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
 
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.network = new NetworkClient(serverUrl, this.eventBus);
-        this.movementService = new MovementService(this.inputHandler, this.network);
+        this.movementService = new MovementService(this.inputHandler,this.eventBus);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.eventBus);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
         this.teleportService = new TeleportService(this.inputHandler, this.coordinateService, this.eventBus);
 
-        this.setupEventListeners();
     }
 
     private setupEventListeners() {
         // Connexion
-        this.eventBus.on("connected", (playerId: string) => {
+        this.eventBus.on(EventBusMessage.CONNECTED, (playerId: string) => {
             console.log("playerId : " + playerId)
             this.localPlayerId = playerId;
         });
 
         // Snapshot complet au spawn
-        this.eventBus.on("players:init", (players: PlayerInfo[]) => {
+        this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
             this.gameState.restorePlayers(players);
         });
 
         // MAJ unique pour tout changement de joueur
-        this.eventBus.on("player:updated", (player: PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
             this.gameState.updatePlayer(player);
         });
 
         // Nouveau joueur
-        this.eventBus.on("player:joined", (player: PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this.gameState.addPlayer(player);
         });
 
         // Joueur parti
-        this.eventBus.on("player:left", (playerId: string) => {
+        this.eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
             this.gameState.removePlayer(playerId);
         });
 
         // Effet attaque
-        this.eventBus.on("attack:effect", (attackData: AttackData) => {
-            // this.renderer.playerRenderer.showAttackEffect(attackData);
-        });
+        // this.eventBus.on("attack:effect", (attackData: AttackData) => {
+        //     // this.renderer.playerRenderer.showAttackEffect(attackData);
+        // });
 
         // Résultat attaque
-        this.eventBus.on("attack:result", (attackResult: AttackResult) => {
+        this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
             this.handleAttackResult(attackResult);
         });
     }
@@ -169,7 +169,7 @@ export class GameController {
 
         player.attackDashTimer -= delta;
         player.setState(PlayerState.ATTACK_DASH);
-        this.eventBus.emit("player:updated", player)
+        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player)
 
         if (player.attackDashTimer <= 0) {
             this.attackService.performAttack(player, player.pendingAttackDir!);
@@ -212,7 +212,8 @@ export class GameController {
                 player.knockbackReceivedVector = undefined;
                 player.knockbackTimer = undefined;
             }
-            this.eventBus.emit("player:updated", player);
+            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player)
+
             return;
         }
 

@@ -84,6 +84,10 @@ export default class PlayerSprite {
                 if (dir === Direction.RIGHT) return { name: "player_dash_attack_right" };
                 if (dir === Direction.LEFT) return { name: "player_dash_attack_right", flipX: true };
                 if (dir === Direction.TOP) return { name: "player_dash_attack_top" };
+                if (dir === Direction.BOTTOM_LEFT) return { name: "player_dash_attack_bottom_right", flipX: true};
+                if (dir === Direction.BOTTOM_RIGHT) return { name: "player_dash_attack_bottom_right"};
+                if (dir === Direction.TOP_RIGHT) return { name: "player_dash_attack_top_right" }
+                if (dir === Direction.TOP_LEFT) return { name: "player_dash_attack_top_right", flipX:true };
                 return { name: "player_dash_attack_bottom" };
 
             case PlayerState.HIT:
@@ -109,7 +113,7 @@ export default class PlayerSprite {
 
 
     public update(player: Player) {
-        const key = `${player.getState()}_${(player as any).direction ?? Direction.BOTTOM}`;
+        const key = `${player.getState()}_${player.movingDirection ?? Direction.BOTTOM}`;
         const anim = this.animations[key];
         if (!anim || anim === this.currentAnimation) return;
 

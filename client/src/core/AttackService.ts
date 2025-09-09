@@ -5,7 +5,7 @@ import type Player from "./player/Player";
 import { PlayerState } from "../../../shared/PlayerState";
 import { GameState } from "./GameState";
 import { ATTACK_COOLDOWN, ATTACK_RESET, ATTACK_SEQUENCE, DASH_ATTACK_DURATION, KNOCKBACK_TIMER } from "../constantes";
-import type { EventBus } from "./EventBus";
+import { EventBusMessage, type EventBus } from "./EventBus";
 import type { AttackData } from "../../../shared/AttackData";
 
 export class AttackService {
@@ -63,7 +63,7 @@ export class AttackService {
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;
         this.attackResetTimer = ATTACK_RESET;
-        this.eventBus.emit("player:updated", player);
+        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
     }
 
 
@@ -80,7 +80,7 @@ export class AttackService {
         let dir = Math.atan2(dy, dx);
         ////
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
-        this.eventBus.emit("attack:performed", {
+        this.eventBus.emit(EventBusMessage.ATTACK_PERFORMED, {
             playerId: player.id,
             position: {...player.position},
             rotation: dir,

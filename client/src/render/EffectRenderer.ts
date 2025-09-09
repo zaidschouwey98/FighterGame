@@ -6,8 +6,8 @@ import type Position from "../../../shared/Position";
 export class EffectRenderer {
     private animations: Partial<Record<PlayerState, AnimatedSprite>> = {};
     private attackEffectContainer: Container;
-    private staticEffectsContainer:Container;
-    private spriteSheets:Spritesheet[];
+    private staticEffectsContainer: Container;
+    private spriteSheets: Spritesheet[];
     constructor(spriteSheets: Spritesheet[], playerContainer: Container, staticEffectsContainer: Container) {
         this.staticEffectsContainer = staticEffectsContainer;
         this.spriteSheets = spriteSheets;
@@ -24,7 +24,7 @@ export class EffectRenderer {
         }
     }
 
-    renderBloodEffect(fromRightAttack:boolean, playerPos:Position){
+    renderBloodEffect(fromRightAttack: boolean, playerPos: Position) {
         const bloodEffect = new AnimatedSprite(findAnimation(this.spriteSheets, "took_hit_from_right_effect")!);
         bloodEffect.scale.x = fromRightAttack ? 1 : -1;
         bloodEffect.anchor.set(0.5)
@@ -53,7 +53,7 @@ export class EffectRenderer {
         this.staticEffectsContainer.addChild(newDashCloud)
     }
 
-    renderTpEffect(playerPos:Position){
+    renderTpEffect(playerPos: Position) {
         const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
         tp_effect.anchor.set(0.5)
         tp_effect.x = playerPos.x;
@@ -67,15 +67,23 @@ export class EffectRenderer {
         this.staticEffectsContainer.addChild(tp_effect)
     }
 
-    renderAttackEffect(action: PlayerState, rotation: number) {
-        if (action != PlayerState.ATTACK_1 && action != PlayerState.ATTACK_2)
-            return;
-        this.animations[action]!.visible = true;
-        this.animations[action]!.loop = false;
-        this.animations[action]!.currentFrame = 0;
-        this.animations[action]!.rotation = rotation;
-        this.animations[action]!.play();
-        this.animations[action]!.onComplete = () => { this.animations[action]!.visible = false }
+    renderAttackEffect(action: PlayerState, direction: { x: number; y: number }) {
+        if (action !== PlayerState.ATTACK_1 && action !== PlayerState.ATTACK_2) return;
+
+        const sprite = this.animations[action];
+        if (!sprite) return;
+
+        // Calcule la rotation en radians
+        const rotation = Math.atan2(direction.y, direction.x);
+
+        sprite.visible = true;
+        sprite.loop = false;
+        sprite.currentFrame = 0;
+        sprite.rotation = rotation;
+        sprite.play();
+        sprite.onComplete = () => {
+            sprite.visible = false;
+        };
     }
 
 }

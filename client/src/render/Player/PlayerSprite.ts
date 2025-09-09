@@ -1,175 +1,55 @@
-import { AnimatedSprite, Container, Spritesheet, TextStyle, Text } from "pixi.js";
-
+import { Container, Spritesheet, TextStyle, Text } from "pixi.js";
+import Player from "../../core/player/Player";
+import { AnimController } from "./AnimController";
+import { IdleAnim } from "./anim/IdleAnim";
+import { MovingAnim } from "./anim/MovingAnim";
+import { AttackDashAnim } from "./anim/AttackDashAnim";
+import { PlayerState } from "../../../../shared/PlayerState";
+import { EffectRenderer } from "../EffectRenderer";
+import { Attack1Anim } from "./anim/Attack1Anim";
 
 export default class PlayerSprite {
-    private playerContainer: Container;
-    private currentAnimation?: AnimatedSprite;
-    private spriteSheets: Spritesheet[];
-    private _terrainContainer:Container;
-    constructor(public id: string, playerContainer: Container, spriteSheet: Spritesheet[],terrainContainer:Container, staticEffectsContainer: Container, playerName:string) {
-        this.playerContainer = playerContainer;
-        this.spriteSheets = spriteSheet;
-        this._terrainContainer = terrainContainer;
-        // this.EffectRenderer = new EffectRenderer(this.spriteSheets, this.playerContainer, staticEffectsContainer);
-        
-
-        this.animations[Action.MOVE_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_right")!);
-        this.animations[Action.MOVE_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_left")!);
-        this.animations[Action.MOVE_DOWN] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_down")!);
-        this.animations[Action.MOVE_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_walk_up")!);
-        
-        this.animations[Action.BLOCK_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
-        this.animations[Action.BLOCK_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
-        this.animations[Action.BLOCK_LEFT].scale.x *= -1;
-        
-        this.animations[Action.BLOCK_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
-        this.animations[Action.BLOCK_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_block_right")!);
-
-        this.animations[Action.TELEPORT] = new AnimatedSprite(findAnimation(this.spriteSheets, "after_tp_idle")!);
-
-
-        this.animations[Action.ATTACK_DASH_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
-        this.animations[Action.ATTACK_DASH_RIGHT].loop = false;
-
-        this.animations[Action.ATTACK_DASH_TOP_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
-        this.animations[Action.ATTACK_DASH_TOP_RIGHT].loop = false;
-
-        this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
-        this.animations[Action.ATTACK_DASH_BOTTOM_RIGHT].loop = false;
-
-        this.animations[Action.ATTACK_DASH_TOP] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top")!);
-        this.animations[Action.ATTACK_DASH_TOP].loop = false;
-
-        this.animations[Action.TOOK_HIT_FROM_RIGHT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
-        this.animations[Action.TOOK_HIT_FROM_RIGHT].onComplete = ()=>{this.playAnimation(Action.IDLE_DOWN)}
-        this.animations[Action.TOOK_HIT_FROM_RIGHT].loop = false;
-
-        this.animations[Action.TOOK_HIT_FROM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_took_hit_from_right_side")!);
-        this.animations[Action.TOOK_HIT_FROM_LEFT].onComplete = ()=>{this.playAnimation(Action.IDLE_DOWN)}
-        this.animations[Action.TOOK_HIT_FROM_LEFT].loop = false;
-        this.animations[Action.TOOK_HIT_FROM_LEFT].scale.x *= -1;
-
-        this.animations[Action.ATTACK_DASH_BOTTOM] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom")!);
-        this.animations[Action.ATTACK_DASH_BOTTOM].loop = false;
-
-        this.animations[Action.ATTACK_DASH_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_right")!);
-        this.animations[Action.ATTACK_DASH_LEFT].loop = false;
-        this.animations[Action.ATTACK_DASH_LEFT].scale.x *= -1;
-
-
-        this.animations[Action.ATTACK_DASH_TOP_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_top_right")!);
-        this.animations[Action.ATTACK_DASH_TOP_LEFT].loop = false;
-        this.animations[Action.ATTACK_DASH_TOP_LEFT].scale.x *= -1;
-
-
-        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT] = new AnimatedSprite(findAnimation(this.spriteSheets, "player_dash_attack_bottom_right")!);
-        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].loop = false;
-        this.animations[Action.ATTACK_DASH_BOTTOM_LEFT].scale.x *= -1;
-
-        const style = new TextStyle({
-            fontFamily: "Arial",
-            fontSize: 8,
-            fill: "#ffffff",
-            stroke: "#000000",
-        });
-        let name = new Text(playerName, style);
+    private controller: AnimController;
+    constructor(
+        public id: string,
+        private playerContainer: Container,
+        spriteSheets: Spritesheet[],
+        _terrainContainer: Container,
+        staticEffectsContainer: Container,
+        playerName: string
+    ) {
+        const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
+        // Label au-dessus du joueur
+        const style = new TextStyle({ fontFamily: "Arial", fontSize: 8, fill: "#ffffff", stroke: "#000000" });
+        const name = new Text(playerName, style);
         name.anchor.set(0.5);
         name.resolution = 2;
-        name.y = -20; // Position au-dessus du sprite
+        name.y = -20;
         this.playerContainer.addChild(name);
 
-        for (const anim of Object.values(this.animations)) {
-            anim.visible = false;
-            anim.animationSpeed = 0.2;
-            anim.anchor.set(0.5);
-            this.playerContainer.addChild(anim);
-        }
+     
+        const idle = new IdleAnim(spriteSheets, this.playerContainer);
+        const moving = new MovingAnim(spriteSheets, this.playerContainer);
+        const dash = new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer);
+
+        this.controller = new AnimController({
+            [PlayerState.IDLE]: idle,
+            [PlayerState.MOVING]: moving,
+            [PlayerState.ATTACK_DASH]: dash,
+            [PlayerState.ATTACK_1]: new Attack1Anim(spriteSheets,playerContainer,effectRenderer),
+            // [PlayerState.BLOCKING]: new BlockingAnim(...),
+            // [PlayerState.HIT]: new HitAnim(...),
+            // [PlayerState.TELEPORTING]: new TeleportAnim(...),
+            // [PlayerState.DEAD]: new DeadAnim(...),
+        }, PlayerState.IDLE);
     }
 
-    overrideCurrentAnimation(action: Action, player: Player) {
-        this.playUniqueAnimation(action, player);
-    }
-
-
-    // DASH
-    private playUniqueAnimation(action: Action, player: Player) {
-        const anim = this.animations[action];
-        if (!anim) return;
-
-        if (this.currentAnimation) {
-            this.currentAnimation.stop();
-            this.currentAnimation.visible = false;
-        }
-        
-        this.uniqueAnimationPlaying = true;
-        this.currentAnimation = anim;
-        this.currentAnimation.visible = true;
-        this.currentAnimation.animationSpeed = Math.round(((this.currentAnimation.totalFrames - 4) / DASH_ATTACK_DURATION) * 100) / 100
-        this.currentAnimation.currentFrame = 1;
-        this.currentAnimation.onComplete = () => {
-            this.uniqueAnimationPlaying = false;
-            //this.playAnimation(Action.IDLE_DOWN); // TO FIX
-        };
-        this.currentAnimation.play();
-        this.EffectRenderer?.renderAttackDashCloud(player.position);
-    }
-
-    public playDyingAnimation(playerPos:Position){
-        this.uniqueAnimationPlaying = true;
-        if (this.currentAnimation) {
-            this.currentAnimation.stop();
-            this.currentAnimation.visible = false;
-        }
-
-        const dyingAnim = new AnimatedSprite(findAnimation(this.spriteSheets, "player_die")!);
-        dyingAnim.x = playerPos.x;
-        dyingAnim.y = playerPos.y;
-        this._terrainContainer.addChild(dyingAnim);
-        dyingAnim.loop = false;
-        dyingAnim.visible = true;
-        dyingAnim.animationSpeed = 0.1;
-        dyingAnim.currentFrame = 0;
-        dyingAnim.onComplete = () => {this.uniqueAnimationPlaying = false;}
-        dyingAnim.play();
-    }
-
-    public playAnimation(action: Action, position?:Position) {
-        if (action == this.currentAction || this.uniqueAnimationPlaying)
-            return;
-        this.currentAction = action;
-        if (this.currentAnimation) {
-            this.currentAnimation.visible = false;
-            this.currentAnimation.stop();
-        }
-
-
-        this.currentAnimation = this.animations[action];
-        this.currentAnimation!.currentFrame = 0;
-        this.currentAnimation!.visible = true;
-        this.currentAnimation?.play();
-        if(!position) return;
-        switch (action) {
-            case Action.TOOK_HIT_FROM_LEFT:
-                this.EffectRenderer.renderBloodEffect(false,position);
-                break;
-            case Action.TOOK_HIT_FROM_RIGHT:
-                this.EffectRenderer.renderBloodEffect(true,position);
-                break;
-        
-            default:
-                break;
-        }
-    }
-
-    public playTeleportCloud(playerPos:Position){
-        this.EffectRenderer.renderTpEffect(playerPos);
-    }
-
-    public playAttackAnimation(action: Action, attackRotation: number) {
-        this.EffectRenderer?.renderAttackEffect(action, attackRotation);
+    public update(player: Player) {
+        this.controller.update(player);
     }
 
     public destroy() {
+        this.controller.stop();
         this.playerContainer.destroy({ children: true });
     }
 }

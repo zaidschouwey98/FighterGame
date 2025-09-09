@@ -78,7 +78,8 @@ export class AttackService {
         let dir = Math.atan2(dy, dx);
         ////
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
-        this.eventBus.emit(EventBusMessage.ATTACK_PERFORMED, {
+
+        this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, {
             playerId: player.id,
             position: {...player.position},
             rotation: dir,
@@ -89,7 +90,8 @@ export class AttackService {
         } as AttackData);
         player.attackIndex = (player.attackIndex + 1) % ATTACK_SEQUENCE.length;
         this._attackOnGoing = false;
-
+        player.setState(PlayerState.IDLE);
+        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player.toInfo());
     }
 
     public attackGotBlocked(attacker: Player, blockerId: string, totalKnockbackStrength: number) {

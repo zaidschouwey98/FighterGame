@@ -1,0 +1,7 @@
+export enum ClientToSocketMsg {
+    CONNECTION = "CONNECTION",
+    PLAYER_UPDATE = "PLAYER_UPDATE",
+    START_ATTACK = "START_ATTACK",
+    ATTACK = "ATTACK",
+    DISCONNECT = "DISCONNECT"
+}

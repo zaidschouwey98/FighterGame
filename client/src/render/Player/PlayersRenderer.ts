@@ -75,9 +75,9 @@ export default class PlayersRenderer {
     //     playerSprite?.playDyingAnimation(player.position);
     // }
 
-    public showAttackEffect(attackData: AttackData): void {
-        let playerSprite = this.playerSprites.get(attackData.playerId);
+    // public showAttackEffect(attackData: AttackData): void {
+    //     let playerSprite = this.playerSprites.get(attackData.playerId);
         
 
-    }
+    // }
 }

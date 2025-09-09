@@ -8,10 +8,10 @@ import { GameState } from "../core/GameState";
 import { HpBar } from "./UI/HpBar";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
-import type { AttackData } from "../../../shared/AttackData";
+import type { AttackResult } from "../../../shared/AttackResult";
 
 export class Renderer {
-    private _eventBus:EventBus;
+    private _eventBus: EventBus;
 
     private _pixiApp: Application;
 
@@ -30,7 +30,7 @@ export class Renderer {
     private _camera: CameraService;
     private _hpBar: HpBar;
 
-    constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], eventBus:EventBus, seed: string = "seed") {
+    constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
         this._eventBus = eventBus;
         this._camera = new CameraService();
 
@@ -59,10 +59,10 @@ export class Renderer {
     }
 
     private registerListeners() {
-        this._eventBus.on(EventBusMessage.PLAYERS_INIT, (players:PlayerInfo[])=>{
-            for(const player of players){
+        this._eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
+            for (const player of players) {
                 let p = GameState.instance.players.get(player.id);
-                if(p) this._playersRenderer.addNewPlayer(p);
+                if (p) this._playersRenderer.addNewPlayer(p);
             }
         })
 
@@ -72,6 +72,10 @@ export class Renderer {
             if (updated) {
                 this._playersRenderer.updatePlayers([updated]);
             }
+        });
+
+        this._eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
+            
         });
 
         // Nouvel arrivant
@@ -84,10 +88,6 @@ export class Renderer {
             this._playersRenderer.removePlayer(playerId);
         });
 
-        // Attaque effectuée
-        this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData: AttackData) => {
-            this._playersRenderer.showAttackEffect(attackData);
-        });
 
         // Joueur mort
         this._eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
@@ -129,11 +129,11 @@ export class Renderer {
         return this._camera;
     }
 
-    
-    public get playersRenderer() : PlayersRenderer {
+
+    public get playersRenderer(): PlayersRenderer {
         return this.playersRenderer;
     }
-    
+
 
     public get worldRenderer(): WorldRenderer {
         return this._worldRenderer;

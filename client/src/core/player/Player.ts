@@ -49,6 +49,9 @@ export default class Player {
         this.fsm.allow(PlayerState.IDLE, PlayerState.IDLE);
         this.fsm.allow(PlayerState.MOVING, PlayerState.MOVING);
         this.fsm.allow(PlayerState.ATTACK_DASH, PlayerState.IDLE);
+        this.fsm.allow(PlayerState.ATTACK_DASH, PlayerState.ATTACK_1);
+        this.fsm.allow(PlayerState.ATTACK_1, PlayerState.MOVING);
+        this.fsm.allow(PlayerState.ATTACK_1, PlayerState.IDLE);
         this.fsm.allow(PlayerState.IDLE, PlayerState.BLOCKING);
         this.fsm.allow(PlayerState.BLOCKING, PlayerState.IDLE);
         this.fsm.allow(PlayerState.ANY, PlayerState.DEAD);

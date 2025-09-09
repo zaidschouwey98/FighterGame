@@ -8,6 +8,9 @@ import { AttackResult } from "../shared/AttackResult";
 import PlayerInfo from "../shared/PlayerInfo"
 import path from "path";
 import { Direction } from "../shared/Direction";
+import { ClientToSocketMsg } from "../shared/ClientToSocketMsg";
+import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+
 
 const app = express();
 const server = http.createServer(app);
@@ -48,26 +51,34 @@ io.on("connection", (socket) => {
   players[socket.id] = newPlayer;
   players[socket.id].name = "player_" + counter++;
   // Envoyer l'état initial au nouveau joueur
-  socket.emit("currentPlayers", players);
+  socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
+  socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, players);
 
 
   // Notifier tous les autres joueurs
-  socket.broadcast.emit("newPlayer", players[socket.id]);
+  socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, players[socket.id]);
 
   // Gestion mouvement
 
 
-  socket.on("playerUpdate", (playerInfo:PlayerInfo) => {
+  socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo:PlayerInfo) => {
     if (players[socket.id]) {
       players[socket.id] = playerInfo;
-      socket.broadcast.emit("playerUpdate", players[socket.id]);
+      socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, players[socket.id]);
     }
   })
 
-  socket.on("attack", (data: AttackData) => {
+  socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo:PlayerInfo)=>{
+    if (players[socket.id]) {
+      players[socket.id] = playerInfo;
+      socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, players[socket.id]);
+    }
+  })
+
+
+  socket.on(ClientToSocketMsg.ATTACK, (data: AttackData) => {
     const attacker = players[data.playerId];
     if (!attacker) return;
-    socket.broadcast.emit("playerAttacks", data)
     // Mettre à jour l'état du joueur
     attacker.position = data.position;
     attacker.state = data.playerAction;
@@ -106,7 +117,7 @@ io.on("connection", (socket) => {
       }
     }
     // Envoyer les résultats à tous les clients
-    io.emit("attackResult", {
+    io.emit(ServerToSocketMsg.ATTACK_RESULT, {
       attackerId: data.playerId,
       hitPlayers: attackResults,
       knockbackStrength: data.knockbackStrength,
@@ -116,10 +127,10 @@ io.on("connection", (socket) => {
   });
 
   // Déconnexion
-  socket.on("disconnect", () => {
+  socket.on(ClientToSocketMsg.DISCONNECT, () => {
     console.log(`Player disconnected: ${socket.id}`);
     delete players[socket.id];
-    io.emit("playerDisconnected", socket.id);
+    io.emit(ServerToSocketMsg.DISCONNECT, socket.id);
   });
 
   function handlePlayerDeath(playerId: string) {
@@ -132,7 +143,7 @@ io.on("connection", (socket) => {
     player.state = PlayerState.DEAD;
 
     // Notifier tous les clients
-    io.emit("playerDied", player);
+    io.emit(ServerToSocketMsg.PLAYER_DIED, player);
 
     // Optionnel : Respawn après 3s
     setTimeout(() => {
@@ -147,7 +158,7 @@ io.on("connection", (socket) => {
     player.isDead = false;
     player.position = { x: 0, y: 0 }; // Spawn point
     player.state = PlayerState.IDLE;
-    io.emit("playerRespawned", player);
+    io.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
   }
 });
 

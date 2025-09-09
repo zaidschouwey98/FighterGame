@@ -165,8 +165,7 @@ export class GameController {
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
         if (player.attackDashTimer <= 0) {
-            player.setState(PlayerState.IDLE);
-            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
+            
             this.attackService.performAttack(player);
             // player.pendingAttack = false;
         }

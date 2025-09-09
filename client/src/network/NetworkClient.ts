@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
 import type PlayerInfo from "../../../shared/PlayerInfo";
+import type { AttackResult } from "../../../shared/AttackResult";
 
 export class NetworkClient {
     private socket: Socket;
@@ -27,10 +28,14 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
         });
 
+        this.socket.on("attackResult",(attackResult:AttackResult)=>{
+            this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
+        })
+
         // SENDING TO SOCKET
-        // this.eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData) => {
-        //     this.socket.emit("attack", attackData);
-        // });
+        this.eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData) => {
+            this.socket.emit("attack", attackData);
+        });
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_UPDATED, (playerInfo) => {
             // TODO SHOULD SEPARATE EVENTS

@@ -1,6 +1,7 @@
 import { Container, Spritesheet } from "pixi.js";
 import type Player from "../../core/player/Player";
 import PlayerSprite from "./PlayerSprite";
+import type { AttackData } from "../../../../shared/AttackData";
 
 export default class PlayersRenderer {
     private playerContainers: Map<string, Container>;
@@ -74,14 +75,9 @@ export default class PlayersRenderer {
     //     playerSprite?.playDyingAnimation(player.position);
     // }
 
-    // public playDashAttackAnimation(player: Player) {
-    //     let playerSprite = this.playerSprites.get(player.id);
-    //     playerSprite?.overrideCurrentAnimation(player.currentAction, player);
-    // }
+    public showAttackEffect(attackData: AttackData): void {
+        let playerSprite = this.playerSprites.get(attackData.playerId);
+        
 
-    // public showAttackEffect(attackData: AttackData): void {
-    //     let playerSprite = this.playerSprites.get(attackData.playerId);
-    //     playerSprite?.playAttackAnimation(attackData.playerAction, attackData.rotation);
-
-    // }
+    }
 }

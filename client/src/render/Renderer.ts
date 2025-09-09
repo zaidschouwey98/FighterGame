@@ -86,7 +86,7 @@ export class Renderer {
 
         // Attaque effectuée
         this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData: AttackData) => {
-            // this._playersRenderer.showAttackEffect(attackData);
+            this._playersRenderer.showAttackEffect(attackData);
         });
 
         // Joueur mort

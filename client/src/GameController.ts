@@ -17,7 +17,7 @@ import { TeleportService } from "./core/TeleportService";
 
 
 export class GameController {
-    private gameState = GameState.instance;
+    private gameState: GameState;
     private eventBus = new EventBus();
     private inputHandler = new InputHandler();
     private coordinateService: CoordinateService;
@@ -32,11 +32,11 @@ export class GameController {
 
     constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
         this.setupEventListeners();
-
-        this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
-
-        this.coordinateService = new CoordinateService(app, this.renderer.camera);
         new NetworkClient(serverUrl, this.eventBus);
+        this.gameState = GameState.instance;
+        this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
+        this.coordinateService = new CoordinateService(app, this.renderer.camera);
+        
         this.movementService = new MovementService(this.inputHandler,this.eventBus);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.eventBus);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
@@ -71,11 +71,6 @@ export class GameController {
             this.gameState.removePlayer(playerId);
         });
 
-        // Effet attaque
-        // this.eventBus.on("attack:effect", (attackData: AttackData) => {
-        //     // this.renderer.playerRenderer.showAttackEffect(attackData);
-        // });
-
         // Résultat attaque
         this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
             this.handleAttackResult(attackResult);
@@ -89,7 +84,7 @@ export class GameController {
         if (attackResult.attackerId === this.localPlayerId && attackResult.killNumber > 0) {
             const local = this.gameState.players.get(this.localPlayerId);
             if(!local) throw new Error("Local player shouldn't be undefined.");
-            local.hp += 20 * attackResult.killNumber; // TODO 20 in constante
+            local.hp += 20 * attackResult.killNumber; // TODO REMOVE, CAUSE SERVERSIDE
             this.renderer.updateHealthBar(local.hp, 100);
         }
 
@@ -170,6 +165,8 @@ export class GameController {
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
         if (player.attackDashTimer <= 0) {
+            player.setState(PlayerState.IDLE);
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
             this.attackService.performAttack(player);
             // player.pendingAttack = false;
         }

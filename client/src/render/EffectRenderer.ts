@@ -68,7 +68,7 @@ export class EffectRenderer {
     }
 
     renderAttackEffect(action: PlayerState, rotation: number) {
-        if (action != PlayerState.ATTACK_1 && action != PlayerState.ATTACK_2 && action != PlayerState.ATTACK_3)
+        if (action != PlayerState.ATTACK_1 && action != PlayerState.ATTACK_2)
             return;
         this.animations[action]!.visible = true;
         this.animations[action]!.loop = false;

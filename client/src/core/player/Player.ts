@@ -15,16 +15,14 @@ export default class Player {
     public isDead: boolean = false;
     public position: Position;
     public movingDirection: Direction = Direction.BOTTOM;
+    public mouseDirection: { x: number, y: number } = {x:0, y:0};
 
-    public pendingAttackDir?: number;
     public attackIndex: number = 0;
 
-    public blockDir?: { x: number, y: number };
     public blockTimer?: number;   // Frames restantes de block
 
     public attackDashTimer?: number; // durée restante du dash
     public attackDashDuration?: number; // durée en frames
-    public dashDir = { x: 0, y: 0 };
     public attackDashMaxSpeed = 3; // TODO PUT THIS IN CONST
 
     public knockbackReceivedVector?: { x: number; y: number };
@@ -54,8 +52,6 @@ export default class Player {
         this.fsm.allow(PlayerState.IDLE, PlayerState.BLOCKING);
         this.fsm.allow(PlayerState.BLOCKING, PlayerState.IDLE);
         this.fsm.allow(PlayerState.ANY, PlayerState.DEAD);
-        this.fsm.addExitHook(PlayerState.ATTACK_1, () => { this.setState(PlayerState.IDLE) });
-        this.fsm.addExitHook(PlayerState.BLOCKING, () => { this.setState(PlayerState.IDLE) });
         // hooks (exemple)
         // this.fsm.addEnterHook(PlayerState.ATTACK_DASH, () => {
         //     console.log("Player starts dash");
@@ -85,10 +81,9 @@ export default class Player {
         player.attackDashTimer = info.attackDashTimer;
         player.attackIndex = info.attackIndex;
         player.blockTimer = info.blockTimer;
-        player.dashDir = info.dashDir;
+        player.mouseDirection = info.mouseDirection;
         player.knockbackReceivedVector = info.knockbackReceivedVector;
         player.knockbackTimer = info.knockbackTimer;
-        player.pendingAttackDir = info.pendingAttackDir;
         player.isDead = info.isDead;
         player.movingDirection = info.movingDirection;
         player.setState(info.state);
@@ -105,13 +100,32 @@ export default class Player {
         this.attackDashTimer = info.attackDashTimer;
         this.attackIndex = info.attackIndex;
         this.blockTimer = info.blockTimer;
-        this.dashDir = info.dashDir;
         this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.knockbackTimer = info.knockbackTimer;
-        this.pendingAttackDir = info.pendingAttackDir;
+        this.mouseDirection = info.mouseDirection;
         this.movingDirection = info.movingDirection;
 
         this.isDead = info.isDead;
         this.setState(info.state);
+    }
+
+    public toInfo(): PlayerInfo {
+        return {
+            position: this.position,
+            hp: this.hp,
+            speed: this.speed,
+            attackDashDuration: this.attackDashDuration,
+            attackDashMaxSpeed: this.attackDashMaxSpeed,
+            attackDashTimer: this.attackDashTimer,
+            attackIndex: this.attackIndex,
+            blockTimer: this.blockTimer,
+            mouseDirection: this.mouseDirection,
+            knockbackReceivedVector: this.knockbackReceivedVector,
+            knockbackTimer: this.knockbackTimer,
+            movingDirection: this.movingDirection,
+            isDead: this.isDead,
+            id: this.id,
+            state: this.getState(),
+        };
     }
 }

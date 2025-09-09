@@ -28,6 +28,9 @@ export class FSM {
     }
 
     public tryTransition(to: PlayerState): boolean {
+        if (this.state === to) {
+            return true; // Pas besoin de transition, déjà dans cet état
+        }
         const allowed = this.transitions.get(this.current);
         if (allowed?.has(to)) {
             this.onExit.get(this.current)?.forEach(cb => cb(this.current, to));

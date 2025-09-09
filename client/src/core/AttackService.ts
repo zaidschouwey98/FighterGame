@@ -51,23 +51,21 @@ export class AttackService {
         const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
         const dx = worldMousePos.x - player.position.x;
         const dy = worldMousePos.y - player.position.y;
-        let dir = Math.atan2(dy, dx);
         const len = Math.sqrt(dx * dx + dy * dy);
         // Direction du dash
-        player.dashDir = { x: dx / len, y: dy / len };
+        player.mouseDirection = { x: dx / len, y: dy / len };
         // Paramètres du dash
         player.attackDashDuration = DASH_ATTACK_DURATION; // TODO CONSTANTE
         player.attackDashTimer = player.attackDashDuration;
-        player.pendingAttackDir = dir;
         player.setState(PlayerState.ATTACK_DASH);
         this.isAttackReady = false;
         this.attackCoolDownTimer = ATTACK_COOLDOWN;
         this.attackResetTimer = ATTACK_RESET;
-        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
     }
 
 
-    public performAttack(player: Player, _Unuseddir: number) {
+    public performAttack(player: Player) {
         if (!this._attackOnGoing)
             return;
         player.setState(ATTACK_SEQUENCE[player.attackIndex] as PlayerState);

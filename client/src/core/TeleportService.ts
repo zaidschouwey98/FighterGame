@@ -41,7 +41,7 @@ export class TeleportService {
     player.position.y = newY;
 
     player.setState(PlayerState.TELEPORTING);
-    this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
 
   }
 }

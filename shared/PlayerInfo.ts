@@ -3,6 +3,7 @@ import { Direction } from "./Direction";
 import Position from "./Position";
 
 export default interface PlayerInfo {
+    mouseDirection: { x: number; y: number; };
     position: Position;
     hp: number;
     speed: number;
@@ -11,17 +12,14 @@ export default interface PlayerInfo {
     state:PlayerState;
     movingDirection:Direction;
 
-    pendingAttackDir?: number;
     pendingAttack?: boolean;
     attackIndex: number;
 
-    blockDir?:{x:number,y:number};
     blockTimer?: number;        // Frames restantes de block
     isBlocking?: boolean;       // True si le joueur bloque
 
     attackDashTimer?: number;   // Durée restante du dash
     attackDashDuration?: number; // Durée en frames
-    dashDir: { x: number; y: number };
     attackDashMaxSpeed: number;
 
     knockbackReceivedVector?: { x: number; y: number };

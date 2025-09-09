@@ -1,6 +1,5 @@
 import { Application, Container, Spritesheet } from "pixi.js";
 import Player from "./core/player/Player";
-import type { AttackData } from "../../shared/AttackData";
 import type { AttackResult } from "../../shared/AttackResult";
 import { AttackService } from "./core/AttackService";
 import { CoordinateService } from "./core/CoordinateService";
@@ -23,7 +22,6 @@ export class GameController {
     private inputHandler = new InputHandler();
     private coordinateService: CoordinateService;
     private renderer: Renderer;
-    private network: NetworkClient;
     private movementService: MovementService;
     private attackService: AttackService;
     private blockService: BlockService
@@ -38,7 +36,7 @@ export class GameController {
         this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
 
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
-        this.network = new NetworkClient(serverUrl, this.eventBus);
+        new NetworkClient(serverUrl, this.eventBus);
         this.movementService = new MovementService(this.inputHandler,this.eventBus);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService, this.eventBus);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
@@ -164,15 +162,15 @@ export class GameController {
         const speed = player.attackDashMaxSpeed * speedFactor;
 
         // Déplacement
-        player.position.x += player.dashDir.x * speed;
-        player.position.y += player.dashDir.y * speed;
+        player.position.x += player.mouseDirection.x * speed;
+        player.position.y += player.mouseDirection.y * speed;
 
         player.attackDashTimer -= delta;
         player.setState(PlayerState.ATTACK_DASH);
-        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player)
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
         if (player.attackDashTimer <= 0) {
-            this.attackService.performAttack(player, player.pendingAttackDir!);
+            this.attackService.performAttack(player);
             // player.pendingAttack = false;
         }
     }
@@ -212,7 +210,7 @@ export class GameController {
                 player.knockbackReceivedVector = undefined;
                 player.knockbackTimer = undefined;
             }
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player)
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
             return;
         }

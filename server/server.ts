@@ -37,14 +37,11 @@ io.on("connection", (socket) => {
     position: { x: startX, y: startY },
     hp: 100,
     speed: 10,
+    mouseDirection:{x:0,y:0},
     id: socket.id,
     state: PlayerState.IDLE,
     movingDirection: Direction.BOTTOM,
     attackIndex: 0,
-    dashDir: {
-      x: 0,
-      y: 0
-    },
     attackDashMaxSpeed: 3,
     isDead: false
   }
@@ -58,52 +55,15 @@ io.on("connection", (socket) => {
   socket.broadcast.emit("newPlayer", players[socket.id]);
 
   // Gestion mouvement
-  socket.on("move", (data: { x: number; y: number; action: PlayerState }) => {
-    if (players[socket.id]) {
-      players[socket.id].position.x = data.x;
-      players[socket.id].position.y = data.y;
-      players[socket.id].state = data.action;
-      socket.broadcast.emit("playerMoved", players[socket.id]);
-    }
-  });
 
-  socket.on("dash", (data: { x: number; y: number; action: PlayerState }) => {
-    if (players[socket.id]) {
-      players[socket.id].position.x = data.x;
-      players[socket.id].position.y = data.y;
-      players[socket.id].state = data.action;
-      socket.broadcast.emit("playerDashed", players[socket.id]);
-    }
-  });
-  socket.on("block", (action: PlayerState) => {
-    if (players[socket.id]) {
-      players[socket.id].state = action;
-      socket.broadcast.emit("playerIsBlocking", players[socket.id]);
-    }
-  });
 
-  socket.on("stopMoving", (action: PlayerState) => {
+  socket.on("playerUpdate", (playerInfo:PlayerInfo) => {
     if (players[socket.id]) {
-      players[socket.id].state = action;
-      socket.broadcast.emit("playerStoppedMoving", players[socket.id]);
+      players[socket.id] = playerInfo;
+      socket.broadcast.emit("playerUpdate", players[socket.id]);
     }
   })
 
-  socket.on("actionUpdated", (action: PlayerState) => {
-    if (players[socket.id]) {
-      players[socket.id].state = action;
-      socket.broadcast.emit("actionUpdated", players[socket.id]);
-    }
-  })
-
-  socket.on("blockEnd", (player: PlayerInfo) => {
-    if (players[socket.id]) {
-      players[socket.id].position.x = player.position.x;
-      players[socket.id].position.y = player.position.y;
-      players[socket.id].state = player.state;
-      socket.broadcast.emit("playerIsBlocking", players[socket.id]);
-    }
-  });
   socket.on("attack", (data: AttackData) => {
     const attacker = players[data.playerId];
     if (!attacker) return;

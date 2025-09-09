@@ -11,13 +11,16 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
         });
         this.socket.on("currentPlayers", (players: PlayerInfo[]) => {
-                
-                this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
-            });
+            this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
+        });
 
         // this.socket.on("attackResult", (attackResult: AttackResult) => this.eventBus.emit("player:attackedResult", attackResult));
         this.socket.on("newPlayer", (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_JOINED, player);
+        });
+
+        this.socket.on("playerUpdate", (player:PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
         });
 
         this.socket.on("playerDisconnected", (playerId: string) => {
@@ -25,12 +28,14 @@ export class NetworkClient {
         });
 
         // SENDING TO SOCKET
-        this.eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData) => {
-            this.socket.emit("attack", attackData);
-        });
+        // this.eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackData) => {
+        //     this.socket.emit("attack", attackData);
+        // });
 
-        this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (playerInfo) => {
+        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_UPDATED, (playerInfo) => {
+            // TODO SHOULD SEPARATE EVENTS
             this.socket.emit("playerUpdate", playerInfo);
+            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
         });
     }
 }

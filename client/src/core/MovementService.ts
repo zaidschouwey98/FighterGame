@@ -38,13 +38,13 @@ export class MovementService {
             player.position.y += dy * player.speed * TILE_SIZE * delta / 60;
 
             player.setState(PlayerState.MOVING);
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
         } else {
 
             if (this.isMoving) {
                 this.isMoving = false;
                 player.setState(PlayerState.IDLE);
-                this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+                this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
 
             }
         }

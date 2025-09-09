@@ -26,9 +26,9 @@ export class BlockService {
     const dx = worldMousePos.x - player.position.x;
     const dy = worldMousePos.y - player.position.y;
     const len = Math.sqrt(dx * dx + dy * dy);
-    player.blockDir = { x: dx / len, y: dy / len };
+    player.mouseDirection = { x: dx / len, y: dy / len };
     player.setState(PlayerState.BLOCKING);
-    this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
 
   }
 
@@ -49,7 +49,7 @@ export class BlockService {
       this.blockCooldown = BLOCK_COOLDOWN;
       player.blockTimer = undefined;
       player.setState(PlayerState.IDLE);
-      this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
     }
   }
 }

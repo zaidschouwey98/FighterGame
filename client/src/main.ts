@@ -1,8 +1,7 @@
-import { Application } from 'pixi.js';
+import { Application, Container } from 'pixi.js';
+import { GameController } from './GameController';
 import { getSpritesheets } from './AssetLoader';
 import { initDevtools } from '@pixi/devtools';
-import { SceneManager } from './scene/SceneManager';
-import { GameScene } from './scene/GameScene';
 
 // TOdo add credits song for my death, but I refused
 (async () => {
@@ -18,12 +17,16 @@ import { GameScene } from './scene/GameScene';
   console.log("Assets chargés !");
   
   document.body.appendChild(app.canvas);
-  const sceneManager = new SceneManager(app);
-  const gameScene = new GameScene("http://localhost:3000", app, spritesheets);
+  const container = new Container();
+  app.stage.addChild(container);
 
-  sceneManager.changeScene(gameScene);
+  // Créez le contrôleur de jeu
+  const gameController = new GameController(container, window.location.origin, app,spritesheets);
 
-  app.ticker.add((delta) => sceneManager.update(delta.deltaTime));
+  // Animation loop
+  app.ticker.add((delta) => {
+    gameController.update(delta.deltaTime);
+  });
   
 
 

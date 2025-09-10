@@ -58,7 +58,7 @@ export class GameController {
         this.movementService = new MovementService(this.inputHandler);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService);
-        this.teleportService = new TeleportService(this.inputHandler, this.coordinateService, this.eventBus);
+        this.teleportService = new TeleportService(this.inputHandler, this.coordinateService);
         this.renderer.worldRenderer.update(0, 0);
     }
 
@@ -93,7 +93,8 @@ export class GameController {
                     this.inputHandler,
                     this.attackService,
                     this.movementService,
-                    this.blockService
+                    this.blockService,
+                    this.teleportService
                 );
                 this.localPlayer.updateFromInfo(player);
                 return;
@@ -184,7 +185,7 @@ export class GameController {
         this.renderer.updateCamera(this.localPlayer.position)
         this.inputHandler.update();
         this.renderer.updateMinimap(this.localPlayer);
-        this.teleportService.update(this.localPlayer, delta);
+        this.teleportService.update(delta);
         this.blockService.update(delta);
         this.attackService.update(delta, this.localPlayer);
     }

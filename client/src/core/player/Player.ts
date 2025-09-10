@@ -16,6 +16,8 @@ import { DieState } from "./states/DieState";
 import { BlockState } from "./states/BlockState";
 import type { BlockService } from "../BlockService";
 import { KnockBackState } from "./states/KnockBackState";
+import { TeleportState } from "./states/TeleportState";
+import type { TeleportService } from "../TeleportService";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -50,6 +52,7 @@ export default class Player {
     public dieState: DieState;
     public blockState: BlockState;
     public knockbackState:KnockBackState;
+    public teleportState: TeleportState;
     constructor(
         playerName: string = "Unknown",
         position: Position,
@@ -61,6 +64,7 @@ export default class Player {
         attackService: AttackService,
         movementService: MovementService,
         blockService:BlockService,
+        teleportService:TeleportService
     ) {
         this.playerName = playerName
         this.id = id;
@@ -77,6 +81,7 @@ export default class Player {
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this,eventBus,blockService);
         this.knockbackState = new KnockBackState(this,eventBus);
+        this.teleportState = new TeleportState(this,teleportService,eventBus);
     }
 
     public update(delta: number) {

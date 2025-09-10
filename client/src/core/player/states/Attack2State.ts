@@ -4,7 +4,7 @@ import type Player from "../Player";
 import type { AttackService } from "../../AttackService";
 import { EventBusMessage, type EventBus } from "../../EventBus";
 
-export class Attack1State extends BaseState {
+export class Attack2State extends BaseState {
   readonly name = PlayerState.ATTACK_2;
 
   private timer = 1; // Frames avant retour idle (ajuste si besoin)

@@ -18,6 +18,7 @@ import type { BlockService } from "../BlockService";
 import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
 import type { TeleportService } from "../TeleportService";
+import { Attack2State } from "./states/Attack2State";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -48,6 +49,7 @@ export default class Player {
     public movingState: MovingState;
     public attackDashState: AttackDashState;
     public attack1State: Attack1State;
+    public attack2State: Attack2State;
     public hitState: HitState;
     public dieState: DieState;
     public blockState: BlockState;
@@ -77,6 +79,7 @@ export default class Player {
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus,inputHandler);
         this.attack1State = new Attack1State(this, attackService, eventBus);
+        this.attack2State = new Attack2State(this, attackService, eventBus);
         this.hitState = new HitState(this, eventBus,inputHandler);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this,eventBus,blockService,inputHandler);

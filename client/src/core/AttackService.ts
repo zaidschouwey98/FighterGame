@@ -55,7 +55,7 @@ export class AttackService {
         // Notifier les autres systèmes
     }
 
-    /** Crée une hitbox d'attaque et notifie le serveur */
+    /** Crée une hitbox d'attaque */
     public performAttack(player: Player): AttackData | undefined {
         if (!this.attackOnGoing) return;
 

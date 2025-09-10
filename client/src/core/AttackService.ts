@@ -2,14 +2,13 @@ import { AttackHitboxService } from "./AttackHitboxService";
 import { CoordinateService } from "./CoordinateService";
 import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
-import { ATTACK_COOLDOWN, ATTACK_RESET, DASH_ATTACK_DURATION, KNOCKBACK_TIMER } from "../constantes";
+import { ATTACK_COOLDOWN, ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import type { AttackData } from "../../../shared/AttackData";
-import { GameState } from "./GameState";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
     private attackCooldownTimer = 0;
-    private attackOnGoing = false;
+    public attackOnGoing = false;
 
     constructor(
         private input: InputHandler,
@@ -35,10 +34,6 @@ export class AttackService {
 
     /** Prépare une attaque (dash) */
     public initiateAttack(player: Player) {
-        if (!this.isAttackReady()) return;
-
-        this.attackOnGoing = true;
-
         const mouse = this.input.getMousePosition();
         const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
         const dx = world.x - player.position.x;
@@ -57,7 +52,6 @@ export class AttackService {
 
     /** Crée une hitbox d'attaque */
     public performAttack(player: Player): AttackData | undefined {
-        if (!this.attackOnGoing) return;
 
         const mouse = this.input.getMousePosition();
         const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
@@ -76,29 +70,10 @@ export class AttackService {
         } as AttackData;
 
         player.attackIndex = (player.attackIndex + 1) % 3; // Combo cycle
-        this.attackOnGoing = false;
-
         return res;
     }
 
-    /** Gestion du knockback si blocage */
-    public attackGotBlocked(attacker: Player, blockerId: string, knockback: number) {
-        const blocker = GameState.instance.players.get(blockerId);
-        if (!blocker) return;
-
-        this.attackCooldownTimer = ATTACK_COOLDOWN;
-        const dx = attacker.position.x - blocker.position.x;
-        const dy = attacker.position.y - blocker.position.y;
-        const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-        attacker.knockbackReceivedVector = {
-            x: (dx / len) * knockback * 2,
-            y: (dy / len) * knockback * 2
-        };
-        attacker.knockbackTimer = KNOCKBACK_TIMER * 2;
-    }
-
     public isAttackReady() {
-        return this.attackCooldownTimer <= 0 && !this.attackOnGoing;
+        return this.attackCooldownTimer <= 0;
     }
 }

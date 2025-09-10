@@ -24,7 +24,4 @@ import { GameScene } from './scene/GameScene';
   sceneManager.changeScene(gameScene);
 
   app.ticker.add((delta) => sceneManager.update(delta.deltaTime));
-  
-
-
 })();

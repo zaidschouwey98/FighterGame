@@ -3,12 +3,17 @@ import type Player from "../Player";
 import type { AttackService } from "../../AttackService";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../EventBus";
+import type { InputHandler } from "../../InputHandler";
 
 export class AttackDashState extends BaseState {
     readonly name = PlayerState.ATTACK_DASH;
 
-    constructor(player: Player, private attackService: AttackService, private eventBus:EventBus) {
+    constructor(player: Player, private attackService: AttackService, private eventBus:EventBus, private inputHandler:InputHandler) {
         super(player);
+    }
+
+    canEnter(): boolean {
+        return this.attackService.isAttackReady();
     }
 
     enter() {
@@ -17,6 +22,10 @@ export class AttackDashState extends BaseState {
     }
 
     update(delta: number) {
+        if (this.inputHandler.consumeRightClick()) {
+            this.player.changeState(this.player.idleState);
+            return;
+        }
         if (this.player.attackDashTimer == undefined || this.player.attackDashTimer <= 0) {
             this.player.attackDashTimer = undefined;
             this.player.changeState(this.player.attack1State);

@@ -27,7 +27,7 @@ export class HpBar {
     this.background = new PIXI.Graphics();
     this.background.rect(0, 0, this.width, this.height);
     this.background.fill({ color: 0x000000, alpha: 0.5 });
-    
+
     // Barre de vie (vert)
     this.bar = new PIXI.Graphics();
     this.bar.rect(0, 0, this.width, this.height);
@@ -56,5 +56,9 @@ export class HpBar {
     if (healthRatio < 0.5) color = 0xffff00; // Jaune si < 50%
     if (healthRatio < 0.25) color = 0xff0000; // Rouge si < 25%
     this.bar.fill({ color });
+  }
+
+  destroy() {
+    this.container.destroy({children:true});
   }
 }

@@ -52,6 +52,7 @@ export default class PlayerSprite {
     }
 
     public update(player: PlayerInfo) {
+
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
     }

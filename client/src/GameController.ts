@@ -25,7 +25,7 @@ export class GameController {
     private currentChunkX?: number;
     private currentChunkY?: number;
     private localPlayer: Player | undefined;
-    private networkClient:NetworkClient;
+    private networkClient: NetworkClient;
 
     // Services
     private coordinateService: CoordinateService;
@@ -33,7 +33,22 @@ export class GameController {
     private blockService: BlockService
     private teleportService: TeleportService;
     private movementService: MovementService;
-    constructor(globalContainer: Container, serverUrl: string, app: Application, spriteSheets: Spritesheet[]) {
+
+    private onDeath?: () => void;
+    private onRespawn?: () => void;
+    constructor(
+        globalContainer: Container,
+        serverUrl: string,
+        app: Application,
+        spriteSheets: Spritesheet[],
+        opts?: {
+            onDeath?: () => void;
+            onRespawn?: () => void;
+        }
+    ) {
+        this.onDeath = opts?.onDeath;
+        this.onRespawn = opts?.onRespawn;
+
         this.setupEventListeners();
         this.networkClient = new NetworkClient(serverUrl, this.eventBus);
         this.gameState = GameState.instance;
@@ -61,7 +76,7 @@ export class GameController {
 
         // MAJ unique pour tout changement de joueur
         this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
-            if(player.id !== this.localPlayerId)
+            if (player.id !== this.localPlayerId)
                 this.gameState.updatePlayer(player);
         });
 
@@ -96,11 +111,20 @@ export class GameController {
             this.handleAttackResult(attackResult);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
             if (player.id === this.localPlayer?.id) {
-                this.localPlayer.die();
-            } else 
+                this.localPlayer!.die();
+                this.onDeath?.()
+            }
             this.gameState.updatePlayer(player);
+        });
+
+        this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
+            this.gameState.updatePlayer(player);
+            if (player.id === this.localPlayer?.id) {
+                this.onRespawn?.();
+                this.eventBus.emit(EventBusMessage.PLAYER_JOINED,player)
+            }
         });
     }
 
@@ -108,12 +132,16 @@ export class GameController {
         this.networkClient.spawnPlayer(name);
     }
 
+    public requestRespawn() {
+        this.networkClient.respawnPlayer();
+    }
+
     private handleAttackResult(attackResult: AttackResult) {
         const hitPlayers = attackResult.hitPlayers;
         const attacker = GameState.instance.getPlayer(attackResult.attackerId)!;
-        if(attackResult.attackerId === this.localPlayerId){
-            if(attackResult.blockedBy != undefined){
-                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position,this.localPlayer!.position, attackResult.knockbackStrength)
+        if (attackResult.attackerId === this.localPlayerId) {
+            if (attackResult.blockedBy != undefined) {
+                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.localPlayer!.position, attackResult.knockbackStrength)
                 this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
                 console.log(this.localPlayer)
                 this.localPlayer?.changeState(this.localPlayer.knockbackState);
@@ -123,7 +151,7 @@ export class GameController {
         for (const hit of hitPlayers) {
             this.gameState.updatePlayer(hit);
             if (hit.id === this.localPlayerId) {
-                if(attackResult.blockedBy?.id === this.localPlayerId)
+                if (attackResult.blockedBy?.id === this.localPlayerId)
                     continue;
 
                 this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(attacker.position, this.localPlayer!.position, attackResult.knockbackStrength)

@@ -38,6 +38,10 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_DIED, player);
         });
 
+        this.socket.on(ServerToSocketMsg.PLAYER_RESPAWNED, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_RESPAWNED, player);
+        });
+
         // SENDING TO SOCKET    
         this.eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attackData: AttackData) => {
             this.socket.emit(ClientToSocketMsg.ATTACK, attackData);
@@ -52,5 +56,9 @@ export class NetworkClient {
 
     public spawnPlayer(name: string) {
         this.socket.emit(ClientToSocketMsg.SPAWN_PLAYER, name);
+    }
+
+    respawnPlayer() {
+        this.socket.emit(ClientToSocketMsg.RESPAWN_PLAYER);
     }
 }

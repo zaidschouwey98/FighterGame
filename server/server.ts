@@ -127,7 +127,17 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       handlePlayerDeath(player.id);
     }
   });
+  socket.on(ClientToSocketMsg.RESPAWN_PLAYER, () => {
+    const player = players[socket.id];
+    if (!player) return;
 
+    player.hp = 100;
+    player.isDead = false;
+    player.position = { x: 0, y: 0 };
+    player.state = PlayerState.IDLE;
+
+    io.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
+  });
   // Déconnexion
   socket.on("disconnect", () => { // RESERVED MESSAGE
     console.log(`Player disconnected: ${socket.id}`);
@@ -148,9 +158,9 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
     io.emit(ServerToSocketMsg.PLAYER_DIED, player);
 
     // Optionnel : Respawn après 3s
-    setTimeout(() => {
-      respawnPlayer(playerId);
-    }, 4000);
+    // setTimeout(() => {
+    //   respawnPlayer(playerId);
+    // }, 4000);
   }
 
   function respawnPlayer(playerId: string) {

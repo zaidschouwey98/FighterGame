@@ -5,4 +5,5 @@ export enum ClientToSocketMsg {
     ATTACK = "ATTACK",
     DISCONNECT = "DISCONNECT",
     SPAWN_PLAYER = "SPAWN_PLAYER",
+    RESPAWN_PLAYER = "RESPAWN_PLAYER",
 }

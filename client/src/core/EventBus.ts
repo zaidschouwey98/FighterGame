@@ -9,7 +9,8 @@ export enum EventBusMessage{
     ATTACK_PERFORMED,
     PLAYER_DIED,
     ATTACK_RESULT,
-    LOCAL_ATTACK_PERFORMED
+    LOCAL_ATTACK_PERFORMED,
+    PLAYER_RESPAWNED
 }
 export class EventBus {
     private listeners: Map<EventBusMessage, EventHandler[]> = new Map();

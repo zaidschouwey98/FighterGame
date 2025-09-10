@@ -2,6 +2,7 @@ import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { PlayerState } from "../../../shared/PlayerState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
+import { Direction } from "../../../shared/Direction";
 
 export class EffectRenderer {
     private animations: Partial<Record<PlayerState, AnimatedSprite>> = {};
@@ -22,21 +23,6 @@ export class EffectRenderer {
             anim.anchor.set(0.5, 0.5)
             this.attackEffectContainer.addChild(anim);
         }
-    }
-
-    renderBloodEffect(fromRightAttack: boolean, playerPos: Position) {
-        const bloodEffect = new AnimatedSprite(findAnimation(this.spriteSheets, "took_hit_from_right_effect")!);
-        bloodEffect.scale.x = fromRightAttack ? 1 : -1;
-        bloodEffect.anchor.set(0.5)
-        bloodEffect.x = playerPos.x;
-        bloodEffect.y = playerPos.y;
-        bloodEffect.visible = true;
-        bloodEffect.loop = false;
-        bloodEffect.animationSpeed = 0.3;
-        bloodEffect.currentFrame = 0;
-        bloodEffect.play();
-        bloodEffect.onComplete = () => { bloodEffect.destroy() }
-        this.staticEffectsContainer.addChild(bloodEffect)
     }
 
     renderAttackDashCloud(playerPos: Position) {

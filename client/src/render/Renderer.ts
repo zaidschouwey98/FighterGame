@@ -64,6 +64,7 @@ export class Renderer {
                 let p = GameState.instance.players.get(player.id);
                 if (p) this._playersRenderer.addNewPlayer(p);
             }
+            this._playersRenderer.updatePlayers(players);
         })
 
         // Quand un joueur est mis à jour
@@ -78,6 +79,7 @@ export class Renderer {
         // Nouvel arrivant
         this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this._playersRenderer.addNewPlayer(GameState.instance.players.get(player.id)!);
+            this._playersRenderer.updatePlayers([player]);
         });
 
         // Joueur parti

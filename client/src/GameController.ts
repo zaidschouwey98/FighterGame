@@ -35,9 +35,9 @@ export class GameController {
         this.setupEventListeners();
         new NetworkClient(serverUrl, this.eventBus);
         this.gameState = GameState.instance;
-        this.renderer = new Renderer(app, globalContainer, spriteSheets,this.eventBus);
+        this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus);
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
-        
+
         this.movementService = new MovementService(this.inputHandler);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService);
         this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
@@ -55,7 +55,7 @@ export class GameController {
         // Snapshot complet au spawn
         this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
             this.gameState.restorePlayers(players);
-            this.localPlayer = new Player("",{x:0,y:0},100,10,this.localPlayerId!,this.eventBus,this.inputHandler, this.attackService,this.movementService);
+            this.localPlayer = new Player("", { x: 0, y: 0 }, 100, 10, this.localPlayerId!, this.eventBus, this.inputHandler, this.attackService, this.movementService);
             let localPlayer = this.gameState.getPlayer(this.localPlayerId!);
             this.localPlayer.updateFromInfo(localPlayer!);
         });
@@ -79,38 +79,35 @@ export class GameController {
         this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
             this.handleAttackResult(attackResult);
         });
+
+        this.eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
+            this.gameState.updatePlayer(player);
+        });
     }
 
     private handleAttackResult(attackResult: AttackResult) {
         const hitPlayers = attackResult.hitPlayers;
-
-        // Heal si le joueur a tué
-        if (attackResult.attackerId === this.localPlayerId && attackResult.killNumber > 0) {
-            const local = this.gameState.players.get(this.localPlayerId);
-            if(!local) throw new Error("Local player shouldn't be undefined.");
-            local.hp += 20 * attackResult.killNumber; // TODO REMOVE, CAUSE SERVERSIDE
-            this.renderer.updateHealthBar(local.hp, 100);
-        }
-
-        // Knockback si bloqué
-        if (attackResult.blockedBy && attackResult.attackerId === this.localPlayerId) {
-            // this.attackService.attackGotBlocked(
-            //     // this.gameState.players.get(this.localPlayerId)!, //todo remove "!"
-            //     attackResult.blockedBy.id,
-            //     attackResult.knockbackStrength
-            // );
-        }
-
-        // MAJ des joueurs touchés
+        const attacker = GameState.instance.getPlayer(attackResult.attackerId)!;
         for (const hit of hitPlayers) {
             this.gameState.updatePlayer(hit);
             if (hit.id === this.localPlayerId) {
-                this.gameState.players.get(this.localPlayerId)!.hp = hit.hp; // TODO WHAT THE FUCK ?
+                const dx = this.localPlayer!.position.x - attacker.position.x;
+                const dy = this.localPlayer!.position.y - attacker.position.y;
+                const len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+                const knockbackStrength = attackResult.knockbackStrength;
+                this.localPlayer!.knockbackReceivedVector = {
+                    x: (dx / len) * knockbackStrength,
+                    y: (dy / len) * knockbackStrength,
+                };
+                this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
+                this.localPlayer?.takeDamage(20);// todo ajust.
             }
         }
     }
 
     public handleAttackReceived(attackResult: AttackResult) {
+        
         // Hp already set by the server
         // todo IF BLOCKING APPLY KNOCKBACK TO ATTACKER
         const attacker = this.gameState.players.get(attackResult.attackerId);
@@ -169,7 +166,7 @@ export class GameController {
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
 
         if (player.attackDashTimer <= 0) {
-            
+
             this.attackService.performAttack(player);
             // player.pendingAttack = false;
         }
@@ -179,25 +176,10 @@ export class GameController {
     public update(delta: number) {
 
         if (!this.localPlayer) return;
-        
+
 
         // // Receive knockback
-        // if (player.knockbackTimer && player.knockbackTimer > 0 && player.knockbackReceivedVector) {
-        //     player.position.x += player.knockbackReceivedVector.x * delta;
-        //     player.position.y += player.knockbackReceivedVector.y * delta;
-        //     // Ralentissement progressif
-        //     player.knockbackReceivedVector.x *= 0.85;
-        //     player.knockbackReceivedVector.y *= 0.85;
-
-        //     player.knockbackTimer -= delta;
-        //     if (player.knockbackTimer <= 0) {
-        //         player.knockbackReceivedVector = undefined;
-        //         player.knockbackTimer = undefined;
-        //     }
-        //     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
-
-        //     return;
-        // }
+        // 
 
         // Handle attack dash if ongoing
         this.localPlayer.update(delta);

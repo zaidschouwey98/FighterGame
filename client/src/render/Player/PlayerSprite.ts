@@ -8,6 +8,8 @@ import { PlayerState } from "../../../../shared/PlayerState";
 import { EffectRenderer } from "../EffectRenderer";
 import { Attack1Anim } from "./anim/Attack1Anim";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
+import { HitAnim } from "./anim/HitAnim";
+import { DieAnim } from "./anim/DieAnim";
 
 export default class PlayerSprite {
     private controller: AnimController;
@@ -39,9 +41,9 @@ export default class PlayerSprite {
             [PlayerState.ATTACK_DASH]: dash,
             [PlayerState.ATTACK_1]: new Attack1Anim(spriteSheets,playerContainer,effectRenderer),
             // [PlayerState.BLOCKING]: new BlockingAnim(...),
-            // [PlayerState.HIT]: new HitAnim(...),
+            [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
             // [PlayerState.TELEPORTING]: new TeleportAnim(...),
-            // [PlayerState.DEAD]: new DeadAnim(...),
+            [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, PlayerState.IDLE);
     }
 

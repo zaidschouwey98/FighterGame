@@ -11,6 +11,8 @@ import type { InputHandler } from "../InputHandler";
 import { AttackDashState } from "./states/AttackDashState";
 import { Attack1State } from "./states/Attack1State";
 import { AttackService } from "../AttackService";
+import { HitState } from "./states/HitState";
+import { DieState } from "./states/DieState";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -23,7 +25,7 @@ export default class Player {
     public movingDirection: Direction = Direction.BOTTOM;
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
 
-    
+
 
     public attackIndex: number = 0;
 
@@ -39,15 +41,17 @@ export default class Player {
     public currentState: BaseState;
     public idleState: IdleState;
     public movingState: MovingState;
-    public attackDashState:AttackDashState;
+    public attackDashState: AttackDashState;
     public attack1State: Attack1State;
+    public hitState: HitState;
+    public dieState: DieState;
     constructor(
         playerName: string = "Unknown",
         position: Position,
         hp: number = 100,
         speed: number = 10,
         id: string,
-        eventBus:EventBus,
+        eventBus: EventBus,
         inputHandler: InputHandler,
         attackService: AttackService,
         movementService: MovementService,
@@ -61,9 +65,11 @@ export default class Player {
 
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;
-        this.movingState = new MovingState(this,movementService,eventBus);
+        this.movingState = new MovingState(this, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus);
-        this.attack1State = new Attack1State(this,attackService, eventBus);
+        this.attack1State = new Attack1State(this, attackService, eventBus);
+        this.hitState = new HitState(this, eventBus);
+        this.dieState = new DieState(this, eventBus);
 
     }
 
@@ -71,10 +77,29 @@ export default class Player {
         this.currentState.update(delta);
     }
 
-    public changeState(nextState:BaseState) {
+    public takeDamage(amount: number) {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.die();
+        } else {
+            this.changeState(this.hitState);
+        }
+    }
+
+    public die() {
+        this.changeState(this.dieState);
+    }
+
+    public respawn(position: Position) {
+        this.position = position;
+        this.hp = 100; // ou config
+        this.changeState(this.idleState);
+    }
+
+    public changeState(nextState: BaseState) {
         this.currentState.exit();
         this.currentState = nextState;
-        nextState.enter(); 
+        nextState.enter();
     }
 
     get state(): PlayerState {

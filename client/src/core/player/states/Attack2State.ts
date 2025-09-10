@@ -5,7 +5,7 @@ import type { AttackService } from "../../AttackService";
 import { EventBusMessage, type EventBus } from "../../EventBus";
 
 export class Attack1State extends BaseState {
-  readonly name = PlayerState.ATTACK_1;
+  readonly name = PlayerState.ATTACK_2;
 
   private timer = 1; // Frames avant retour idle (ajuste si besoin)
 
@@ -14,6 +14,7 @@ export class Attack1State extends BaseState {
   }
 
   enter() {
+    console.log("ATTACK2")
     // Déclenchement attaque (hitbox envoyée)
     let attackData = this.attackService.performAttack(this.player);
     if(!attackData) throw new Error("AttackData shouldn't be unset.");

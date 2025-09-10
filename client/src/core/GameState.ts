@@ -22,7 +22,8 @@ export class GameState {
             // this.addPlayer(info);
             return;
         }
-        player = info;
+        
+        this.players.set(info.id,info);
     }
 
     restorePlayers(infos: PlayerInfo[]) {

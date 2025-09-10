@@ -8,7 +8,7 @@ import type { InputHandler } from "../../InputHandler";
 export class AttackDashState extends BaseState {
     readonly name = PlayerState.ATTACK_DASH;
 
-    constructor(player: Player, private attackService: AttackService, private eventBus:EventBus, private inputHandler:InputHandler) {
+    constructor(player: Player, private attackService: AttackService, private eventBus: EventBus, private inputHandler: InputHandler) {
         super(player);
     }
 
@@ -18,18 +18,21 @@ export class AttackDashState extends BaseState {
 
     enter() {
         this.attackService.initiateAttack(this.player);
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED,this.player.toInfo());
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
 
     update(delta: number) {
-        if (this.inputHandler.consumeRightClick()) {
-            this.player.changeState(this.player.idleState);
-            return;
-        }
+
         if (this.player.attackDashTimer == undefined || this.player.attackDashTimer <= 0) {
-            this.player.attackDashTimer = undefined;
-            this.player.changeState(this.player.attack1State);
-            return;
+            if (this.inputHandler.consumeRightClick()) {
+                this.player.attackDashTimer = undefined;
+                this.player.changeState(this.player.idleState);
+                return;
+            } else {
+                this.player.attackDashTimer = undefined;
+                this.player.changeState(this.player.attack1State);
+                return;
+            }
         }
         // Déplacement dash
         if (!this.player.attackDashTimer || this.player.attackDashTimer <= 0) return;
@@ -53,7 +56,7 @@ export class AttackDashState extends BaseState {
         this.player.position.x += this.player.mouseDirection.x * speed;
         this.player.position.y += this.player.mouseDirection.y * speed;
         this.player.attackDashTimer -= delta;
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED,this.player.toInfo());
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
 
     exit() {

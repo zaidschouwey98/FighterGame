@@ -48,7 +48,7 @@ export class Renderer {
         globalContainer.addChild(this._overlayContainer);
         globalContainer.addChild(this._uiContainer);
         rootContainer.addChild(globalContainer);
-        rootContainer.addChild(this._uiContainer);
+        rootContainer.addChild(this._uiContainer); // follows the camera
         this._minimap = new Minimap(app, this._uiContainer, 200);
         this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);

@@ -6,9 +6,7 @@ import type PlayerInfo from "../../../../../shared/PlayerInfo";
 export class Attack1Anim implements IAnimState {
     constructor(
         private effectRenderer: EffectRenderer
-    ) {
-
-    }
+    ) {}
 
     play(_player: PlayerInfo): void {
 

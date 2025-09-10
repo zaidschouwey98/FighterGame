@@ -15,6 +15,7 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
         });
         this.socket.on(ServerToSocketMsg.CURRENT_PLAYERS, (players: PlayerInfo[]) => {
+            console.log(players)
             this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
         });
 
@@ -22,7 +23,7 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_JOINED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_UPDATE, (player:PlayerInfo) => {
+        this.socket.on(ServerToSocketMsg.PLAYER_UPDATE, (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
         });
 
@@ -30,11 +31,11 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
         });
 
-        this.socket.on(ServerToSocketMsg.ATTACK_RESULT,(attackResult:AttackResult)=>{
+        this.socket.on(ServerToSocketMsg.ATTACK_RESULT, (attackResult: AttackResult) => {
             this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
         })
 
-        this.socket.on(ServerToSocketMsg.PLAYER_DIED, (player:PlayerInfo)=>{
+        this.socket.on(ServerToSocketMsg.PLAYER_DIED, (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_DIED, player);
         });
 
@@ -48,5 +49,9 @@ export class NetworkClient {
             this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
         });
+    }
+
+    public spawnPlayer(name: string) {
+        this.socket.emit(ClientToSocketMsg.SPAWN_PLAYER, name);
     }
 }

@@ -113,6 +113,7 @@ export default class Player {
     public updateFromInfo(info: PlayerInfo) {
         this.position = info.position;
         this.hp = info.hp;
+        this.playerName = info.name;
         this.speed = info.speed;
         this.attackDashDuration = info.attackDashDuration;
         this.attackDashMaxSpeed = info.attackDashMaxSpeed;
@@ -143,6 +144,7 @@ export default class Player {
             knockbackTimer: this.knockbackTimer,
             movingDirection: this.movingDirection,
             isDead: this.isDead,
+            name: this.playerName,
             id: this.id,
             state: this.state,
         };

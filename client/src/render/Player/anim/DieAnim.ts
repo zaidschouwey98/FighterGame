@@ -24,6 +24,7 @@ export class DieAnim implements IAnimState {
         }
 
         const dyingAnim = new AnimatedSprite(findAnimation(this.spriteSheets, "player_die")!);
+        dyingAnim.anchor.set(0.5);
         dyingAnim.x = player.position.x;
         dyingAnim.y = player.position.y;
         this.terrainContainer.addChild(dyingAnim);

@@ -17,7 +17,6 @@ export class BlockState extends BaseState {
     }
 
     canEnter(): boolean {
-        console.log(this.blockService.getBlockCD())
         if(this.blockService.getBlockCD() > 0)
             return false;
         else return true;

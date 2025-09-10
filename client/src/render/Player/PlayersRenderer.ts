@@ -22,7 +22,7 @@ export default class PlayersRenderer {
         const newPlayerContainer = new Container();
         newPlayerContainer.label = player.id;
         // créer le sprite lié à ce player
-        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "bibite");
+        const sprite = new PlayerSprite(player.id, newPlayerContainer, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side");
         this.playerContainers.set(player.id, newPlayerContainer);
         this.playerSprites.set(player.id, sprite);
         this.players.set(player.id, player);
@@ -68,14 +68,4 @@ export default class PlayersRenderer {
             if (playerSprite) playerSprite.update(player);
         }
     }
-    // public renderDyingPlayer(player: Player) {
-    //     let playerSprite = this.playerSprites.get(player.id);
-    //     playerSprite?.playDyingAnimation(player.position);
-    // }
-
-    // public showAttackEffect(attackData: AttackData): void {
-    //     let playerSprite = this.playerSprites.get(attackData.playerId);
-        
-
-    // }
 }

@@ -33,43 +33,40 @@ const players: Record<string, PlayerInfo> = {};
 io.on("connection", (socket) => { // RESERVED MESSAGE
   console.log(`Player connected: ${socket.id}`);
 
-  // Ajouter le joueur avec une position aléatoire
-  const startX = 0;
-  const startY = 0;
-  const newPlayer: PlayerInfo = {
-    position: { x: startX, y: startY },
-    hp: 100,
-    speed: 10,
-    mouseDirection:{x:0,y:0},
-    id: socket.id,
-    state: PlayerState.IDLE,
-    movingDirection: Direction.BOTTOM,
-    name:"HELLO",
-    attackIndex: 0,
-    attackDashMaxSpeed: 3,
-    isDead: false
-  }
-  players[socket.id] = newPlayer;
-  players[socket.id].name = "player_" + counter++;
-  // Envoyer l'état initial au nouveau joueur
+
   socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
+  console.log(players)
   socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, players);
 
-
-  // Notifier tous les autres joueurs
-  socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, players[socket.id]);
+  socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
+    const player: PlayerInfo = {
+      id: socket.id,
+      name: name?.trim(),
+      position: { x: 0, y: 0 },
+      hp: 100,
+      speed: 10,
+      mouseDirection: { x: 0, y: 0 },
+      state: PlayerState.IDLE,
+      movingDirection: Direction.BOTTOM,
+      attackIndex: 0,
+      attackDashMaxSpeed: 3,
+      isDead: false,
+    };
+    players[socket.id] = player;
+    console.log(`Spawn player ${player.name} (${socket.id})`);
+    socket.emit(ServerToSocketMsg.NEW_PLAYER, player);
+    socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, player);
+  });
 
   // Gestion mouvement
-
-
-  socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo:PlayerInfo) => {
+  socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) => {
     if (players[socket.id]) {
       players[socket.id] = playerInfo;
       socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, players[socket.id]);
     }
   })
 
-  socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo:PlayerInfo)=>{
+  socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo: PlayerInfo) => {
     if (players[socket.id]) {
       players[socket.id] = playerInfo;
       socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, players[socket.id]);
@@ -127,7 +124,7 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       killNumber: killNumber
     } as AttackResult);
 
-    for(const player of killedPlayers){
+    for (const player of killedPlayers) {
       handlePlayerDeath(player.id);
     }
   });

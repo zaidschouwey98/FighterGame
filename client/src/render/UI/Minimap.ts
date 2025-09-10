@@ -44,7 +44,6 @@ export class Minimap {
 
     // Dessiner les autres joueurs
     players.forEach(p => {
-      if (p.isLocal) return; // Ne pas redessiner le joueur local
 
       const dot = new PIXI.Graphics();
       

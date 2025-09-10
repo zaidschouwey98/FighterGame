@@ -1,4 +1,3 @@
-import { PlayerState } from "../../../shared/PlayerState";
 import { TP_COOLDOWN, TP_DISTANCE } from "../constantes";
 import type { CoordinateService } from "./CoordinateService";
 import { EventBusMessage, type EventBus } from "./EventBus";
@@ -40,7 +39,7 @@ export class TeleportService {
     player.position.x = newX;
     player.position.y = newY;
 
-    player.setState(PlayerState.TELEPORTING);
+
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo());
 
   }

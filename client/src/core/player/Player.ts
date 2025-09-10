@@ -15,6 +15,7 @@ import { HitState } from "./states/HitState";
 import { DieState } from "./states/DieState";
 import { BlockState } from "./states/BlockState";
 import type { BlockService } from "../BlockService";
+import { KnockBackState } from "./states/KnockBackState";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -48,6 +49,7 @@ export default class Player {
     public hitState: HitState;
     public dieState: DieState;
     public blockState: BlockState;
+    public knockbackState:KnockBackState;
     constructor(
         playerName: string = "Unknown",
         position: Position,
@@ -58,7 +60,7 @@ export default class Player {
         inputHandler: InputHandler,
         attackService: AttackService,
         movementService: MovementService,
-        blockService:BlockService
+        blockService:BlockService,
     ) {
         this.playerName = playerName
         this.id = id;
@@ -74,6 +76,7 @@ export default class Player {
         this.hitState = new HitState(this, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this,eventBus,blockService);
+        this.knockbackState = new KnockBackState(this,eventBus);
     }
 
     public update(delta: number) {
@@ -86,6 +89,7 @@ export default class Player {
             return;
         this.changeState(this.hitState);
     }
+
 
     public die() {
         this.changeState(this.dieState);
@@ -109,7 +113,7 @@ export default class Player {
         return this.currentState.name;
     }
 
-    // Rarement utilisé
+    // Utiliser uniquement lors de la création du joueur local
     public updateFromInfo(info: PlayerInfo) {
         this.position = info.position;
         this.hp = info.hp;

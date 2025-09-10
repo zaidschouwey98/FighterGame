@@ -7,6 +7,7 @@ import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
+import type Player from "../core/player/Player";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -27,12 +28,12 @@ export class Renderer {
 
     private _camera: CameraService;
 
-    constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
+    constructor(app: Application, rootContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
         this._eventBus = eventBus;
         this._camera = new CameraService();
 
         this._pixiApp = app;
-
+        const globalContainer = new Container();
         this._globalContainer = globalContainer;
         this._tilesContainer = new Container({ label: "tiles_container" });
         this._terrainContainer = new Container({ label: "terrain_container" });
@@ -45,10 +46,10 @@ export class Renderer {
         globalContainer.addChild(this._terrainContainer);
         globalContainer.addChild(this._objectContainer);
         globalContainer.addChild(this._overlayContainer);
-        app.stage.addChild(this._uiContainer)
-
+        globalContainer.addChild(this._uiContainer);
+        rootContainer.addChild(globalContainer);
+        rootContainer.addChild(this._uiContainer);
         this._minimap = new Minimap(app, this._uiContainer, 200);
-        
         this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
@@ -71,7 +72,7 @@ export class Renderer {
 
         // Nouvel arrivant
         this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
-            this._playersRenderer.addNewPlayer(GameState.instance.players.get(player.id)!);
+            this._playersRenderer.addNewPlayer(player);
             this._playersRenderer.updatePlayers([player]);
         });
 
@@ -81,14 +82,11 @@ export class Renderer {
         });
     }
 
-    updateMinimap(localPlayerId: string) {
-        // Dans ton update
-        const localPlayer = GameState.instance.players.get(localPlayerId!);
+    updateMinimap(localPlayer: Player) {
         const playersArray = Array.from(GameState.instance.players.values()).map(p => ({
             id: p.id,
             x: p.position.x,
             y: p.position.y,
-            isLocal: p.id === localPlayerId
         }));
 
         if (localPlayer) {

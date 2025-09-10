@@ -13,6 +13,7 @@ import { BlockService } from "./core/BlockService";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { CHUNK_SIZE, KNOCKBACK_TIMER, TILE_SIZE } from "./constantes";
 import { TeleportService } from "./core/TeleportService";
+import { PhysicsService } from "./core/PhysicsService";
 
 
 export class GameController {
@@ -60,13 +61,12 @@ export class GameController {
 
         // MAJ unique pour tout changement de joueur
         this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
-            this.gameState.updatePlayer(player);
+            if(player.id !== this.localPlayerId)
+                this.gameState.updatePlayer(player);
         });
 
         // Nouveau joueur
         this.eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
-            this.gameState.addPlayer(player);
-
             if (player.id === this.localPlayerId) {
                 this.localPlayer = new Player(
                     player.name,
@@ -81,7 +81,9 @@ export class GameController {
                     this.blockService
                 );
                 this.localPlayer.updateFromInfo(player);
+                return;
             }
+            this.gameState.addPlayer(player);
         });
 
         // Joueur parti
@@ -97,7 +99,7 @@ export class GameController {
         this.eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
             if (player.id === this.localPlayer?.id) {
                 this.localPlayer.die();
-            }
+            } else 
             this.gameState.updatePlayer(player);
         });
     }
@@ -109,18 +111,22 @@ export class GameController {
     private handleAttackResult(attackResult: AttackResult) {
         const hitPlayers = attackResult.hitPlayers;
         const attacker = GameState.instance.getPlayer(attackResult.attackerId)!;
+        if(attackResult.attackerId === this.localPlayerId){
+            if(attackResult.blockedBy != undefined){
+                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position,this.localPlayer!.position, attackResult.knockbackStrength)
+                this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
+                console.log(this.localPlayer)
+                this.localPlayer?.changeState(this.localPlayer.knockbackState);
+            }
+        }
+
         for (const hit of hitPlayers) {
             this.gameState.updatePlayer(hit);
             if (hit.id === this.localPlayerId) {
-                const dx = this.localPlayer!.position.x - attacker.position.x;
-                const dy = this.localPlayer!.position.y - attacker.position.y;
-                const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                if(attackResult.blockedBy?.id === this.localPlayerId)
+                    continue;
 
-                const knockbackStrength = attackResult.knockbackStrength;
-                this.localPlayer!.knockbackReceivedVector = {
-                    x: (dx / len) * knockbackStrength,
-                    y: (dy / len) * knockbackStrength,
-                };
+                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(attacker.position, this.localPlayer!.position, attackResult.knockbackStrength)
                 this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
                 this.localPlayer?.takeDamage(hit.hp);
             }
@@ -148,9 +154,8 @@ export class GameController {
         }
 
         this.renderer.updateCamera(this.localPlayer.position)
-        // Minimap
         this.inputHandler.update();
-        this.renderer.updateMinimap(this.localPlayer.id);
+        this.renderer.updateMinimap(this.localPlayer);
         this.teleportService.update(this.localPlayer, delta);
         this.blockService.update(delta);
         this.attackService.update(delta, this.localPlayer);

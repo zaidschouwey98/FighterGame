@@ -35,7 +35,6 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
 
 
   socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
-  console.log(players)
   socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, players);
 
   socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {

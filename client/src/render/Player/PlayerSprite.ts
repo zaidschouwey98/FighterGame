@@ -44,6 +44,7 @@ export default class PlayerSprite {
             [PlayerState.ATTACK_DASH]: dash,
             [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer),
             [PlayerState.BLOCKING]: new BlockAnim(spriteSheets,playerContainer),
+            [PlayerState.KNOCKBACK]: new BlockAnim(spriteSheets,playerContainer),
             [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
             // [PlayerState.TELEPORTING]: new TeleportAnim(...),
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),

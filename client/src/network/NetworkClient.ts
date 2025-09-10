@@ -15,7 +15,6 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
         });
         this.socket.on(ServerToSocketMsg.CURRENT_PLAYERS, (players: PlayerInfo[]) => {
-            console.log(players)
             this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
         });
 

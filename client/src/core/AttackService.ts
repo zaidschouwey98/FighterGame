@@ -4,6 +4,8 @@ import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
 import { ATTACK_COOLDOWN, ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import type { AttackData } from "../../../shared/AttackData";
+import AnimHelper from "../helper/AnimHelper";
+import { Direction } from "../../../shared/Direction";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
@@ -44,7 +46,7 @@ export class AttackService {
         player.mouseDirection = { x: dx / len, y: dy / len };
         player.attackDashDuration = DASH_ATTACK_DURATION;
         player.attackDashTimer = DASH_ATTACK_DURATION;
-
+        player.movingDirection = AnimHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
         this.attackCooldownTimer = ATTACK_COOLDOWN;
         this.attackResetTimer = ATTACK_RESET;
         // Notifier les autres systèmes

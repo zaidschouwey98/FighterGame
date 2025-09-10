@@ -95,6 +95,15 @@ const atlasConfig = [
         } as const
     },
     {
+        file: "/assets/knockback_from_right.png",
+        spriteAmount: { w: 5, h: 1 },
+        assetDimensions: { w: 32, h: 32 },
+        textures: ["knockback_from_right_1","knockback_from_right_2","knockback_from_right_3","knockback_from_right_4","knockback_from_right_5"] as const,
+        animations: {
+            knockback_from_right: ["knockback_from_right_1","knockback_from_right_2","knockback_from_right_3","knockback_from_right_4","knockback_from_right_5"]
+        } as const
+    },
+    {
         file: "/assets/attack_effect_right_1.png",
         spriteAmount: { w: 2, h: 2 },
         assetDimensions: { w: 128, h: 128 },

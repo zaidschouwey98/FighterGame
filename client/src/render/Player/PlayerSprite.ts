@@ -12,6 +12,7 @@ import { DieAnim } from "./anim/DieAnim";
 import { BlockAnim } from "./anim/BlockAnim";
 import { HpBar } from "../UI/HpBar";
 import { TeleportingAnim } from "./anim/TeleportAnim";
+import { KnockBackAnim } from "./anim/KnockBackAnim";
 
 export default class PlayerSprite {
     private controller: AnimController;
@@ -45,7 +46,7 @@ export default class PlayerSprite {
             [PlayerState.ATTACK_DASH]: dash,
             [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer),
             [PlayerState.BLOCKING]: new BlockAnim(spriteSheets,playerContainer),
-            [PlayerState.KNOCKBACK]: new BlockAnim(spriteSheets,playerContainer),
+            [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets,playerContainer),
             [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
             [PlayerState.TELEPORTING]: new TeleportingAnim(spriteSheets,playerContainer,staticEffectsContainer),
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),

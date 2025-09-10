@@ -1,11 +1,12 @@
 import { PlayerState } from "../../../../../shared/PlayerState";
 import { EventBusMessage, type EventBus } from "../../EventBus";
+import type { InputHandler } from "../../InputHandler";
 import type Player from "../Player";
 import { BaseState } from "./BaseState";
 
 export class KnockBackState extends BaseState {
     readonly name = PlayerState.KNOCKBACK;
-    constructor(player: Player, private eventBus: EventBus) {
+    constructor(player: Player, private eventBus: EventBus, private inputHandler:InputHandler) {
         super(player);
     }
 
@@ -14,6 +15,9 @@ export class KnockBackState extends BaseState {
     }
 
     update(delta: number) {
+        if (this.inputHandler.consumeSpaceClick()) {
+            this.player.changeState(this.player.teleportState);
+        }
         if (this.player.knockbackTimer && this.player.knockbackTimer > 0 && this.player.knockbackReceivedVector) {
             this.player.position.x += this.player.knockbackReceivedVector.x * delta;
             this.player.position.y += this.player.knockbackReceivedVector.y * delta;

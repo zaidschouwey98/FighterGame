@@ -77,10 +77,10 @@ export default class Player {
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus,inputHandler);
         this.attack1State = new Attack1State(this, attackService, eventBus);
-        this.hitState = new HitState(this, eventBus);
+        this.hitState = new HitState(this, eventBus,inputHandler);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this,eventBus,blockService,inputHandler);
-        this.knockbackState = new KnockBackState(this,eventBus);
+        this.knockbackState = new KnockBackState(this,eventBus,inputHandler);
         this.teleportState = new TeleportState(this,teleportService,eventBus);
     }
 

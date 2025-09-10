@@ -17,7 +17,7 @@ export class TeleportState extends BaseState {
     }
 
     enter() {
-        this.timer = 100;
+        this.timer = 1;
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
         this.teleportService.teleportPlayer(this.player);
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());

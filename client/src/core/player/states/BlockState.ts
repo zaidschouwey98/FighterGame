@@ -4,6 +4,7 @@ import type Player from "../Player";
 import { EventBusMessage, type EventBus } from "../../EventBus";
 import { BLOCK_DURATION } from "../../../constantes";
 import type { BlockService } from "../../BlockService";
+import type { InputHandler } from "../../InputHandler";
 
 export class BlockState extends BaseState {
     readonly name = PlayerState.BLOCKING;
@@ -11,7 +12,8 @@ export class BlockState extends BaseState {
     constructor(
         player: Player,
         private eventBus: EventBus,
-        private blockService: BlockService
+        private blockService: BlockService,
+        private inputHandler:InputHandler,
     ) {
         super(player);
     }
@@ -29,23 +31,20 @@ export class BlockState extends BaseState {
     }
 
     update(delta: number) {
-        // Si blocage limité dans le temps
+        if(this.inputHandler.consumeAttack()){
+            this.player.changeState(this.player.attackDashState);
+        }
         if (this.player.blockTimer !== undefined) {
             this.player.blockTimer -= delta;
             if (this.player.blockTimer <= 0) {
                 this.blockService.resetBlockCD();
-                this.stopBlocking();
+                this.player.changeState(this.player.idleState);
                 return;
             }
         }
-        
     }
 
     exit() {
         this.player.blockTimer = undefined;
-    }
-
-    private stopBlocking() {
-        this.player.changeState(this.player.idleState);
     }
 }

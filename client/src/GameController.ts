@@ -54,6 +54,7 @@ export class GameController {
 
         // Snapshot complet au spawn
         this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
+            console.log("controller")
             this.gameState.restorePlayers(players);
             this.localPlayer = new Player("", { x: 0, y: 0 }, 100, 10, this.localPlayerId!, this.eventBus, this.inputHandler, this.attackService, this.movementService,this.blockService);
             let localPlayer = this.gameState.getPlayer(this.localPlayerId!);

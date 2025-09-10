@@ -74,7 +74,6 @@ export default class Player {
         this.hitState = new HitState(this, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this,eventBus,blockService);
-
     }
 
     public update(delta: number) {

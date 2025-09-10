@@ -11,23 +11,23 @@ export class HpBar {
 
   constructor(
     uiContainer: PIXI.Container,
-    x: number = 20,
-    y: number = 20,
-    width: number = 200,
-    height: number = 20
+    x: number,
+    y: number,
+    width: number,
+    height: number
   ) {
     this.width = width;
     this.height = height;
 
     this.container = new PIXI.Container({ label: "healthbar" });
-    this.container.x = x;
+    this.container.x = x - width / 2;
     this.container.y = y;
 
     // Fond noir semi-transparent
     this.background = new PIXI.Graphics();
     this.background.rect(0, 0, this.width, this.height);
     this.background.fill({ color: 0x000000, alpha: 0.5 });
-
+    
     // Barre de vie (vert)
     this.bar = new PIXI.Graphics();
     this.bar.rect(0, 0, this.width, this.height);

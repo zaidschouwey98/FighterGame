@@ -44,6 +44,7 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
     id: socket.id,
     state: PlayerState.IDLE,
     movingDirection: Direction.BOTTOM,
+    name:"HELLO",
     attackIndex: 0,
     attackDashMaxSpeed: 3,
     isDead: false
@@ -93,6 +94,7 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
     const attackResults = [];
     let blockedBy: PlayerInfo | undefined;
     let killNumber: number = 0;
+    let killedPlayers = [];
     // Appliquer les dégâts
     for (const targetId of hitPlayerIds) {
       const target = players[targetId];
@@ -113,7 +115,7 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       if (target.hp <= 0 && !target.isDead) {
         attacker.hp += 20
         killNumber++;
-        handlePlayerDeath(target.id);
+        killedPlayers.push(target);
       }
     }
     // Envoyer les résultats à tous les clients
@@ -124,6 +126,10 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       blockedBy: blockedBy,
       killNumber: killNumber
     } as AttackResult);
+
+    for(const player of killedPlayers){
+      handlePlayerDeath(player.id);
+    }
   });
 
   // Déconnexion

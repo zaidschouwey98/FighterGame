@@ -10,9 +10,11 @@ import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
 import { DieAnim } from "./anim/DieAnim";
 import { BlockAnim } from "./anim/BlockAnim";
+import { HpBar } from "../UI/HpBar";
 
 export default class PlayerSprite {
     private controller: AnimController;
+    private hpBar: HpBar;
     constructor(
         public id: string,
         private playerContainer: Container,
@@ -22,6 +24,7 @@ export default class PlayerSprite {
         playerName: string
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
+        this.hpBar = new HpBar(this.playerContainer, 0, -24, 40, 10);
         // Label au-dessus du joueur
         const style = new TextStyle({ fontFamily: "Arial", fontSize: 8, fill: "#ffffff", stroke: "#000000" });
         const name = new Text(playerName, style);
@@ -48,6 +51,7 @@ export default class PlayerSprite {
     }
 
     public update(player: PlayerInfo) {
+        this.hpBar.update(player.hp, 100);
         this.controller.update(player);
     }
 

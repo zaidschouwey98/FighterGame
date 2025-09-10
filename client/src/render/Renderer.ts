@@ -5,7 +5,6 @@ import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
 import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
-import { HpBar } from "./UI/HpBar";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
 
@@ -27,7 +26,6 @@ export class Renderer {
     private _worldRenderer: WorldRenderer;
 
     private _camera: CameraService;
-    private _hpBar: HpBar;
 
     constructor(app: Application, globalContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
         this._eventBus = eventBus;
@@ -50,7 +48,7 @@ export class Renderer {
         app.stage.addChild(this._uiContainer)
 
         this._minimap = new Minimap(app, this._uiContainer, 200);
-        this._hpBar = new HpBar(this._uiContainer, 100, 100, 200, 60);
+        
         this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
@@ -100,10 +98,6 @@ export class Renderer {
                 playersArray
             );
         }
-    }
-
-    updateHealthBar(currentHealth: number, maxHealth: number) {
-        this._hpBar.update(currentHealth, maxHealth)
     }
 
     updateCamera(position: Position) {

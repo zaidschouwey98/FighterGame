@@ -8,7 +8,6 @@ import { GameState } from "../core/GameState";
 import { HpBar } from "./UI/HpBar";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
-import type { AttackResult } from "../../../shared/AttackResult";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -72,10 +71,6 @@ export class Renderer {
             this._playersRenderer.updatePlayers([player]);
         });
 
-        this._eventBus.on(EventBusMessage.ATTACK_PERFORMED, (attackResult: AttackResult) => {
-            
-        });
-
         // Nouvel arrivant
         this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this._playersRenderer.addNewPlayer(GameState.instance.players.get(player.id)!);
@@ -85,13 +80,6 @@ export class Renderer {
         // Joueur parti
         this._eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
             this._playersRenderer.removePlayer(playerId);
-        });
-
-
-        // Joueur mort
-        this._eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
-            const dead = GameState.instance.players.get(player.id);
-            // if (dead) this._playersRenderer.renderDyingPlayer(dead);
         });
     }
 

@@ -1,5 +1,4 @@
 import { Container, Spritesheet, TextStyle, Text } from "pixi.js";
-import Player from "../../core/player/Player";
 import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
@@ -10,6 +9,7 @@ import { Attack1Anim } from "./anim/Attack1Anim";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
 import { DieAnim } from "./anim/DieAnim";
+import { BlockAnim } from "./anim/BlockAnim";
 
 export default class PlayerSprite {
     private controller: AnimController;
@@ -39,8 +39,8 @@ export default class PlayerSprite {
             [PlayerState.IDLE]: idle,
             [PlayerState.MOVING]: moving,
             [PlayerState.ATTACK_DASH]: dash,
-            [PlayerState.ATTACK_1]: new Attack1Anim(spriteSheets,playerContainer,effectRenderer),
-            // [PlayerState.BLOCKING]: new BlockingAnim(...),
+            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer),
+            [PlayerState.BLOCKING]: new BlockAnim(spriteSheets,playerContainer),
             [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
             // [PlayerState.TELEPORTING]: new TeleportAnim(...),
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),

@@ -13,6 +13,8 @@ import { Attack1State } from "./states/Attack1State";
 import { AttackService } from "../AttackService";
 import { HitState } from "./states/HitState";
 import { DieState } from "./states/DieState";
+import { BlockState } from "./states/BlockState";
+import type { BlockService } from "../BlockService";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -45,6 +47,7 @@ export default class Player {
     public attack1State: Attack1State;
     public hitState: HitState;
     public dieState: DieState;
+    public blockState: BlockState;
     constructor(
         playerName: string = "Unknown",
         position: Position,
@@ -55,7 +58,7 @@ export default class Player {
         inputHandler: InputHandler,
         attackService: AttackService,
         movementService: MovementService,
-
+        blockService:BlockService
     ) {
         this.playerName = playerName
         this.id = id;
@@ -65,11 +68,12 @@ export default class Player {
 
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;
-        this.movingState = new MovingState(this, movementService, eventBus);
+        this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus);
         this.attack1State = new Attack1State(this, attackService, eventBus);
         this.hitState = new HitState(this, eventBus);
         this.dieState = new DieState(this, eventBus);
+        this.blockState = new BlockState(this,eventBus,blockService);
 
     }
 
@@ -77,13 +81,11 @@ export default class Player {
         this.currentState.update(delta);
     }
 
-    public takeDamage(amount: number) {
-        this.hp -= amount;
-        if (this.hp <= 0) {
-            this.die();
-        } else {
-            this.changeState(this.hitState);
-        }
+    public takeDamage(newHp: number) {
+        this.hp = newHp;
+        if(this.currentState.name === PlayerState.DEAD)
+            return;
+        this.changeState(this.hitState);
     }
 
     public die() {
@@ -97,6 +99,8 @@ export default class Player {
     }
 
     public changeState(nextState: BaseState) {
+        if(!nextState.canEnter())
+            return;
         this.currentState.exit();
         this.currentState = nextState;
         nextState.enter();

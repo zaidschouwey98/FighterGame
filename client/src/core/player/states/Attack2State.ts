@@ -14,7 +14,6 @@ export class Attack1State extends BaseState {
   }
 
   enter() {
-    console.log("ATTACK2")
     // Déclenchement attaque (hitbox envoyée)
     let attackData = this.attackService.performAttack(this.player);
     if(!attackData) throw new Error("AttackData shouldn't be unset.");

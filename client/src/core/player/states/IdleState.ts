@@ -29,6 +29,11 @@ export class IdleState extends BaseState {
             return;
         }
 
+        if (this.inputHandler.consumeRightClick()) {
+            this.player.changeState(this.player.blockState);
+            return;
+        }
+
         // Si espace → dash
         if (this.inputHandler.consumeSpaceClick()) {
             // this.player.changeState(this.player.dashState);

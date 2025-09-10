@@ -64,7 +64,7 @@ export class AttackService {
         const dx = world.x - player.position.x;
         const dy = world.y - player.position.y;
         const dir = Math.atan2(dy, dx);
-
+        // player.mouseDirection = {x:dx,y:dy}
         const hitbox = AttackHitboxService.createHitbox(player.position, dir);
         let res = {
             playerId: player.id,

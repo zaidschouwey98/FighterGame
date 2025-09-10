@@ -40,7 +40,7 @@ export class GameController {
 
         this.movementService = new MovementService(this.inputHandler);
         this.attackService = new AttackService(this.inputHandler, this.coordinateService);
-        this.blockService = new BlockService(this.inputHandler, this.coordinateService, this.eventBus);
+        this.blockService = new BlockService(this.inputHandler, this.coordinateService);
         this.teleportService = new TeleportService(this.inputHandler, this.coordinateService, this.eventBus);
 
     }
@@ -55,7 +55,7 @@ export class GameController {
         // Snapshot complet au spawn
         this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
             this.gameState.restorePlayers(players);
-            this.localPlayer = new Player("", { x: 0, y: 0 }, 100, 10, this.localPlayerId!, this.eventBus, this.inputHandler, this.attackService, this.movementService);
+            this.localPlayer = new Player("", { x: 0, y: 0 }, 100, 10, this.localPlayerId!, this.eventBus, this.inputHandler, this.attackService, this.movementService,this.blockService);
             let localPlayer = this.gameState.getPlayer(this.localPlayerId!);
             this.localPlayer.updateFromInfo(localPlayer!);
         });
@@ -81,6 +81,9 @@ export class GameController {
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_DIED, (player: PlayerInfo) => {
+            if(player.id === this.localPlayer?.id){
+                this.localPlayer.die();
+            }
             this.gameState.updatePlayer(player);
         });
     }
@@ -101,74 +104,8 @@ export class GameController {
                     y: (dy / len) * knockbackStrength,
                 };
                 this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
-                this.localPlayer?.takeDamage(20);// todo ajust.
+                this.localPlayer?.takeDamage(hit.hp);
             }
-        }
-    }
-
-    public handleAttackReceived(attackResult: AttackResult) {
-        
-        // Hp already set by the server
-        // todo IF BLOCKING APPLY KNOCKBACK TO ATTACKER
-        const attacker = this.gameState.players.get(attackResult.attackerId);
-        const player = this.gameState.players.get(this.localPlayerId!);
-        if (!player) throw new Error("Player not in game received damage.");
-
-        if (!attacker) return;
-        let didBlock = false;
-        if (player.isDead) {
-            // this.handleDeath(player);
-            return;
-        }
-        // If player is blocking
-        // if (player.getState() === PlayerState.BLOCKING) // todo check if in correction direction serverside
-        // {
-        //     didBlock = true;
-        // }
-        this.renderer.updateHealthBar(player.hp, 100);
-        const dx = player.position.x - attacker.position.x;
-        const dy = player.position.y - attacker.position.y;
-        const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-        const knockbackStrength = !didBlock ? attackResult.knockbackStrength : attackResult.knockbackStrength / 2;
-        player.knockbackReceivedVector = {
-            x: (dx / len) * knockbackStrength,
-            y: (dy / len) * knockbackStrength,
-        };
-        // if (!didBlock) player.setState(PlayerState.HIT);
-        player.knockbackTimer = KNOCKBACK_TIMER; // Frames de knockback // TODO CHANGE THIS FROM ATTACK
-    }
-
-    private handleAttackDash(player: Player, delta: number) {
-        if (!player.attackDashTimer || player.attackDashTimer <= 0) return;
-
-        // Progression totale du dash (0 → 1)
-        const t = 1 - player.attackDashTimer / player.attackDashDuration!;
-
-        // Fonction mathématique     avec freeze
-        const freezeRatio = 10 / player.attackDashDuration!; // 15 premières frames sans mouvement
-        const p = 9; // contrôle la douceur
-        let speedFactor = 0;
-
-        if (t >= freezeRatio) {
-            const tPrime = (t - freezeRatio) / (1 - freezeRatio);
-            speedFactor = Math.pow(4, p) * Math.pow(tPrime, p) * Math.pow(1 - tPrime, p);
-        }
-
-        const speed = player.attackDashMaxSpeed * speedFactor;
-
-        // Déplacement
-        player.position.x += player.mouseDirection.x * speed;
-        player.position.y += player.mouseDirection.y * speed;
-
-        player.attackDashTimer -= delta;
-        // player.setState(PlayerState.ATTACK_DASH);
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, player.toInfo())
-
-        if (player.attackDashTimer <= 0) {
-
-            this.attackService.performAttack(player);
-            // player.pendingAttack = false;
         }
     }
 
@@ -177,9 +114,6 @@ export class GameController {
 
         if (!this.localPlayer) return;
 
-
-        // // Receive knockback
-        // 
 
         // Handle attack dash if ongoing
         this.localPlayer.update(delta);
@@ -200,7 +134,7 @@ export class GameController {
         this.inputHandler.update();
         this.renderer.updateMinimap(this.localPlayer.id);
         this.teleportService.update(this.localPlayer, delta);
-        this.blockService.update(this.localPlayer, delta);
+        this.blockService.update(delta);
         this.attackService.update(delta, this.localPlayer);
     }
 }

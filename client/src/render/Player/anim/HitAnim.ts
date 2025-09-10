@@ -6,7 +6,6 @@ import type { IAnimState } from "./IAnimState";
 import AnimHelper from "../../../helper/AnimHelper";
 import { KNOCKBACK_TIMER } from "../../../constantes";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
-import type Position from "../../../../../shared/Position";
 
 export class HitAnim implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
@@ -86,7 +85,6 @@ export class HitAnim implements IAnimState {
                 bloodEffect.scale.x *= -1;
                 break;
             case Direction.LEFT:
-
                 break;
             case Direction.TOP:
                 bloodEffect.rotation += Math.PI / 2

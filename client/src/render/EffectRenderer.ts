@@ -2,7 +2,6 @@ import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { PlayerState } from "../../../shared/PlayerState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
-import { Direction } from "../../../shared/Direction";
 
 export class EffectRenderer {
     private animations: Partial<Record<PlayerState, AnimatedSprite>> = {};

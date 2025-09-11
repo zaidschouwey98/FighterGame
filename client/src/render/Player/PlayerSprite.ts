@@ -14,10 +14,12 @@ import { HpBar } from "../UI/HpBar";
 import { TeleportingAnim } from "./anim/TeleportAnim";
 import { KnockBackAnim } from "./anim/KnockBackAnim";
 import { Attack2Anim } from "./anim/Attack2Anim";
+import { WeaponSprite } from "./WeaponSprite";
 
 export default class PlayerSprite {
     private controller: AnimController;
     private hpBar: HpBar;
+    private weapon: WeaponSprite;
     constructor(
         public id: string,
         private playerContainer: Container,
@@ -36,7 +38,8 @@ export default class PlayerSprite {
         name.y = -20;
         this.playerContainer.addChild(name);
 
-     
+        this.weapon = new WeaponSprite(spriteSheets, this.playerContainer);
+
         const idle = new IdleAnim(spriteSheets, this.playerContainer);
         const moving = new MovingAnim(spriteSheets, this.playerContainer);
         const dash = new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer);
@@ -45,12 +48,12 @@ export default class PlayerSprite {
             [PlayerState.IDLE]: idle,
             [PlayerState.MOVING]: moving,
             [PlayerState.ATTACK_DASH]: dash,
-            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer,spriteSheets,playerContainer),
+            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer, spriteSheets, playerContainer),
             [PlayerState.ATTACK_2]: new Attack2Anim(effectRenderer),
-            [PlayerState.BLOCKING]: new BlockAnim(spriteSheets,playerContainer),
-            [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets,playerContainer),
+            [PlayerState.BLOCKING]: new BlockAnim(spriteSheets, playerContainer),
+            [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
             [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
-            [PlayerState.TELEPORTING]: new TeleportingAnim(spriteSheets,playerContainer,staticEffectsContainer),
+            [PlayerState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, PlayerState.IDLE);
     }
@@ -59,6 +62,14 @@ export default class PlayerSprite {
 
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
+        this.weapon.update(player);
+
+        const statesWithoutWeapon = [
+            PlayerState.ATTACK_1,
+            PlayerState.ATTACK_2,
+        ];
+
+        this.weapon.setVisible(!statesWithoutWeapon.includes(player.state));
     }
 
     public destroy() {

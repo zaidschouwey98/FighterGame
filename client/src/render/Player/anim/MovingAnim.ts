@@ -10,6 +10,7 @@ export class MovingAnim implements IAnimState {
   private lastDir?: Direction;
 
   constructor(spriteSheets: Spritesheet[], playerContainer: Container) {
+  
     // Right
     const right = new AnimatedSprite(findAnimation(spriteSheets, "player_walk_right")!);
     // Left = flip du right

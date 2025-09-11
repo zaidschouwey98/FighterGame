@@ -45,7 +45,7 @@ export default class PlayerSprite {
             [PlayerState.IDLE]: idle,
             [PlayerState.MOVING]: moving,
             [PlayerState.ATTACK_DASH]: dash,
-            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer),
+            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer,spriteSheets,playerContainer),
             [PlayerState.ATTACK_2]: new Attack2Anim(effectRenderer),
             [PlayerState.BLOCKING]: new BlockAnim(spriteSheets,playerContainer),
             [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets,playerContainer),

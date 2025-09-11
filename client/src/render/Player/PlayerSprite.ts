@@ -67,6 +67,7 @@ export default class PlayerSprite {
         const statesWithoutWeapon = [
             PlayerState.ATTACK_1,
             PlayerState.ATTACK_2,
+            PlayerState.ATTACK_DASH
         ];
 
         this.weapon.setVisible(!statesWithoutWeapon.includes(player.state));

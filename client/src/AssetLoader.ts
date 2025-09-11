@@ -98,6 +98,15 @@ const atlasConfig = [
         textures: ["sword"] as const
     },
     {
+        file: "/assets/swords/sword_1/sword_spawning.png",
+        spriteAmount: { w: 2, h: 1 },
+        assetDimensions: { w: 64, h: 32 },
+        textures: ["sword_spawning_1", "sword_spawning_2"] as const,
+        animations: {
+            sword_spawning:["sword_spawning_1", "sword_spawning_2"]
+        }
+    },
+    {
         file: "/assets/spritesheet.png",
         spriteAmount: { w: 8, h: 8 },
         assetDimensions: { w: 16, h: 16 },

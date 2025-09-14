@@ -19,6 +19,9 @@ import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
 import type { TeleportService } from "../TeleportService";
 import { Attack2State } from "./states/Attack2State";
+import type { AttackResult } from "../../../../shared/AttackResult";
+import { PhysicsService } from "../PhysicsService";
+import { GameState } from "../GameState";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -50,10 +53,8 @@ export default class Player {
     public attackDashState: AttackDashState;
     public attack1State: Attack1State;
     public attack2State: Attack2State;
-    public hitState: HitState;
     public dieState: DieState;
     public blockState: BlockState;
-    public knockbackState:KnockBackState;
     public teleportState: TeleportState;
     constructor(
         playerName: string = "Unknown",
@@ -61,12 +62,12 @@ export default class Player {
         hp: number = 100,
         speed: number = 10,
         id: string,
-        eventBus: EventBus,
-        inputHandler: InputHandler,
+        private eventBus: EventBus,
+        private inputHandler: InputHandler,
         attackService: AttackService,
         movementService: MovementService,
-        blockService:BlockService,
-        teleportService:TeleportService
+        blockService: BlockService,
+        teleportService: TeleportService
     ) {
         this.playerName = playerName
         this.id = id;
@@ -77,25 +78,49 @@ export default class Player {
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
-        this.attackDashState = new AttackDashState(this, attackService, eventBus,inputHandler);
+        this.attackDashState = new AttackDashState(this, attackService, eventBus, inputHandler);
         this.attack1State = new Attack1State(this, attackService, eventBus);
         this.attack2State = new Attack2State(this, attackService, eventBus);
-        this.hitState = new HitState(this, eventBus,inputHandler);
         this.dieState = new DieState(this, eventBus);
-        this.blockState = new BlockState(this,eventBus,blockService,inputHandler);
-        this.knockbackState = new KnockBackState(this,eventBus,inputHandler);
-        this.teleportState = new TeleportState(this,teleportService,eventBus);
+        this.blockState = new BlockState(this, eventBus, blockService, inputHandler);
+
+        this.teleportState = new TeleportState(this, teleportService, eventBus);
     }
 
     public update(delta: number) {
         this.currentState.update(delta);
     }
 
-    public takeDamage(newHp: number) {
+    public handleAttackReceived(attackResult: AttackResult) {
+        const hitPlayers = attackResult.hitPlayers;
+        if (attackResult.attackerId === this.id && attackResult.blockedBy != undefined) {
+            this.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.position, attackResult.knockbackStrength);
+            this.changeState(
+                new KnockBackState(
+                    this,
+                    this.eventBus,
+                    this.inputHandler,
+                    PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.position, attackResult.knockbackStrength),
+                    attackResult.knockbackTimer
+                ))
+        }
+
+        for (const hit of hitPlayers) {
+            if (hit.id === this.id) {
+                if (attackResult.blockedBy?.id === this.id)
+                    continue;
+                this.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.attackerId)!.position, this.position, attackResult.knockbackStrength),
+                this.takeDamage(hit.hp, PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.attackerId)!.position, this.position, attackResult.knockbackStrength),
+                        attackResult.knockbackTimer);
+            }
+        }
+    }
+
+    public takeDamage(newHp: number, knockbackVector:{x:number,y:number}, knockbackStrength:number) {
         this.hp = newHp;
-        if(this.currentState.name === PlayerState.DEAD)
+        if (this.currentState.name === PlayerState.DEAD)
             return;
-        this.changeState(this.hitState);
+        this.changeState(new HitState(this,this.eventBus,this.inputHandler,knockbackVector,knockbackStrength));
     }
 
 
@@ -110,7 +135,7 @@ export default class Player {
     }
 
     public changeState(nextState: BaseState) {
-        if(!nextState.canEnter())
+        if (!nextState.canEnter())
             return;
         this.currentState.exit();
         this.currentState = nextState;
@@ -131,9 +156,7 @@ export default class Player {
         this.attackDashMaxSpeed = info.attackDashMaxSpeed;
         this.attackDashTimer = info.attackDashTimer;
         this.attackIndex = info.attackIndex;
-        this.blockTimer = info.blockTimer;
         this.knockbackReceivedVector = info.knockbackReceivedVector;
-        this.knockbackTimer = info.knockbackTimer;
         this.mouseDirection = info.mouseDirection;
         this.movingDirection = info.movingDirection;
 
@@ -150,10 +173,8 @@ export default class Player {
             attackDashMaxSpeed: this.attackDashMaxSpeed,
             attackDashTimer: this.attackDashTimer,
             attackIndex: this.attackIndex,
-            blockTimer: this.blockTimer,
             mouseDirection: this.mouseDirection,
             knockbackReceivedVector: this.knockbackReceivedVector,
-            knockbackTimer: this.knockbackTimer,
             movingDirection: this.movingDirection,
             isDead: this.isDead,
             name: this.playerName,

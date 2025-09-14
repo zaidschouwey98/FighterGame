@@ -1,44 +1,47 @@
 import { PlayerState } from "../../../../../shared/PlayerState";
-import { BaseState } from "./BaseState";
-import type Player from "../Player";
 import { EventBusMessage, type EventBus } from "../../EventBus";
 import type { InputHandler } from "../../InputHandler";
+import type Player from "../Player";
+import { BaseState } from "./BaseState";
 
 export class HitState extends BaseState {
-  readonly name = PlayerState.HIT;
-  constructor(player: Player, private eventBus: EventBus, private inputHandler:InputHandler) {
-    super(player);
-  }
-
-  enter() {
-    // Notifier FX/serveur que le joueur est touché
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
-  }
-
-  update(delta: number) {
-    if(this.inputHandler.consumeSpaceClick()){
-      this.player.changeState(this.player.teleportState);
+    readonly name = PlayerState.HIT;
+    constructor(
+        player: Player,
+        private eventBus: EventBus,
+        private inputHandler: InputHandler,
+        private knockbackVector: { x: number; y: number },
+        private knockbackTimer: number
+    ) {
+        super(player);
     }
-    if (this.player.knockbackTimer && this.player.knockbackTimer > 0 && this.player.knockbackReceivedVector) {
-      this.player.position.x += this.player.knockbackReceivedVector.x * delta;
-      this.player.position.y += this.player.knockbackReceivedVector.y * delta;
-      // Ralentissement progressif
-      this.player.knockbackReceivedVector.x *= 0.85;
-      this.player.knockbackReceivedVector.y *= 0.85;
 
-      this.player.knockbackTimer -= delta;
-      if (this.player.knockbackTimer <= 0) {
-        this.player.knockbackReceivedVector = undefined;
-        this.player.knockbackTimer = undefined;
-        this.player.changeState(this.player.idleState);
-      }
-      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo())
+    enter() {
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
-  }
 
-  exit() {
-    // Nettoyage knockback
-    this.player.knockbackReceivedVector = undefined;
-    this.player.knockbackTimer = undefined;
-  }
+    update(delta: number) {
+        if (this.inputHandler.consumeSpaceClick()) {
+            this.player.changeState(this.player.teleportState);
+        }
+
+        if (this.knockbackTimer > 0) {
+            this.player.position.x += this.knockbackVector.x * delta;
+            this.player.position.y += this.knockbackVector.y * delta;
+
+            this.knockbackVector.x *= 0.85;
+            this.knockbackVector.y *= 0.85;
+
+            this.knockbackTimer -= delta;
+            if (this.knockbackTimer <= 0) {
+                this.player.changeState(this.player.idleState);
+            }
+
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+        }
+    }
+
+    exit() {
+
+    }
 }

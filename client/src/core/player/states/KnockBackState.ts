@@ -6,7 +6,13 @@ import { BaseState } from "./BaseState";
 
 export class KnockBackState extends BaseState {
     readonly name = PlayerState.KNOCKBACK;
-    constructor(player: Player, private eventBus: EventBus, private inputHandler:InputHandler) {
+    constructor(
+        player: Player,
+        private eventBus: EventBus,
+        private inputHandler: InputHandler,
+        private knockbackVector: { x: number; y: number },
+        private knockbackTimer: number
+    ) {
         super(player);
     }
 
@@ -18,26 +24,24 @@ export class KnockBackState extends BaseState {
         if (this.inputHandler.consumeSpaceClick()) {
             this.player.changeState(this.player.teleportState);
         }
-        if (this.player.knockbackTimer && this.player.knockbackTimer > 0 && this.player.knockbackReceivedVector) {
-            this.player.position.x += this.player.knockbackReceivedVector.x * delta;
-            this.player.position.y += this.player.knockbackReceivedVector.y * delta;
-            // Ralentissement progressif
-            this.player.knockbackReceivedVector.x *= 0.85;
-            this.player.knockbackReceivedVector.y *= 0.85;
 
-            this.player.knockbackTimer -= delta;
-            if (this.player.knockbackTimer <= 0) {
-                this.player.knockbackReceivedVector = undefined;
-                this.player.knockbackTimer = undefined;
+        if (this.knockbackTimer > 0) {
+            this.player.position.x += this.knockbackVector.x * delta;
+            this.player.position.y += this.knockbackVector.y * delta;
+
+            this.knockbackVector.x *= 0.85;
+            this.knockbackVector.y *= 0.85;
+
+            this.knockbackTimer -= delta;
+            if (this.knockbackTimer <= 0) {
                 this.player.changeState(this.player.idleState);
             }
-            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo())
+
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
         }
     }
 
     exit() {
-        // Nettoyage knockback
-        this.player.knockbackReceivedVector = undefined;
-        this.player.knockbackTimer = undefined;
+
     }
 }

@@ -7,7 +7,7 @@ import { EventBusMessage, type EventBus } from "../../EventBus";
 export class Attack1State extends BaseState {
   readonly name = PlayerState.ATTACK_1;
 
-  private timer = 20; // Frames avant retour idle (ajuste si besoin)
+  private timer = 10; // Frames avant retour idle (ajuste si besoin)
 
   constructor(player: Player, private attackService: AttackService, private eventBus:EventBus) {
     super(player);
@@ -19,7 +19,7 @@ export class Attack1State extends BaseState {
     if(!attackData) throw new Error("AttackData shouldn't be unset.");
     this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED,this.player.toInfo());
-    this.timer = 20; // court délai pour animer
+    this.timer = 10; // court délai pour animer
   }
 
   update(delta: number) {

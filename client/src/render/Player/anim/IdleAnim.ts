@@ -19,7 +19,7 @@ export class IdleAnim implements IAnimState{
     // Init commun
     for (const s of [down, right, top, left]) {
       s.visible = false;
-      s.animationSpeed = 0.2;
+      s.animationSpeed = 0.1;
       s.anchor.set(0.5);
       playerContainer.addChild(s);
     }

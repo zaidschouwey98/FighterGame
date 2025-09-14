@@ -11,9 +11,8 @@ import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
 import { BlockService } from "./core/BlockService";
 import type PlayerInfo from "../../shared/PlayerInfo";
-import { CHUNK_SIZE, KNOCKBACK_TIMER, TILE_SIZE } from "./constantes";
+import { CHUNK_SIZE, TILE_SIZE } from "./constantes";
 import { TeleportService } from "./core/TeleportService";
-import { PhysicsService } from "./core/PhysicsService";
 
 
 export class GameController {
@@ -109,7 +108,7 @@ export class GameController {
 
         // Résultat attaque
         this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.handleAttackResult(attackResult);
+            this.localPlayer?.handleAttackReceived(attackResult);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
@@ -137,32 +136,6 @@ export class GameController {
         this.networkClient.respawnPlayer();
     }
 
-    private handleAttackResult(attackResult: AttackResult) {
-        const hitPlayers = attackResult.hitPlayers;
-        const attacker = GameState.instance.getPlayer(attackResult.attackerId)!;
-        if (attackResult.attackerId === this.localPlayerId) {
-            if (attackResult.blockedBy != undefined) {
-                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.localPlayer!.position, attackResult.knockbackStrength)
-                this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
-                console.log(this.localPlayer)
-                this.localPlayer?.changeState(this.localPlayer.knockbackState);
-            }
-        }
-
-        for (const hit of hitPlayers) {
-            this.gameState.updatePlayer(hit);
-            if (hit.id === this.localPlayerId) {
-                if (attackResult.blockedBy?.id === this.localPlayerId)
-                    continue;
-
-                this.localPlayer!.knockbackReceivedVector = PhysicsService.computeKnockback(attacker.position, this.localPlayer!.position, attackResult.knockbackStrength)
-                this.localPlayer!.knockbackTimer = KNOCKBACK_TIMER;
-                this.localPlayer?.takeDamage(hit.hp);
-            }
-        }
-    }
-
-
     public update(delta: number) {
 
         if (!this.localPlayer) return;
@@ -188,5 +161,6 @@ export class GameController {
         this.teleportService.update(delta);
         this.blockService.update(delta);
         this.attackService.update(delta, this.localPlayer);
+        this.renderer.update(delta);
     }
 }

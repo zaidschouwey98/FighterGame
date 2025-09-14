@@ -59,20 +59,15 @@ export default class PlayerSprite {
     }
 
     public update(player: PlayerInfo) {
-
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
-        this.weapon.update(player);
+        this.weapon.setState(player.state);
+        this.weapon.setDirection(player.movingDirection);
+    }
 
-        const statesWithoutWeapon = [
-            PlayerState.ATTACK_1,
-            PlayerState.ATTACK_2,
-            PlayerState.ATTACK_DASH,
-            PlayerState.DEAD,
-            PlayerState.BLOCKING
-        ];
+    public updateWeapon(delta: number) {
+        this.weapon.update(delta);
 
-        this.weapon.setVisible(!statesWithoutWeapon.includes(player.state));
     }
 
     public destroy() {

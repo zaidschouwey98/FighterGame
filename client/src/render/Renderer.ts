@@ -98,6 +98,10 @@ export class Renderer {
         }
     }
 
+    update(delta:number){
+        this._playersRenderer.update(delta);
+    }
+
     updateCamera(position: Position) {
         this._camera.follow(position, this._pixiApp.screen.width, this._pixiApp.screen.height);
         this._globalContainer.x = this._camera.x;

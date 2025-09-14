@@ -68,4 +68,10 @@ export default class PlayersRenderer {
             if (playerSprite) playerSprite.update(player);
         }
     }
+
+    public update(delta: number) {
+        for (const sprite of this.playerSprites.values()) {
+            sprite.updateWeapon(delta);
+        }
+    }
 }

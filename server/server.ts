@@ -120,7 +120,8 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       hitPlayers: attackResults,
       knockbackStrength: data.knockbackStrength,
       blockedBy: blockedBy,
-      killNumber: killNumber
+      killNumber: killNumber,
+      knockbackTimer:40 // todo change that depending on attack
     } as AttackResult);
 
     for (const player of killedPlayers) {

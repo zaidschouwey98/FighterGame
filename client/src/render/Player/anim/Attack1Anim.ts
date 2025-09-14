@@ -25,7 +25,7 @@ export class Attack1Anim implements IAnimState {
         const all = [right, left];
         for (const s of all) {
             s.visible = false;
-            s.animationSpeed = 0.2;
+            s.animationSpeed = 0.4;
             s.anchor.set(0.5);
             s.loop = false;
             playerContainer.addChild(s);

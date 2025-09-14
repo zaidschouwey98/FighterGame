@@ -60,7 +60,7 @@ export class EffectRenderer {
 
         // Calcule la rotation en radians
         const rotation = Math.atan2(direction.y, direction.x);
-        sprite.animationSpeed = 0.2
+        sprite.animationSpeed = 0.4
         sprite.visible = true;
         sprite.loop = false;
         sprite.currentFrame = 0;

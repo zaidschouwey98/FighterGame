@@ -26,6 +26,7 @@ export class WeaponSprite {
       [PlayerState.MOVING]: new IdleWeaponAnim(this.sprite),
       [PlayerState.ATTACK_1]: new HiddenWeaponAnim(this.sprite),
       [PlayerState.BLOCKING]: new HiddenWeaponAnim(this.sprite),
+      [PlayerState.DEAD]: new HiddenWeaponAnim(this.sprite),
       [PlayerState.ATTACK_DASH]: new DashWeaponAnim(this.sprite)
     });
   }

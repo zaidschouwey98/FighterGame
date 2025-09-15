@@ -1,5 +1,6 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "./IWeaponAnim";
+import type { Direction } from "../../../../../shared/Direction";
 
 export class IdleWeaponAnim implements IWeaponAnim {
   private time = 0;
@@ -25,5 +26,9 @@ export class IdleWeaponAnim implements IWeaponAnim {
     const offset = Math.sin(this.time) * 0.5; // Petit offset vertical
     this.sprite.y = this.baseY + offset;
     this.sprite.rotation = 0; // Pas de rotation idle
+  }
+
+  setDirection(_dir: Direction): void {
+    
   }
 }

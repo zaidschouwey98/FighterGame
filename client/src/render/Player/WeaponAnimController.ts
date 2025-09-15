@@ -1,3 +1,4 @@
+import type { Direction } from "../../../../shared/Direction";
 import { PlayerState } from "../../../../shared/PlayerState";
 import type { IWeaponAnim } from "./weapon_anim/IWeaponAnim";
 
@@ -14,6 +15,10 @@ export class WeaponAnimController {
     const anim = this.animations[state];
     this.current = anim;
     anim?.play();
+  }
+
+  setDirection(direction:Direction){
+    this.current?.setDirection(direction);
   }
 
   update(delta:number) {

@@ -37,6 +37,7 @@ export class WeaponSprite {
   setDirection(direction: Direction) {
     if (direction != this.currentDirection) {
       this.setRotationByDirection(direction);
+      this.controller.setDirection(direction);
       this.currentDirection = direction
     }
   }

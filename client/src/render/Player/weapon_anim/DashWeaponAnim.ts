@@ -37,7 +37,7 @@ export class DashWeaponAnim implements IWeaponAnim {
                 this.targetRotation = Math.PI * 0.25; // arme monte à droite
                 break;
             case Direction.LEFT:
-                this.targetRotation = Math.PI * 0.25;  // arme monte à gauche
+                this.targetRotation = -Math.PI * 0.25;  // arme monte à gauche
                 break;
             case Direction.TOP:
                 this.targetRotation = -Math.PI * 0.15; // légère rotation

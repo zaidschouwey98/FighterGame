@@ -28,23 +28,23 @@ export class AttackDashAnim implements IAnimState{
     left.scale.x = -1;
 
     // TOP
-    const top = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top")!);
-    // BOTTOM
-    const bottom = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom")!);
+    // const top = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top")!);
+    // // BOTTOM
+    // const bottom = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom")!);
 
-    // TOP_RIGHT
-    const tr = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top_right")!);
-    // TOP_LEFT = flip du TOP_RIGHT
-    const tl = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top_right")!);
-    tl.scale.x = -1;
+    // // TOP_RIGHT
+    // const tr = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top_right")!);
+    // // TOP_LEFT = flip du TOP_RIGHT
+    // const tl = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_top_right")!);
+    // tl.scale.x = -1;
 
-    // BOTTOM_RIGHT
-    const br = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom_right")!);
-    // BOTTOM_LEFT = flip du BOTTOM_RIGHT
-    const bl = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom_right")!);
-    bl.scale.x = -1;
+    // // BOTTOM_RIGHT
+    // const br = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom_right")!);
+    // // BOTTOM_LEFT = flip du BOTTOM_RIGHT
+    // const bl = new AnimatedSprite(findAnimation(spriteSheets, "player_dash_attack_bottom_right")!);
+    // bl.scale.x = -1;
 
-    const all = [right, left, top, bottom, tr, tl, br, bl];
+    const all = [right, left];
     for (const s of all) {
       s.visible = false;
       s.animationSpeed = s.totalFrames/DASH_ATTACK_DURATION;
@@ -55,12 +55,12 @@ export class AttackDashAnim implements IAnimState{
 
     this.sprites.set(Direction.RIGHT, right);
     this.sprites.set(Direction.LEFT, left);
-    this.sprites.set(Direction.TOP, top);
-    this.sprites.set(Direction.BOTTOM, bottom);
-    this.sprites.set(Direction.TOP_RIGHT, tr);
-    this.sprites.set(Direction.TOP_LEFT, tl);
-    this.sprites.set(Direction.BOTTOM_RIGHT, br);
-    this.sprites.set(Direction.BOTTOM_LEFT, bl);
+    // this.sprites.set(Direction.TOP, top);
+    // this.sprites.set(Direction.BOTTOM, bottom);
+    // this.sprites.set(Direction.TOP_RIGHT, tr);
+    // this.sprites.set(Direction.TOP_LEFT, tl);
+    // this.sprites.set(Direction.BOTTOM_RIGHT, br);
+    // this.sprites.set(Direction.BOTTOM_LEFT, bl);
   }
 
   /** À appeler quand on entre dans le state DASH (optionnel) */
@@ -72,8 +72,7 @@ export class AttackDashAnim implements IAnimState{
   public play(player: PlayerInfo) {
     const vec = player.mouseDirection ?? { x: 1, y: 0 };
     const dir = AnimHelper.getDirectionByVector(vec, [
-      Direction.TOP, Direction.TOP_RIGHT, Direction.RIGHT, Direction.BOTTOM_RIGHT,
-      Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.LEFT, Direction.TOP_LEFT
+      Direction.RIGHT, Direction.LEFT
     ]);
 
 

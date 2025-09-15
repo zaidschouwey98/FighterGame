@@ -24,6 +24,7 @@ export class GameState {
         }
         
         this.players.set(info.id,info);
+        console.log(this.players.get(info.id));
     }
 
     restorePlayers(infos: PlayerInfo[]) {

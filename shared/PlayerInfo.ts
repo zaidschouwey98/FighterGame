@@ -12,6 +12,9 @@ export default interface PlayerInfo {
     state:PlayerState;
     movingDirection:Direction;
 
+    killStreak:number;
+    killCounter:number;
+
     pendingAttack?: boolean;
     attackIndex: number;
     

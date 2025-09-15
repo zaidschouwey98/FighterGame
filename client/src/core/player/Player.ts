@@ -34,7 +34,8 @@ export default class Player {
     public movingDirection: Direction = Direction.BOTTOM;
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
 
-
+    public killCounter = 0;
+    public killStreak = 0;
 
     public attackIndex: number = 0;
 
@@ -92,7 +93,12 @@ export default class Player {
     }
 
     public handleAttackReceived(attackResult: AttackResult) {
+        
         const hitPlayers = attackResult.hitPlayers;
+        if(attackResult.attackerId === this.id && attackResult.killNumber > 0){
+            this.killCounter += attackResult.killNumber;
+        }
+        console.log(this.killCounter)
         if (attackResult.attackerId === this.id && attackResult.blockedBy != undefined) {
             this.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.position, attackResult.knockbackStrength);
             this.changeState(
@@ -180,6 +186,8 @@ export default class Player {
             name: this.playerName,
             id: this.id,
             state: this.state,
+            killCounter: this.killCounter,
+            killStreak:this.killStreak
         };
     }
 }

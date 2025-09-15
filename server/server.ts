@@ -50,6 +50,8 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       attackIndex: 0,
       attackDashMaxSpeed: 3,
       isDead: false,
+      killCounter:0,
+      killStreak:0
     };
     players[socket.id] = player;
     console.log(`Spawn player ${player.name} (${socket.id})`);

@@ -8,6 +8,7 @@ import { GameState } from "../core/GameState";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../core/EventBus";
 import type Player from "../core/player/Player";
+import { ScoreBoard } from "./UI/ScoreBoard";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -41,6 +42,9 @@ export class Renderer {
         this._overlayContainer = new Container({ label: "overlay_container" });
         this._uiContainer = new Container({ label: "ui_container" });
 
+        this._uiContainer.x = app.canvas.width - 400; // Haut droite
+        this._uiContainer.y = 20;
+
         globalContainer.scale.set(this._camera.zoom);
         globalContainer.addChild(this._tilesContainer);
         globalContainer.addChild(this._terrainContainer);
@@ -49,7 +53,8 @@ export class Renderer {
         globalContainer.addChild(this._uiContainer);
         rootContainer.addChild(globalContainer);
         rootContainer.addChild(this._uiContainer); // follows the camera
-        this._minimap = new Minimap(app, this._uiContainer, 200);
+        new ScoreBoard(this._uiContainer)
+        this._minimap = new Minimap(this._uiContainer, 200);
         this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 

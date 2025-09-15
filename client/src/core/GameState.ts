@@ -1,10 +1,13 @@
 import type PlayerInfo from "../../../shared/PlayerInfo";
+import { Subject } from "./observer/Subject";
 
-export class GameState {
+export class GameState extends Subject{
     private static _instance: GameState;
     public players: Map<string, PlayerInfo> = new Map();
 
-    private constructor() { }
+    private constructor() { 
+        super();
+    }
 
     public static get instance(): GameState {
         if (!GameState._instance) GameState._instance = new GameState();
@@ -13,6 +16,7 @@ export class GameState {
 
     addPlayer(info: PlayerInfo) {
         this.players.set(info.id, info);
+        this.notify(Array.from(this.players.values()));
     }
 
     updatePlayer(info: PlayerInfo) {
@@ -24,7 +28,7 @@ export class GameState {
         }
         
         this.players.set(info.id,info);
-        console.log(this.players.get(info.id));
+        this.notify(Array.from(this.players.values()));
     }
 
     restorePlayers(infos: PlayerInfo[]) {
@@ -36,6 +40,7 @@ export class GameState {
 
     removePlayer(id: string) {
         this.players.delete(id);
+        this.notify(Array.from(this.players.values()));
     }
 
     getPlayer(id: string): PlayerInfo | undefined {

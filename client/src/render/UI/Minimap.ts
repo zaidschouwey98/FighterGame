@@ -7,10 +7,9 @@ export class Minimap {
   private playerDot: PIXI.Graphics;
   private playerDots: PIXI.Graphics[] = [];
 
-  constructor(private app: PIXI.Application, uiContainer:PIXI.Container, private mapSize = 200) {
+  constructor(uiContainer:PIXI.Container, private mapSize = 200) {
     this.container = new PIXI.Container({label:"minimap"});
-    this.container.x = this.app.canvas.width - this.mapSize - 100; // Haut droite
-    this.container.y = 20;
+    
 
     this.background = new PIXI.Graphics();
 

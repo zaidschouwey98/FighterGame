@@ -51,13 +51,14 @@ export default class PlayerSprite {
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, PlayerState.IDLE);
 
-        this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller);
+        this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
     }
 
     public syncPlayer(player: PlayerInfo) {
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
-        this.weapon.setState(player.state);
+        this.weapon.setState(player.state, player.attackIndex,player.mouseDirection);
+        
         this.weapon.setDirection(player.movingDirection);
     }
 

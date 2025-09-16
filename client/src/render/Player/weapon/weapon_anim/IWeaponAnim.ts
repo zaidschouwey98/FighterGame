@@ -2,7 +2,7 @@ import type { Direction } from "../../../../../../shared/Direction";
 
 export interface IWeaponAnim {
 
-  play():void;
+  play(direction?: {x: number, y: number}):void;
 
   stop():void;
 

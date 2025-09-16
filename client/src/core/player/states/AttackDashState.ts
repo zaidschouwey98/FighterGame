@@ -30,7 +30,7 @@ export class AttackDashState extends BaseState {
                 return;
             } else {
                 this.player.attackDashTimer = undefined;
-                this.player.changeState(this.player.attack1State);
+                this.player.changeState(this.player.attackState);
                 return;
             }
         }

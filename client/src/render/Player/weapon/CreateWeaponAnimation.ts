@@ -1,5 +1,5 @@
 
-import type { Sprite } from "pixi.js";
+import type { Container, Sprite, Spritesheet } from "pixi.js";
 import { WeaponType } from "../../../../../shared/WeaponType";
 import { PlayerState } from "../../../../../shared/PlayerState";
 import type { IWeaponAnim } from "./weapon_anim/IWeaponAnim";
@@ -9,13 +9,13 @@ import { DashWeaponAnim } from "./weapon_anim/heavy_sword/DashWeaponAnim";
 import { HeavySwordAttack1 } from "./weapon_anim/heavy_sword/HeavySwordAttack1";
 import { HeavySwordAttack2 } from "./weapon_anim/heavy_sword/HeavySwordAttack2";
 
-export function createWeaponAnimations(sprite: Sprite, type: WeaponType): Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>> {
+export function createWeaponAnimations(sprite: Sprite, type: WeaponType, staticEffectContainer:Container, spriteSheets:Spritesheet[]): Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>> {
   switch (type) {
     case WeaponType.HEAVY_SWORD:
       return {
         [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
         [PlayerState.ATTACK]: [
-          new HeavySwordAttack1(),
+          new HeavySwordAttack1(staticEffectContainer,spriteSheets),
           new HeavySwordAttack2(),
         ],
         [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),

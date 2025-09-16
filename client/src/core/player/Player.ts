@@ -9,7 +9,7 @@ import type { EventBus } from "../EventBus";
 import { MovementService } from "../MovementService";
 import type { InputHandler } from "../InputHandler";
 import { AttackDashState } from "./states/AttackDashState";
-import { Attack1State } from "./states/Attack1State";
+import { AttackState } from "./states/AttackState";
 import { AttackService } from "../AttackService";
 import { HitState } from "./states/HitState";
 import { DieState } from "./states/DieState";
@@ -18,7 +18,6 @@ import type { BlockService } from "../BlockService";
 import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
 import type { TeleportService } from "../TeleportService";
-import { Attack2State } from "./states/Attack2State";
 import type { AttackResult } from "../../../../shared/AttackResult";
 import { PhysicsService } from "../PhysicsService";
 import { GameState } from "../GameState";
@@ -56,8 +55,7 @@ export default class Player {
     public idleState: IdleState;
     public movingState: MovingState;
     public attackDashState: AttackDashState;
-    public attack1State: Attack1State;
-    public attack2State: Attack2State;
+    public attackState: AttackState;
     public dieState: DieState;
     public blockState: BlockState;
     public teleportState: TeleportState;
@@ -84,8 +82,7 @@ export default class Player {
         this.currentState = this.idleState;
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus, inputHandler);
-        this.attack1State = new Attack1State(this, attackService, eventBus);
-        this.attack2State = new Attack2State(this, attackService, eventBus);
+        this.attackState = new AttackState(this, attackService, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this, eventBus, blockService, inputHandler);
 

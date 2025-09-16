@@ -13,19 +13,19 @@ export class WeaponSprite {
   private controller: WeaponAnimController;
   private currentDirection: Direction = Direction.BOTTOM;
 
-  constructor(spriteSheets: Spritesheet[], parent: Container, type: WeaponType, skin = "default", anchor: {x:number,y:number}, posX:number, posY:number) {
+  constructor(spriteSheets: Spritesheet[],staticEffectContainer:Container, playerContainer: Container, type: WeaponType, skin = "default", anchor: {x:number,y:number}, posX:number, posY:number) {
     console.log(skin)
     this.sprite = new Sprite(findTexture(spriteSheets, type as any));
     this.sprite.anchor = anchor;
     this.sprite.x = posX;
     this.sprite.y = posY;
-    parent.addChild(this.sprite);
+    playerContainer.addChild(this.sprite);
 
-    this.controller = new WeaponAnimController(createWeaponAnimations(this.sprite, type));
+    this.controller = new WeaponAnimController(createWeaponAnimations(this.sprite, type,staticEffectContainer,spriteSheets));
   }
 
-  setState(state: PlayerState) {
-    this.controller.setState(state);
+  setState(state: PlayerState, comboIndex = 0, mouseDirection:{x:number,y:number}) {
+    this.controller.setState(state, comboIndex,mouseDirection);
   }
 
   setDirection(direction: Direction) {

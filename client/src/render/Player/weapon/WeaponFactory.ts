@@ -12,12 +12,13 @@ export class WeaponFactory {
     spriteSheets: Spritesheet[],
     parent: Container,
     playerController: AnimController,
+    staticEffectContainer:Container
   ): WeaponSprite {
     switch (this.type) {
       case WeaponType.HEAVY_SWORD:
         // ajoute anims du joueur propres à l’épée
         playerController.register(PlayerState.ATTACK, [new HeavySwordBodyAttack1(spriteSheets, parent), new HeavySwordBodyAttack1(spriteSheets, parent)]);
-        return new WeaponSprite(spriteSheets, parent, WeaponType.HEAVY_SWORD, this.skin, {x:0.92, y:0.5},0,3);
+        return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, this.skin, {x:0.92, y:0.5},0,3);
 
     //   case WeaponType.FIST:
     //     playerController.register(PlayerState.ATTACK, new FistAttackAnim(effectRenderer, spriteSheets, parent));

@@ -8,10 +8,9 @@ export class WeaponAnimController {
 
   constructor(
     private animations: Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>>
-  ) {}
+  ) { }
 
-  setState(state: PlayerState, comboIndex = 0) {
-    // si pas de changement d'état, sauf pour ATTACK (car comboIndex peut évoluer)
+  setState(state: PlayerState, comboIndex = 0, attackDir?: { x: number, y: number }) {
     const needTransition =
       state !== this.currentState || state === PlayerState.ATTACK;
 
@@ -21,14 +20,14 @@ export class WeaponAnimController {
     this.currentState = state;
 
     this.current = this.resolveAnim(state, comboIndex);
-    this.current?.play();
-  }
 
-  setAttack(comboIndex: number) {
-    if (this.currentState === PlayerState.ATTACK) {
-      this.current?.stop();
-      this.current = this.resolveAnim(PlayerState.ATTACK, comboIndex);
-      this.current?.play();
+    // 👇 si attaque et qu’on a un vecteur, on le passe à play()
+    if (this.current) {
+      if (state === PlayerState.ATTACK && attackDir) {
+        this.current.play(attackDir);
+      } else {
+        this.current.play();
+      }
     }
   }
 

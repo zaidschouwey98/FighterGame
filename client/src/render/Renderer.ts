@@ -64,21 +64,20 @@ export class Renderer {
     private registerListeners() {
         this._eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
             for (const player of players) {
-                let p = GameState.instance.players.get(player.id);
-                if (p) this._playersRenderer.addNewPlayer(p);
+                this._playersRenderer.addNewPlayer(player);
             }
-            this._playersRenderer.updatePlayers(players);
+            this._playersRenderer.syncPlayers(players);
         })
 
         // Quand un joueur est mis à jour
         this._eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
-            this._playersRenderer.updatePlayers([player]);
+            this._playersRenderer.syncPlayers([player]);
         });
 
         // Nouvel arrivant
         this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this._playersRenderer.addNewPlayer(player);
-            this._playersRenderer.updatePlayers([player]);
+            this._playersRenderer.syncPlayers([player]);
         });
 
         // Joueur parti
@@ -116,7 +115,6 @@ export class Renderer {
     public get camera(): CameraService {
         return this._camera;
     }
-
 
     public get playersRenderer(): PlayersRenderer {
         return this.playersRenderer;

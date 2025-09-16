@@ -16,7 +16,7 @@ export function createWeaponAnimations(sprite: Sprite, type: WeaponType, staticE
         [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
         [PlayerState.ATTACK]: [
           new HeavySwordAttack1(staticEffectContainer,spriteSheets),
-          new HeavySwordAttack2(),
+          // new HeavySwordAttack2(),
         ],
         [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),
         [PlayerState.BLOCKING]: new HiddenWeaponAnim(sprite),

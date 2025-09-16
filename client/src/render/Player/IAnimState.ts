@@ -1,4 +1,4 @@
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../shared/PlayerInfo";
 
 export interface IAnimState {
   play(player: PlayerInfo): void;

@@ -1,6 +1,7 @@
 import { PlayerState } from "./PlayerState";
 import { Direction } from "./Direction";
 import Position from "./Position";
+import { WeaponType } from "./WeaponType";
 
 export default interface PlayerInfo {
     mouseDirection: { x: number; y: number; };
@@ -11,6 +12,7 @@ export default interface PlayerInfo {
     name?:string;
     state:PlayerState;
     movingDirection:Direction;
+    weapon:WeaponType;
 
     killStreak:number;
     killCounter:number;

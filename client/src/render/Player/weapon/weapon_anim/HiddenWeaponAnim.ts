@@ -1,6 +1,6 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "./IWeaponAnim";
-import type { Direction } from "../../../../../shared/Direction";
+import type { Direction } from "../../../../../../shared/Direction";
 
 export class HiddenWeaponAnim implements IWeaponAnim{
 

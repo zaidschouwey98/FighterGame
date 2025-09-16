@@ -1,6 +1,6 @@
 import { Sprite } from "pixi.js";
-import type { IWeaponAnim } from "./IWeaponAnim";
-import type { Direction } from "../../../../../shared/Direction";
+import type { IWeaponAnim } from "../IWeaponAnim";
+import type { Direction } from "../../../../../../../shared/Direction";
 
 export class IdleWeaponAnim implements IWeaponAnim {
   private time = 0;

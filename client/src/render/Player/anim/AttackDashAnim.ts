@@ -2,10 +2,10 @@ import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
 import { findAnimation } from "../../../AssetLoader";
 import AnimHelper from "../../../helper/AnimHelper";
-import type { IAnimState } from "./IAnimState";
 import type { EffectRenderer } from "../../EffectRenderer";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
 import { DASH_ATTACK_DURATION } from "../../../constantes";
+import type { IAnimState } from "../IAnimState";
 
 
 

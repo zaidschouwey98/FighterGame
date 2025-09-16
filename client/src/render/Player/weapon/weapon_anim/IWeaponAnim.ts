@@ -1,4 +1,4 @@
-import type { Direction } from "../../../../../shared/Direction";
+import type { Direction } from "../../../../../../shared/Direction";
 
 export interface IWeaponAnim {
 

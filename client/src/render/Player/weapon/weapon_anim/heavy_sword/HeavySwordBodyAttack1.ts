@@ -1,19 +1,17 @@
-import type { IAnimState } from "./IAnimState";
-import type { EffectRenderer } from "../../EffectRenderer";
-import { PlayerState } from "../../../../../shared/PlayerState";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { findAnimation } from "../../../AssetLoader";
-import { Direction } from "../../../../../shared/Direction";
-import AnimHelper from "../../../helper/AnimHelper";
+import { findAnimation } from "../../../../../AssetLoader";
+import { Direction } from "../../../../../../../shared/Direction";
+import AnimHelper from "../../../../../helper/AnimHelper";
+import type { IAnimState } from "../../../IAnimState";
 
-export class Attack1Anim implements IAnimState {
+export class HeavySwordBodyAttack1 implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
     private current?: AnimatedSprite;
     private lastDir?: Direction;
 
     constructor(
-        private effectRenderer: EffectRenderer, spriteSheets: Spritesheet[], playerContainer: Container
+        spriteSheets: Spritesheet[], playerContainer: Container
     ) {
         const right = new AnimatedSprite(findAnimation(spriteSheets, "player_1_attack")!);
 
@@ -63,8 +61,8 @@ export class Attack1Anim implements IAnimState {
         this.current = undefined;
         this.lastDir = undefined;
     }
-    enter?(player: PlayerInfo): void {
-        this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.mouseDirection);
+    enter?(_player: PlayerInfo): void {
+        // this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.mouseDirection);
     }
 
 }

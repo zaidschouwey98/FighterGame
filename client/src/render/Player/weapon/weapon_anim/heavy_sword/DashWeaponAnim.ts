@@ -1,6 +1,6 @@
 import { Sprite } from "pixi.js";
-import type { IWeaponAnim } from "./IWeaponAnim";
-import { Direction } from "../../../../../shared/Direction";
+import type { IWeaponAnim } from "../IWeaponAnim";
+import { Direction } from "../../../../../../../shared/Direction";
 
 export class DashWeaponAnim implements IWeaponAnim {
     private progress = 0;

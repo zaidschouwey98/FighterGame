@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
 import { findAnimation } from "../../../AssetLoader";
-import type { IAnimState } from "./IAnimState";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type { IAnimState } from "../IAnimState";
 
 export class IdleAnim implements IAnimState{
   private animations = new Map<Direction, AnimatedSprite>();

@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
-import type { IAnimState } from "./IAnimState";
+import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type { IAnimState } from "../IAnimState";
 
 export class MovingAnim implements IAnimState {
   private sprites = new Map<Direction, AnimatedSprite>();
@@ -36,7 +36,7 @@ export class MovingAnim implements IAnimState {
     this.sprites.set(Direction.BOTTOM, down);
   }
 
-  public play(player: Player) {
+  public play(player: PlayerInfo) {
     const dir = player.movingDirection ?? Direction.BOTTOM;
 
     // si même direction, ne pas reset l'anim

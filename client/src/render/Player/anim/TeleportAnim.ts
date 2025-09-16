@@ -1,9 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
-import type { IAnimState } from "./IAnimState";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type { IAnimState } from "../IAnimState";
 
 export class TeleportingAnim implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
@@ -34,7 +33,7 @@ export class TeleportingAnim implements IAnimState {
         this.staticEffectsContainer.addChild(tp_effect)
     }
 
-    public play(_player: Player) {
+    public play(_player: PlayerInfo) {
         const dir = Direction.BOTTOM
         if (dir === this.lastDir && this.current) return;
         this.lastDir = dir;

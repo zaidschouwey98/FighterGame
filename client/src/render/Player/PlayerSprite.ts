@@ -5,16 +5,15 @@ import { MovingAnim } from "./anim/MovingAnim";
 import { AttackDashAnim } from "./anim/AttackDashAnim";
 import { PlayerState } from "../../../../shared/PlayerState";
 import { EffectRenderer } from "../EffectRenderer";
-import { Attack1Anim } from "./anim/Attack1Anim";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
 import { DieAnim } from "./anim/DieAnim";
-import { BlockAnim } from "./anim/BlockAnim";
 import { HpBar } from "../UI/HpBar";
 import { TeleportingAnim } from "./anim/TeleportAnim";
 import { KnockBackAnim } from "./anim/KnockBackAnim";
-import { Attack2Anim } from "./anim/Attack2Anim";
-import { WeaponSprite } from "./WeaponSprite";
+import { WeaponSprite } from "./weapon/WeaponSprite";
+import { BlockAnim } from "./anim/BlockAnim";
+import type { WeaponFactory } from "./weapon/WeaponFactory";
 
 export default class PlayerSprite {
     private controller: AnimController;
@@ -26,7 +25,8 @@ export default class PlayerSprite {
         spriteSheets: Spritesheet[],
         _terrainContainer: Container,
         staticEffectsContainer: Container,
-        playerName: string
+        playerName: string,
+        weaponFactory: WeaponFactory
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
         this.hpBar = new HpBar(this.playerContainer, 0, -24, 40, 10);
@@ -38,36 +38,31 @@ export default class PlayerSprite {
         name.y = -20;
         this.playerContainer.addChild(name);
 
-        this.weapon = new WeaponSprite(spriteSheets, this.playerContainer);
-
-        const idle = new IdleAnim(spriteSheets, this.playerContainer);
-        const moving = new MovingAnim(spriteSheets, this.playerContainer);
-        const dash = new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer);
+        
 
         this.controller = new AnimController({
-            [PlayerState.IDLE]: idle,
-            [PlayerState.MOVING]: moving,
-            [PlayerState.ATTACK_DASH]: dash,
-            [PlayerState.ATTACK_1]: new Attack1Anim(effectRenderer, spriteSheets, playerContainer),
-            [PlayerState.ATTACK_2]: new Attack2Anim(effectRenderer),
+            [PlayerState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
+            [PlayerState.MOVING]: new MovingAnim(spriteSheets, this.playerContainer),
+            [PlayerState.ATTACK_DASH]: new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer),
             [PlayerState.BLOCKING]: new BlockAnim(spriteSheets, playerContainer),
             [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
             [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
             [PlayerState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
             [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, PlayerState.IDLE);
+
+        this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller);
     }
 
-    public update(player: PlayerInfo) {
+    public syncPlayer(player: PlayerInfo) {
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
         this.weapon.setState(player.state);
         this.weapon.setDirection(player.movingDirection);
     }
 
-    public updateWeapon(delta: number) {
+    public update(delta: number) {
         this.weapon.update(delta);
-
     }
 
     public destroy() {

@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
-import type { IAnimState } from "./IAnimState";
+import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type { IAnimState } from "../IAnimState";
 
 export class DieAnim implements IAnimState {
     private current?: AnimatedSprite;
@@ -12,7 +12,7 @@ export class DieAnim implements IAnimState {
 
     }
 
-    public play(player: Player) {
+    public play(player: PlayerInfo) {
         const dir = Direction.BOTTOM
         // si même direction, ne pas reset l'anim
         if (dir === this.lastDir && this.current) return;

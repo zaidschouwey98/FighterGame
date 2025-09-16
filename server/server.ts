@@ -10,6 +10,7 @@ import path from "path";
 import { Direction } from "../shared/Direction";
 import { ClientToSocketMsg } from "../shared/ClientToSocketMsg";
 import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+import { WeaponType } from "../shared/WeaponType";
 
 
 const app = express();
@@ -51,7 +52,8 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       attackDashMaxSpeed: 3,
       isDead: false,
       killCounter:0,
-      killStreak:0
+      killStreak:0,
+      weapon: WeaponType.HEAVY_SWORD
     };
     players[socket.id] = player;
     console.log(`Spawn player ${player.name} (${socket.id})`);

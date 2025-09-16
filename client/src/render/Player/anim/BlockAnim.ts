@@ -1,11 +1,10 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
-import type Player from "../../../core/player/Player";
 import { findAnimation } from "../../../AssetLoader";
-import type { IAnimState } from "./IAnimState";
 import AnimHelper from "../../../helper/AnimHelper";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
 import { BLOCK_DURATION } from "../../../constantes";
+import type { IAnimState } from "../IAnimState";
 
 export class BlockAnim implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
@@ -38,7 +37,7 @@ export class BlockAnim implements IAnimState {
     
     }
 
-    public play(player: Player) {
+    public play(player: PlayerInfo) {
         if (!player.mouseDirection) return;
         const dir = AnimHelper.getDirectionByVector(player.mouseDirection, [
             Direction.RIGHT,

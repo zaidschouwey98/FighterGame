@@ -28,6 +28,7 @@ export class Renderer {
     private _worldRenderer: WorldRenderer;
 
     private _camera: CameraService;
+    private _scoreBoard: ScoreBoard;
 
     constructor(app: Application, rootContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
         this._eventBus = eventBus;
@@ -53,7 +54,7 @@ export class Renderer {
         globalContainer.addChild(this._uiContainer);
         rootContainer.addChild(globalContainer);
         rootContainer.addChild(this._uiContainer); // follows the camera
-        new ScoreBoard(this._uiContainer)
+        this._scoreBoard = new ScoreBoard(this._uiContainer)
         this._minimap = new Minimap(this._uiContainer, 200);
         this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
@@ -66,6 +67,7 @@ export class Renderer {
             for (const player of players) {
                 let p = GameState.instance.players.get(player.id);
                 if (p) this._playersRenderer.addNewPlayer(p);
+                this._scoreBoard.update(player)
             }
             this._playersRenderer.updatePlayers(players);
         })
@@ -73,6 +75,8 @@ export class Renderer {
         // Quand un joueur est mis à jour
         this._eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
             this._playersRenderer.updatePlayers([player]);
+            this._scoreBoard.update(player)
+            
         });
 
         // Nouvel arrivant

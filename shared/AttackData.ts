@@ -1,3 +1,4 @@
+import { Hitbox } from "./Hitbox";
 import { PlayerState } from "./PlayerState";
 
 export interface AttackData {
@@ -5,12 +6,6 @@ export interface AttackData {
     position: { x: number; y: number };
     rotation: number;
     knockbackStrength: number;
-    hitbox: {
-        x: number;
-        y: number;
-        angle: number;
-        range: number;
-        arcAngle: number;
-    };
+    hitbox: Hitbox;
     playerAction:PlayerState;
 }

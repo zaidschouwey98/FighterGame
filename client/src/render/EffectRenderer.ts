@@ -53,35 +53,35 @@ export class EffectRenderer {
     }
 
     renderAttackEffect(action: PlayerState, direction: { x: number; y: number }) {
-    if (action !== PlayerState.ATTACK_1 && action !== PlayerState.ATTACK_2) return;
+        if (action !== PlayerState.ATTACK_1 && action !== PlayerState.ATTACK_2) return;
 
-    const sprite = this.animations[action];
-    if (!sprite) return;
+        const sprite = this.animations[action];
+        if (!sprite) return;
 
-    // Calcule la rotation en radians
-    let rotation = Math.atan2(direction.y, direction.x);
+        // Calcule la rotation en radians
+        let rotation = Math.atan2(direction.y, direction.x);
 
-    // Vérifie si on est dans la moitié gauche du cercle
-    const flipX = rotation > Math.PI / 2 || rotation < -Math.PI / 2;
+        // Vérifie si on est dans la moitié gauche du cercle
+        const flipX = rotation > Math.PI / 2 || rotation < -Math.PI / 2;
 
-    if (flipX) {
-        sprite.scale.x = -1;           // Flip horizontal
-        rotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
-    } else {
-        sprite.scale.x = 1;
+        if (flipX) {
+            sprite.scale.x = -1;           // Flip horizontal
+            rotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
+        } else {
+            sprite.scale.x = 1;
+        }
+
+        sprite.animationSpeed = 0.4;
+        sprite.visible = true;
+        sprite.loop = false;
+        sprite.currentFrame = 0;
+        sprite.rotation = rotation;
+
+        sprite.play();
+        sprite.onComplete = () => {
+            sprite.visible = false;
+        };
     }
-
-    sprite.animationSpeed = 0.4;
-    sprite.visible = true;
-    sprite.loop = false;
-    sprite.currentFrame = 0;
-    sprite.rotation = rotation;
-
-    sprite.play();
-    sprite.onComplete = () => {
-        sprite.visible = false;
-    };
-}
 
 
 

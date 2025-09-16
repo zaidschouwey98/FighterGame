@@ -1,22 +1,21 @@
 import { Container, Text } from "pixi.js";
-import { GameState } from "../../core/GameState";
-import { Observer } from "../../core/observer/Observer";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 
-export class ScoreBoard extends Observer {
-
+export class ScoreBoard {
     private scoreBoardContainer: Container;
+    private players: Map<string, PlayerInfo> = new Map();
 
     constructor(uiContainer: Container) {
-        super();
         this.scoreBoardContainer = new Container({ label: "ScoreBoard" });
         this.scoreBoardContainer.y += 200;
         uiContainer.addChild(this.scoreBoardContainer);
-        GameState.instance.addObserver(this);
     }
 
-    onNotify(players: PlayerInfo[]): void {
-        // On efface l'ancien affichage
+    update(player: PlayerInfo): void {
+        // Met à jour ou ajoute le joueur
+        this.players.set(player.id, player);
+
+        // Efface l'ancien affichage
         this.scoreBoardContainer.removeChildren();
 
         // Titre
@@ -24,20 +23,22 @@ export class ScoreBoard extends Observer {
             text: "ScoreBoard",
             style: { fill: 0xffffff, fontSize: 20, fontWeight: "bold" },
         });
-        title.x = 0;
-        title.y = 0;
         this.scoreBoardContainer.addChild(title);
 
-        let y = 30; // Position Y de départ
+        // Trie les joueurs par kills (descendant)
+        const sortedPlayers = [...this.players.values()].sort(
+            (a, b) => b.killCounter - a.killCounter
+        );
 
-        for (const player of players) {
+        // Affiche les joueurs
+        let y = 30;
+        for (const p of sortedPlayers) {
             const playerText = new Text({
-                text: `${player.name} - Kills: ${player.killCounter}`,
+                text: `${p.name} - Kills: ${p.killCounter}`,
                 style: { fill: 0xffffff, fontSize: 16 },
             });
-            playerText.x = 0;
             playerText.y = y;
-            y += 20; // Décalage entre lignes
+            y += 20;
 
             this.scoreBoardContainer.addChild(playerText);
         }

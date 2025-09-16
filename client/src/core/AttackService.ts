@@ -1,8 +1,7 @@
-import { AttackHitboxService } from "./AttackHitboxService";
 import { CoordinateService } from "./CoordinateService";
 import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
-import { ATTACK_COOLDOWN, ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
+import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import type { AttackData } from "../../../shared/AttackData";
 import AnimHelper from "../helper/AnimHelper";
 import { Direction } from "../../../shared/Direction";
@@ -10,7 +9,6 @@ import { Direction } from "../../../shared/Direction";
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
     private attackCooldownTimer = 0;
-    public attackOnGoing = false;
 
     constructor(
         private input: InputHandler,
@@ -47,31 +45,20 @@ export class AttackService {
         player.attackDashDuration = DASH_ATTACK_DURATION;
         player.attackDashTimer = DASH_ATTACK_DURATION;
         player.movingDirection = AnimHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
-        this.attackCooldownTimer = ATTACK_COOLDOWN;
+        this.attackCooldownTimer = player.weapon.attackCoolDown;
         this.attackResetTimer = ATTACK_RESET;
         // Notifier les autres systèmes
     }
 
     /** Crée une hitbox d'attaque */
     public performAttack(player: Player): AttackData | undefined {
-
         const mouse = this.input.getMousePosition();
         const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
         const dx = world.x - player.position.x;
         const dy = world.y - player.position.y;
         const dir = Math.atan2(dy, dx);
-        // player.mouseDirection = {x:dx,y:dy}
-        const hitbox = AttackHitboxService.createHitbox(player.position, dir);
-        let res = {
-            playerId: player.id,
-            position: { ...player.position },
-            rotation: dir,
-            knockbackStrength: 15, // TODO: constante/configurable
-            hitbox,
-            playerAction: player.state
-        } as AttackData;
-
-        player.attackIndex = (player.attackIndex + 1) % 3; // Combo cycle
+        let res = player.weapon.useWeapon(player.position, dir);
+        res.playerId = player.id;
         return res;
     }
 

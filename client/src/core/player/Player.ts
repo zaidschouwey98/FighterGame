@@ -22,6 +22,8 @@ import { Attack2State } from "./states/Attack2State";
 import type { AttackResult } from "../../../../shared/AttackResult";
 import { PhysicsService } from "../PhysicsService";
 import { GameState } from "../GameState";
+import type { Weapon } from "../weapons/Weapon";
+import { HeavyWeapon } from "../weapons/HeavyWeapon";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -33,6 +35,8 @@ export default class Player {
     public position: Position;
     public movingDirection: Direction = Direction.BOTTOM;
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
+
+    public weapon:Weapon;
 
     public killCounter = 0;
     public killStreak = 0;
@@ -75,7 +79,7 @@ export default class Player {
         this.position = new Position(position.x, position.y);
         this.hp = hp;
         this.speed = speed;
-
+        this.weapon = new HeavyWeapon();
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
@@ -98,7 +102,6 @@ export default class Player {
         if(attackResult.attackerId === this.id && attackResult.killNumber > 0){
             this.killCounter += attackResult.killNumber;
         }
-        console.log(this.killCounter)
         if (attackResult.attackerId === this.id && attackResult.blockedBy != undefined) {
             this.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.blockedBy.id)!.position, this.position, attackResult.knockbackStrength);
             this.changeState(

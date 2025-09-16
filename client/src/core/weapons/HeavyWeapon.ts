@@ -1,7 +1,7 @@
 import type { AttackData } from "../../../../shared/AttackData";
 import { PlayerState } from "../../../../shared/PlayerState";
 import type Position from "../../../../shared/Position";
-import { AttackHitboxService } from "../AttackHitboxService";
+import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
 
 export class HeavyWeapon extends Weapon {

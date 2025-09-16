@@ -1,4 +1,4 @@
-import { Hitbox } from "./Hitbox";
+import type { Hitbox } from "./Hitbox";
 import { PlayerState } from "./PlayerState";
 
 export interface AttackData {

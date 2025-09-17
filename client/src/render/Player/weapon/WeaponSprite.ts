@@ -19,6 +19,7 @@ export class WeaponSprite {
     this.sprite.anchor = anchor;
     this.sprite.x = posX;
     this.sprite.y = posY;
+    this.sprite.label = "weapon";
     playerContainer.addChild(this.sprite);
 
     this.controller = new WeaponAnimController(createWeaponAnimations(this.sprite, type,playerContainer,spriteSheets));

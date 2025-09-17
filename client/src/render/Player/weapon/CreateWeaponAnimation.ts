@@ -15,6 +15,7 @@ export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerC
     case WeaponType.HEAVY_SWORD:
       return {
         [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
+        [PlayerState.MOVING]: new IdleWeaponAnim(sprite),
         [PlayerState.ATTACK]: [
           new HeavySwordAttack1(sprite,playerContainer,spriteSheets),
           new HeavySwordAttack2(sprite,playerContainer,spriteSheets),

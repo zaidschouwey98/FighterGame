@@ -8,6 +8,12 @@ export class HeavySwordAttack3 implements IWeaponAnim {
     private effect: AnimatedSprite;
     private previousSpriteData: any;
 
+    private attackDuration:number = 30;
+
+    private baseRotation?:number;
+    private currentRotation?:number;
+    private targetRotation?:number;
+
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
         this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
@@ -19,14 +25,12 @@ export class HeavySwordAttack3 implements IWeaponAnim {
     play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
         this.previousSpriteData = {rotation:this.sprite.rotation};
         let rotation = Math.atan2(direction.y, direction.x);
-
-        let r = 10;
-        this.sprite.rotation = rotation;
-        let y = Math.sin(rotation)*r;
-        let x = Math.cos(rotation)*r;
-        this.sprite.y = y;
-        this.sprite.x = x;
-
+        console.log(rotation);
+        this.baseRotation = rotation;
+        this.sprite.rotation = this.baseRotation;
+        this.currentRotation = rotation;
+        this.targetRotation = rotation - 2*Math.PI
+        this.sprite.anchor.set(1.1,0.5)
         // Vérifie si on est dans la moitié gauche du cercle
         const flipX = rotation > Math.PI / 2 || rotation < -Math.PI / 2;
 
@@ -47,9 +51,24 @@ export class HeavySwordAttack3 implements IWeaponAnim {
     }
     stop(): void {
         this.effect.visible = false;
+        this.sprite.anchor.set(0.92,0.5)
     }
     update(_delta: number): void {
+        // delta = 0.36 quand ordi puissant, 0.88 quand ordit a chier
+        if(!this.currentRotation || !this.baseRotation || !this.targetRotation) return;
+        if(this.sprite.rotation < this.targetRotation){
+            this.sprite.anchor.set(0.92,0.5)
+            return;
+        }
+        this.sprite.rotation -= (Math.PI / 4) * _delta;
 
+        // let y = Math.sin(this.currentRotation)*10; // nok
+
+        // let x = Math.cos(this.currentRotation)*10; // ok
+        // this.sprite.x = x;
+        // this.sprite.y = y;
+        // this.sprite.rotation = this.currentRotation;
+        // this.currentRotation -= Math.PI/16;
     }
     setDirection(_dir: Direction): void {
 

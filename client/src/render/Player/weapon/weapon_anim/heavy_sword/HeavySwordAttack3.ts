@@ -3,20 +3,29 @@ import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
 
-export class HeavySwordAttack1 implements IWeaponAnim {
+export class HeavySwordAttack3 implements IWeaponAnim {
     private sprite: Sprite;
     private effect: AnimatedSprite;
-    
-    constructor(sprite:Sprite, playerContainer:Container, spriteSheets:Spritesheet[]){
+    private previousSpriteData: any;
+
+    constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
-        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_1")!);
+        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
         this.effect.anchor.set(0.5);
+        this.effect.scale.y = -1;
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
     }
-    play(direction:{x:number,y:number} = {x:0,y:0}): void {
-        this.sprite.visible = false;
+    play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
+        this.previousSpriteData = {rotation:this.sprite.rotation};
         let rotation = Math.atan2(direction.y, direction.x);
+
+        let r = 10;
+        this.sprite.rotation = rotation;
+        let y = Math.sin(rotation)*r;
+        let x = Math.cos(rotation)*r;
+        this.sprite.y = y;
+        this.sprite.x = x;
 
         // Vérifie si on est dans la moitié gauche du cercle
         const flipX = rotation > Math.PI / 2 || rotation < -Math.PI / 2;
@@ -40,10 +49,10 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.effect.visible = false;
     }
     update(_delta: number): void {
-        
+
     }
     setDirection(_dir: Direction): void {
-        
+
     }
-    
+
 }

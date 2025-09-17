@@ -23,10 +23,10 @@ export class AttackService {
         }
 
         // Reset combo
-        if (player.attackIndex > 0) {
+        if (player.weapon.attackCurrentCombo > 0) {
             this.attackResetTimer -= delta;
             if (this.attackResetTimer <= 0) {
-                player.attackIndex = 0;
+                player.weapon.resetCombo();
                 this.attackResetTimer = ATTACK_RESET;
             }
         }
@@ -52,11 +52,13 @@ export class AttackService {
 
     /** Crée une hitbox d'attaque */
     public performAttack(player: Player): AttackData | undefined {
+        this.attackResetTimer = ATTACK_RESET;
         const mouse = this.input.getMousePosition();
         const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
         const dx = world.x - player.position.x;
         const dy = world.y - player.position.y;
         const dir = Math.atan2(dy, dx);
+        player.mouseDirection = {x:dx, y:dy}
         let res = player.weapon.useWeapon(player.position, dir);
         player.attackIndex = res.attackIndex;
         res.playerId = player.id;

@@ -1,27 +1,28 @@
+import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
-import { findAnimation } from "../../../AssetLoader";
-import AnimHelper from "../../../helper/AnimHelper";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
-import { BLOCK_DURATION } from "../../../constantes";
-import type { IAnimState } from "../IAnimState";
+import { findAnimation } from "../../../../../AssetLoader";
+import { Direction } from "../../../../../../../shared/Direction";
+import AnimHelper from "../../../../../helper/AnimHelper";
+import type { IAnimState } from "../../../IAnimState";
 
-export class BlockAnim implements IAnimState {
+export class HeavySwordBodyAttack2 implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
     private current?: AnimatedSprite;
     private lastDir?: Direction;
 
-    constructor(spriteSheets: Spritesheet[], playerContainer: Container) {
-        const right = new AnimatedSprite(findAnimation(spriteSheets, "player_block_right")!);
-        
+    constructor(
+        spriteSheets: Spritesheet[], playerContainer: Container
+    ) {
+        const right = new AnimatedSprite(findAnimation(spriteSheets, "player_1_attack")!);
 
-        const left = new AnimatedSprite(findAnimation(spriteSheets, "player_block_right")!);
+        // Left = flip du right
+        const left = new AnimatedSprite(findAnimation(spriteSheets, "player_1_attack")!);
         left.scale.x = -1;
 
         const all = [right, left];
         for (const s of all) {
             s.visible = false;
-            s.animationSpeed = s.totalFrames / BLOCK_DURATION;
+            s.animationSpeed = s.totalFrames/20;
             s.anchor.set(0.5);
             s.loop = false;
             playerContainer.addChild(s);
@@ -31,11 +32,7 @@ export class BlockAnim implements IAnimState {
         this.sprites.set(Direction.LEFT, left);
     }
 
-    public enter(_player: PlayerInfo): void {
-    
-    }
-
-    public play(player: PlayerInfo) {
+    play(player: PlayerInfo): void {
         if (!player.mouseDirection) return;
         const dir = AnimHelper.getDirectionByVector(player.mouseDirection, [
             Direction.RIGHT,
@@ -54,13 +51,17 @@ export class BlockAnim implements IAnimState {
         next.visible = true;
         next.gotoAndPlay(0);
         this.current = next;
-    }
 
-    public stop() {
+    }
+    stop(): void {
         if (!this.current) return;
         this.current.stop();
         this.current.visible = false;
         this.current = undefined;
         this.lastDir = undefined;
     }
+    enter?(_player: PlayerInfo): void {
+        // this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.mouseDirection);
+    }
+
 }

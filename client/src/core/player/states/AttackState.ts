@@ -7,20 +7,30 @@ import { EventBusMessage, type EventBus } from "../../EventBus";
 export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;
 
-  private timer = 10; // Frames avant retour idle (ajuste si besoin)
+  private attackDashDone: boolean = false;
+  private timer = 20;
 
-  constructor(player: Player, private attackService: AttackService, private eventBus:EventBus) {
+  constructor(player: Player, private attackService: AttackService, private eventBus: EventBus) {
     super(player);
   }
 
+  canEnter(): boolean {
+    if (this.player.weapon.isDashAttack() && !this.attackDashDone) {
+      this.attackDashDone = true;
+      this.player.changeState(this.player.attackDashState);
+      return false;
+    } else {
+      this.attackDashDone = false;
+      return true;
+    }
+  }
+
   enter() {
-    // Déclenchement attaque (hitbox envoyée)
     let attackData = this.attackService.performAttack(this.player);
-    if(!attackData) throw new Error("AttackData shouldn't be unset.");
-    console.log(this.player.toInfo())
+    if (!attackData) throw new Error("AttackData shouldn't be unset.");
     this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED,this.player.toInfo());
-    this.timer = 10; // court délai pour animer
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+    this.timer = 20;
   }
 
   update(delta: number) {
@@ -30,5 +40,5 @@ export class AttackState extends BaseState {
     }
   }
 
-  exit() {}
+  exit() { }
 }

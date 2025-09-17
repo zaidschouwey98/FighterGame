@@ -8,15 +8,17 @@ import { HiddenWeaponAnim } from "./weapon_anim/HiddenWeaponAnim";
 import { DashWeaponAnim } from "./weapon_anim/heavy_sword/DashWeaponAnim";
 import { HeavySwordAttack1 } from "./weapon_anim/heavy_sword/HeavySwordAttack1";
 import { HeavySwordAttack2 } from "./weapon_anim/heavy_sword/HeavySwordAttack2";
+import { HeavySwordAttack3 } from "./weapon_anim/heavy_sword/HeavySwordAttack3";
 
-export function createWeaponAnimations(sprite: Sprite, type: WeaponType, staticEffectContainer:Container, spriteSheets:Spritesheet[]): Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>> {
+export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerContainer:Container, spriteSheets:Spritesheet[]): Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>> {
   switch (type) {
     case WeaponType.HEAVY_SWORD:
       return {
         [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
         [PlayerState.ATTACK]: [
-          new HeavySwordAttack1(staticEffectContainer,spriteSheets),
-          // new HeavySwordAttack2(),
+          new HeavySwordAttack1(sprite,playerContainer,spriteSheets),
+          new HeavySwordAttack2(sprite,playerContainer,spriteSheets),
+          new HeavySwordAttack3(sprite,playerContainer,spriteSheets),
         ],
         [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),
         [PlayerState.BLOCKING]: new HiddenWeaponAnim(sprite),

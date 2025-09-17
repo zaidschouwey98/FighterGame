@@ -18,10 +18,13 @@ export abstract class Weapon {
         this._attackCurrentCombo = 0;
     }
 
-    resetCombo(){
+    public resetCombo(){
         this._attackCurrentCombo = 0;
     }
     
+    public get attackCurrentCombo(): number{
+        return this._attackCurrentCombo;
+    }
     
     public get attackCoolDown() : number {
         return this._attackCoolDown;
@@ -31,6 +34,8 @@ export abstract class Weapon {
     public get weaponDamage() : number {
         return this._weaponDamage;
     }
+
+    public abstract isDashAttack():boolean;
 
     public abstract useWeapon(playerPos:Position, attackDir:number):AttackData;
 }

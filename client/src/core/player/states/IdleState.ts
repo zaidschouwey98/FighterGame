@@ -25,7 +25,7 @@ export class IdleState extends BaseState {
 
         // Si clic gauche → attaque
         if (this.inputHandler.consumeAttack()) {
-            this.player.changeState(this.player.attackDashState);
+            this.player.changeState(this.player.attackState);
             return;
         }
 

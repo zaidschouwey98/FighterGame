@@ -54,14 +54,6 @@ export default class PlayersRenderer {
         for (const player of players) {
             let playerContainer = this.playerContainers.get(player.id);
             let playerSprite = this.playerSprites.get(player.id);
-
-            // // Si le joueur n'existe pas encore, créez-le
-            // if (!playerContainer || !playerSprite) {
-            //     this.addNewPlayer(player);
-            //     playerContainer = this.playerContainers.get(player.id);
-            //     playerSprite = this.playerSprites.get(player.id);
-            // }
-
             if (!playerContainer || !playerSprite) continue;
             // Mise à jour de la position
             playerContainer.x = player.position.x;

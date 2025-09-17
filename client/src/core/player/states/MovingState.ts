@@ -30,7 +30,7 @@ export class MovingState extends BaseState {
       return;
     }
     if (this.inputHandler.consumeAttack()) {
-      this.player.changeState(this.player.attackDashState);
+      this.player.changeState(this.player.attackState);
       return;
     }
 

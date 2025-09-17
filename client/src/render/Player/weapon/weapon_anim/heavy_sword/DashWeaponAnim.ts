@@ -50,7 +50,6 @@ export class DashWeaponAnim implements IWeaponAnim {
 
 
     update(delta = 1) {
-        // Avance le temps linéairement
         this.progress = Math.min(1, this.progress + delta * 0.1);
 
         const rawRotation = this.targetRotation * this.progress;

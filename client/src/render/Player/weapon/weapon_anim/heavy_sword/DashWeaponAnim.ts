@@ -1,6 +1,7 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { Direction } from "../../../../../../../shared/Direction";
+import AnimHelper from "../../../../../helper/AnimHelper";
 
 export class DashWeaponAnim implements IWeaponAnim {
     private progress = 0;
@@ -19,11 +20,14 @@ export class DashWeaponAnim implements IWeaponAnim {
         this.setTargetRotation();
     }
 
-    play() {
+    play(direction: { x: number, y: number } = { x: 0, y: 0 }) {
+        console.log(direction)
+        this.direction = AnimHelper.getDirectionByVector(direction,[Direction.LEFT, Direction.RIGHT]);
+        this.setTargetRotation();
+
         this.sprite.visible = true;
         this.progress = 0;
         this.rotation = 0;
-        this.setTargetRotation();
     }
 
     stop() {

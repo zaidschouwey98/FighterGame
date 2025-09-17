@@ -23,7 +23,7 @@ export class WeaponAnimController {
 
     // 👇 si attaque et qu’on a un vecteur, on le passe à play()
     if (this.current) {
-      if (state === PlayerState.ATTACK && attackDir) {
+      if (state === PlayerState.ATTACK || state === PlayerState.ATTACK_DASH && attackDir) {
         this.current.play(attackDir);
       } else {
         this.current.play();

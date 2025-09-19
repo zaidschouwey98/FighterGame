@@ -52,7 +52,7 @@ export class EffectRenderer {
         this.staticEffectsContainer.addChild(tp_effect)
     }
 
-    renderAttackEffect(action: PlayerState, direction: { x: number; y: number }) {
+    renderAttackEffect(_action: PlayerState, _direction: { x: number; y: number }) {
         // if (action !== PlayerState.ATTACK_1 && action !== PlayerState.ATTACK_2) return;
 
         // const sprite = this.animations[action];

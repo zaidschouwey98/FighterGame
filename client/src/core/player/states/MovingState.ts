@@ -38,6 +38,11 @@ export class MovingState extends BaseState {
       this.player.changeState(this.player.blockState);
       return;
     }
+
+    if (this.inputHandler.consumeSpaceClick()) {
+      this.player.changeState(this.player.teleportState);
+      return;
+    }
     // Déplacement
     this.movementService.movePlayer(this.player, dx, dy, delta);
 

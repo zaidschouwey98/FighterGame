@@ -3,14 +3,15 @@ import { BaseState } from "./BaseState";
 import type Player from "../Player";
 import type { AttackService } from "../../AttackService";
 import { EventBusMessage, type EventBus } from "../../EventBus";
+import type { MovementService } from "../../MovementService";
 
 export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;
 
   private attackDashDone: boolean = false;
-  private timer = 20;
+  private timer = 40;
 
-  constructor(player: Player, private attackService: AttackService, private eventBus: EventBus) {
+  constructor(player: Player, private attackService: AttackService, private movementService: MovementService, private eventBus: EventBus) {
     super(player);
   }
 
@@ -30,10 +31,16 @@ export class AttackState extends BaseState {
     if (!attackData) throw new Error("AttackData shouldn't be unset.");
     this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
-    this.timer = 20;
-  }
+    this.timer = 40;
+  } 
 
   update(delta: number) {
+    // let v = this.movementService.getMovementDelta();
+    // v.dx = v.dx / 2;
+    // v.dy = v.dy / 2;
+    // this.movementService.movePlayer(this.player, v.dx, v.dy, delta)
+    //     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+
     this.timer -= delta;
     if (this.timer <= 0) {
       this.player.changeState(this.player.idleState);

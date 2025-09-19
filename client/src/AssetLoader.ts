@@ -85,7 +85,7 @@ const atlasConfig = [
                 "dash_attack_bottom_right_4", "dash_attack_bottom_right_5", "dash_attack_bottom_right_6",
                 "dash_attack_bottom_right_7", "dash_attack_bottom_right_8", "dash_attack_bottom_right_9"
             ],
-            player_1_attack: ["player_1_attack_1", "player_1_attack_2", "player_1_attack_3", "player_1_attack_4"]
+            // player_1_attack: ["player_1_attack_1", "player_1_attack_2", "player_1_attack_3", "player_1_attack_4"]
 
 
         } as const
@@ -104,6 +104,15 @@ const atlasConfig = [
         textures: ["sword_spawning_1", "sword_spawning_2"] as const,
         animations: {
             sword_spawning:["sword_spawning_1", "sword_spawning_2"]
+        }
+    },
+    {
+        file: "/assets/swords/character_body_attack_1.png",
+        spriteAmount: { w: 4, h: 2 },
+        assetDimensions: { w: 32, h: 32 },
+        textures: ["character_body_attack_1", "character_body_attack_2","character_body_attack_3","character_body_attack_4","character_body_attack_5","character_body_attack_6","character_body_attack_7","character_body_attack_8"] as const,
+        animations: {
+            sword_character_body_attack_1:["character_body_attack_1", "character_body_attack_2","character_body_attack_3","character_body_attack_4","character_body_attack_5","character_body_attack_6","character_body_attack_7","character_body_attack_8"]
         }
     },
     {

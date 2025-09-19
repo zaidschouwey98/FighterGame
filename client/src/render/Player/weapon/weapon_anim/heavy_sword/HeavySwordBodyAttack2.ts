@@ -13,10 +13,10 @@ export class HeavySwordBodyAttack2 implements IAnimState {
     constructor(
         spriteSheets: Spritesheet[], playerContainer: Container
     ) {
-        const right = new AnimatedSprite(findAnimation(spriteSheets, "player_1_attack")!);
+        const right = new AnimatedSprite(findAnimation(spriteSheets, "sword_character_body_attack_1")!);
 
         // Left = flip du right
-        const left = new AnimatedSprite(findAnimation(spriteSheets, "player_1_attack")!);
+        const left = new AnimatedSprite(findAnimation(spriteSheets, "sword_character_body_attack_1")!);
         left.scale.x = -1;
 
         const all = [right, left];

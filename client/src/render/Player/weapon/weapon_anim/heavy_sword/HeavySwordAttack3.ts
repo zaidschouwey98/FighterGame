@@ -68,17 +68,17 @@ export class HeavySwordAttack3 implements IWeaponAnim {
 
         if (this.flipX) {
             
-            if (this.sprite.rotation + (Math.PI / 4) * _delta > this.targetRotation) {
+            if (this.sprite.rotation + (Math.PI / 2) * _delta > this.targetRotation) {
                 this.sprite.anchor.set(0.92, 0.5)
                 return;
             }
-            this.sprite.rotation += (Math.PI / 4) * _delta;
+            this.sprite.rotation += (Math.PI / 2) * _delta;
         } else {
-            if (this.sprite.rotation - (Math.PI / 4) * _delta < this.targetRotation) {
+            if (this.sprite.rotation - (Math.PI / 2) * _delta < this.targetRotation) {
                 this.sprite.anchor.set(0.92, 0.5)
                 return;
             }
-            this.sprite.rotation -= (Math.PI / 4) * _delta;
+            this.sprite.rotation -= (Math.PI / 2) * _delta;
         }
 
 

@@ -53,9 +53,11 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         if (!this.targetRotation || !this.baseRotation || this.baseX == undefined || this.baseY == undefined)
             return;
         if (this.sprite.rotation > this.targetRotation){
+            
             this.inverseRotation = true;
         }
         if(this.inverseRotation){
+        
             this.sprite.rotation -= 0.05;
             return;
         }
@@ -66,22 +68,40 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         let normalizedRotation = this.sprite.rotation % Math.PI*2;
 
         if(this.progress < 0.3){
-            this.sprite.x -= delta * 0.5;
+            this.sprite.x = this.lerp(0,-8,this.progress*3.33)
             this.sprite.y = -5
             return;
         }
-        else {
+
+        if(this.progress >= 0.66 && this.progress <= 0.8){
+            const t = (this.progress - 0.66) / (0.8 - 0.66);
+            this.sprite.rotation = this.lerp(this.baseRotation + Math.PI*2, this.baseRotation + Math.PI*3,t);
+            this.sprite.x = this.baseX;
+            this.sprite.anchor.set(1,0.5);
+            return;
+        }
+
+        if(this.progress > 0.3 && this.progress < 0.66){
             this.sprite.y = Math.sin(normalizedRotation) * -5;
+            const t = (this.progress - 0.3) / (0.66 - 0.3);
+            this.sprite.rotation = this.lerp(0,this.baseRotation + Math.PI*2,t)
+            return;
+        }
+        
+        else {
+            
         }
         
         let distFrom2PI = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI * 2));
 
+
         let factor;
         if (distFrom2PI > 4 * Math.PI / 4) {
+            // 0.3 à 0.65
             factor = 0.9;
         } else {
-            this.sprite.x = this.baseX;
-            this.sprite.anchor.set(1,0.5);
+            // progress = 0.67
+            
             const flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
 
             if (flipX) {
@@ -106,6 +126,17 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     }
     setDirection(_dir: Direction): void {
 
+    }
+
+    /**
+     * 
+     * @param a Source
+     * @param b Dest
+     * @param t [0,1]
+     * @returns 
+     */
+    private lerp(a:number, b:number, t:number):number{
+        return a+(b-a)*t;
     }
 
 }

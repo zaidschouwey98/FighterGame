@@ -21,7 +21,9 @@ export class DashWeaponAnim implements IWeaponAnim {
     }
 
     play(direction: { x: number, y: number } = { x: 0, y: 0 }) {
-        console.log(direction)
+        const rot = Math.atan2(direction.y,direction.x);
+        const flipX = rot > Math.PI / 2 || rot< -Math.PI / 2;
+        this.sprite.scale.x = flipX ? -1 : 1;
         this.direction = AnimHelper.getDirectionByVector(direction,[Direction.LEFT, Direction.RIGHT]);
         this.setTargetRotation();
 

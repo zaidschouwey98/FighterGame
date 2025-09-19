@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, copySearchParams, ObservablePoint, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
+import { AnimatedSprite, Container, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
 import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
@@ -20,7 +20,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
 
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
-        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
+        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "sword_1_attack_effect_right_1")!);
         this.effect.anchor.set(0.5);
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
@@ -45,6 +45,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
         this.effect.visible = false;
         this.sprite.x = this.baseX;
         this.sprite.y = this.baseY;
+        this.sprite.rotation = 0;
         this.sprite.scale.x = this.flipX ? -1 : 1;
         this.sprite.anchor.copyFrom(this.baseAnchor);
     }
@@ -60,7 +61,6 @@ export class HeavySwordAttack2 implements IWeaponAnim {
         const normalizedRotation = this.sprite.rotation % (Math.PI * 2);
 
         if (this.progress < 0.3) {
-            console.log(this.sprite.zIndex)
             this.sprite.zIndex = -1;
             this.sprite.x = dir * this.lerp(0, -8, this.progress * 3.33);
             this.sprite.y = 6;

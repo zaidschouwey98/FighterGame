@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, copySearchParams, ObservablePoint, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
+import { AnimatedSprite, Container, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
 import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
@@ -20,7 +20,9 @@ export class HeavySwordAttack1 implements IWeaponAnim {
 
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
-        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
+        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "sword_1_attack_effect_right_1")!);
+        this.effect.scale.y = -1;
+
         this.effect.anchor.set(0.5);
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
@@ -54,7 +56,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.progress += delta / this.duration;
 
 
-        let normalizedRotation = this.sprite.rotation % (Math.PI * 2);
+        const normalizedRotation = this.sprite.rotation % (Math.PI * 2);
 
         if (this.progress < 0.3) {
             this.sprite.x = dir * this.lerp(0, -8, this.progress * 3.33);
@@ -91,7 +93,6 @@ export class HeavySwordAttack1 implements IWeaponAnim {
             this.sprite.y = Math.sin(normalizedRotation) * -5;
             // this.sprite.anchor.set(1, 0.25);
             const t = (this.progress - 0.3) / (0.66 - 0.3);
-            console.log(this.sprite.rotation)
             this.sprite.rotation = this.lerp(0, 0 + dir * Math.PI, t);
             return;
         }

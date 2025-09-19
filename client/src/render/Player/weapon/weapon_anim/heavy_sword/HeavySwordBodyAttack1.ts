@@ -23,7 +23,7 @@ export class HeavySwordBodyAttack1 implements IAnimState {
         const all = [right, left];
         for (const s of all) {
             s.visible = false;
-            s.animationSpeed = 0.2;
+            s.animationSpeed = 0.16;
             s.anchor.set(0.5);
             s.loop = false;
             playerContainer.addChild(s);

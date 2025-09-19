@@ -26,6 +26,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         playerContainer.addChild(this.effect);
     }
     play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
+        this.progress = 0;
         this.baseX = this.sprite.x;
         this.baseY = this.sprite.y;
         this.sprite.anchor.copyTo(this.baseAnchor)
@@ -52,16 +53,23 @@ export class HeavySwordAttack1 implements IWeaponAnim {
             return;
         if (this.sprite.rotation > this.targetRotation)
             return;
+        this.progress += delta / this.duration;
+
+
+        let normalizedRotation = this.sprite.rotation % Math.PI*2;
+
+        if(this.progress < 0.3){
+            this.sprite.x -= this.progress*delta;
+            this.sprite.y = -5
+            return;
+        }
         
-        let normalizedAngle = this.sprite.rotation % Math.PI * 2;
-        // console.log(normalizedAngle);
-        let val = Math.cos(normalizedAngle + Math.PI / 6) * 4;// [-16,16]
-        // console.log("y : " + val)
-        this.sprite.y = this.baseY - val;
-        // console.log("real y : " + this.sprite.y;
-
-
-
+        else {
+            
+            this.sprite.y = Math.sin(normalizedRotation) * -5;
+            console.log("current rot : " + normalizedRotation + " y: " + this.sprite.y);
+            // this.sprite.y = -5
+        }
         
         let distFrom2PI = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI * 2));
 
@@ -69,7 +77,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         if (distFrom2PI > 4 * Math.PI / 4) {
             factor = 0.8;
         } else {
-            
+            this.sprite.x = this.baseX;
             const flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
 
             if (flipX) {
@@ -88,7 +96,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
             this.effect.play();
             factor = 4 // => [1,3]
         }
-        this.sprite.rotation += Math.PI / 16 * delta * factor;
+        this.sprite.rotation += Math.PI / 12 * delta * factor;
         this.sprite.scale.y = Math.max(1, 2 - 0.5 * Math.abs(distFrom2PI));
 
         let distFromPIby2 = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI / 2));

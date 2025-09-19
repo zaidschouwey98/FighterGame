@@ -50,14 +50,21 @@ export default class PlayersRenderer {
         this.players.delete(playerId);
     }
 
-    public syncPlayers(players: PlayerInfo[]) {
+    public syncPosition(players: PlayerInfo[]){
         for (const player of players) {
             let playerContainer = this.playerContainers.get(player.id);
-            let playerSprite = this.playerSprites.get(player.id);
-            if (!playerContainer || !playerSprite) continue;
-            // Mise à jour de la position
+            if (!playerContainer) continue;
             playerContainer.x = player.position.x;
             playerContainer.y = player.position.y;
+        }
+    }
+
+    public syncPlayers(players: PlayerInfo[]) {
+        for (const player of players) {
+            let playerSprite = this.playerSprites.get(player.id);
+            if (!playerSprite) continue;
+            // Mise à jour de la position
+            this.syncPosition([player]);
             playerSprite.syncPlayer(player);
         }
     }

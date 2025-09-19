@@ -16,7 +16,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
 
     private duration:number = 40;
     private progress = 0; // entre 0 et 1
-
+    private inverseRotation:boolean = false;
 
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
@@ -26,13 +26,14 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         playerContainer.addChild(this.effect);
     }
     play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
+        this.inverseRotation = false;
         this.progress = 0;
         this.baseX = this.sprite.x;
         this.baseY = this.sprite.y;
         this.sprite.anchor.copyTo(this.baseAnchor)
 
         let rotation = Math.atan2(direction.y, direction.x);
-        this.targetRotation = rotation + Math.PI * 4;
+        this.targetRotation = rotation + Math.PI * 5/2;
         this.baseRotation = rotation;
 
         this.sprite.anchor.set(1, 0.25)
@@ -51,33 +52,36 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     update(delta: number): void {
         if (!this.targetRotation || !this.baseRotation || this.baseX == undefined || this.baseY == undefined)
             return;
-        if (this.sprite.rotation > this.targetRotation)
+        if (this.sprite.rotation > this.targetRotation){
+            this.inverseRotation = true;
+        }
+        if(this.inverseRotation){
+            this.sprite.rotation -= 0.05;
             return;
+        }
+           
         this.progress += delta / this.duration;
 
 
         let normalizedRotation = this.sprite.rotation % Math.PI*2;
 
         if(this.progress < 0.3){
-            this.sprite.x -= this.progress*delta;
+            this.sprite.x -= delta * 0.5;
             this.sprite.y = -5
             return;
         }
-        
         else {
-            
             this.sprite.y = Math.sin(normalizedRotation) * -5;
-            console.log("current rot : " + normalizedRotation + " y: " + this.sprite.y);
-            // this.sprite.y = -5
         }
         
         let distFrom2PI = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI * 2));
 
         let factor;
         if (distFrom2PI > 4 * Math.PI / 4) {
-            factor = 0.8;
+            factor = 0.9;
         } else {
             this.sprite.x = this.baseX;
+            this.sprite.anchor.set(1,0.5);
             const flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
 
             if (flipX) {
@@ -87,25 +91,17 @@ export class HeavySwordAttack1 implements IWeaponAnim {
                 this.effect.scale.x = 1;
             }
 
-            this.effect.animationSpeed = 0.3;
+            this.effect.animationSpeed = 0.5;
             this.effect.visible = true;
             this.effect.loop = false;
             this.effect.currentFrame = 0;
             this.effect.rotation = this.baseRotation;
 
             this.effect.play();
-            factor = 4 // => [1,3]
+            factor = 4;
         }
-        this.sprite.rotation += Math.PI / 12 * delta * factor;
-        this.sprite.scale.y = Math.max(1, 2 - 0.5 * Math.abs(distFrom2PI));
-
-        let distFromPIby2 = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI / 2));
-        // if (distFromPIby2 < 0.7) distFromPIby2 = 0.7
-        // this.sprite.scale.x = -Math.min(1, distFromPIby2)
-
-
-        // this.sprite.x = this.baseX - 10;
-        // this.sprite.y = this.baseY - 16; // -2 = min 16 = max
+        this.sprite.rotation += Math.PI / 13 * delta * factor;
+        // this.sprite.scale.y = Math.max(1, 2 - 0.5 * Math.abs(distFrom2PI));
 
     }
     setDirection(_dir: Direction): void {

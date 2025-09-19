@@ -76,6 +76,10 @@ export class Renderer {
             this._scoreBoard.update(player);
         });
 
+        this._eventBus.on(EventBusMessage.PLAYER_POSITION_UPDATED, (player:PlayerInfo)=>{
+            this._playersRenderer.syncPosition([player])
+        })
+
         // Nouvel arrivant
         this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             this._playersRenderer.addNewPlayer(player);

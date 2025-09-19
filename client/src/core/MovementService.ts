@@ -16,14 +16,14 @@ export class MovementService {
     return { dx, dy };
   }
 
-  public movePlayer(player: Player, dx: number, dy: number, delta: number) {
+  public movePlayer(player: Player, dx: number, dy: number, delta: number, speed:number = player.speed) {
     if (dx === 0 && dy === 0) return;
 
     const length = Math.sqrt(dx * dx + dy * dy);
     dx /= length;
     dy /= length;
 
-    player.position.x += dx * player.speed * TILE_SIZE * delta / 60;
-    player.position.y += dy * player.speed * TILE_SIZE * delta / 60;
+    player.position.x += dx * speed * TILE_SIZE * delta / 60;
+    player.position.y += dy * speed * TILE_SIZE * delta / 60;
   }
 }

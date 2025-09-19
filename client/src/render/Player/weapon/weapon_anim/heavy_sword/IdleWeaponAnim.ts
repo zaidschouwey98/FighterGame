@@ -22,13 +22,13 @@ export class IdleWeaponAnim implements IWeaponAnim {
   }
 
   update(delta:number) {
-    // this.time += delta * 0.3; // Oscillation lente
-    // const offset = Math.sin(this.time) * 0.5; // Petit offset vertical
-    // this.sprite.y = this.baseY + offset;
-    // this.sprite.rotation = 0; // Pas de rotation idle
+    this.time += delta * 0.3; // Oscillation lente
+    const offset = Math.sin(this.time) * 0.5; // Petit offset vertical
+    this.sprite.y = this.baseY + offset;
+    this.sprite.rotation = 0; // Pas de rotation idle
   }
 
-  setDirection(dir: Direction): void {
+  setDirection(_dir: Direction): void {
     // switch (dir) {
     //   case Direction.BOTTOM:
     //     this.sprite.rotation = 0;

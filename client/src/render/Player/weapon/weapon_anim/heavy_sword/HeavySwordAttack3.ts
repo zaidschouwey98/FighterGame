@@ -10,7 +10,6 @@ export class HeavySwordAttack3 implements IWeaponAnim {
 
     private flipX: boolean = false;
 
-    private attackDuration: number = 30;
 
     private baseRotation?: number;
     private currentRotation?: number;

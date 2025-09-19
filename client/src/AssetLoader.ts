@@ -112,7 +112,8 @@ const atlasConfig = [
         assetDimensions: { w: 32, h: 32 },
         textures: ["character_body_attack_1", "character_body_attack_2","character_body_attack_3","character_body_attack_4","character_body_attack_5","character_body_attack_6","character_body_attack_7","character_body_attack_8"] as const,
         animations: {
-            sword_character_body_attack_1:["character_body_attack_1", "character_body_attack_2","character_body_attack_3","character_body_attack_4","character_body_attack_5","character_body_attack_6","character_body_attack_7","character_body_attack_8"]
+            sword_character_body_attack_1:["character_body_attack_1", "character_body_attack_2","character_body_attack_3","character_body_attack_4","character_body_attack_5","character_body_attack_6","character_body_attack_7","character_body_attack_8"],
+            sword_character_body_attack_2:["character_body_attack_1", "character_body_attack_7","character_body_attack_6","character_body_attack_5","character_body_attack_4","character_body_attack_3","character_body_attack_2","character_body_attack_8"]
         }
     },
     {

@@ -29,26 +29,26 @@ export class IdleWeaponAnim implements IWeaponAnim {
   }
 
   setDirection(dir: Direction): void {
-    switch (dir) {
-      case Direction.BOTTOM:
-        this.sprite.rotation = 0;
-        break;
-      case Direction.TOP:
-        this.sprite.rotation = 0;
-        break;
-      case Direction.LEFT:
-        this.sprite.scale.x = 1;
-        this.sprite.scale.y = 1;
-        this.sprite.rotation = 0;
-        break;
-      case Direction.RIGHT:
-        this.sprite.scale.x = -1;
-        this.sprite.scale.y = 1;
-        this.sprite.rotation = 0;
-        break;
+    // switch (dir) {
+    //   case Direction.BOTTOM:
+    //     this.sprite.rotation = 0;
+    //     break;
+    //   case Direction.TOP:
+    //     this.sprite.rotation = 0;
+    //     break;
+    //   case Direction.LEFT:
+    //     this.sprite.scale.x = 1;
+    //     this.sprite.scale.y = 1;
+    //     this.sprite.rotation = 0;
+    //     break;
+    //   case Direction.RIGHT:
+    //     this.sprite.scale.x = -1;
+    //     this.sprite.scale.y = 1;
+    //     this.sprite.rotation = 0;
+    //     break;
     
-      default:
-        break;
-    }
+    //   default:
+    //     break;
+    // }
   }
 }

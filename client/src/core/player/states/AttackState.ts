@@ -9,7 +9,7 @@ export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;
 
   private attackDashDone: boolean = false;
-  private timer = 40;
+  private timer = 35;
 
   constructor(player: Player, private attackService: AttackService, private movementService: MovementService, private eventBus: EventBus) {
     super(player);

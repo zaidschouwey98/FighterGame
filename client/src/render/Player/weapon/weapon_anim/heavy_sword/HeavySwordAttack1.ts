@@ -7,38 +7,35 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     private sprite: Sprite;
     private effect: AnimatedSprite;
 
-    private targetRotation?: number;
     private baseRotation?: number;
 
     private baseX?: number;
     private baseY?: number;
     private baseAnchor: PointLike = new Point();
 
-    private duration:number = 40;
+    private duration: number = 40;
     private progress = 0; // entre 0 et 1
-    private inverseRotation:boolean = false;
+
+    private flipX: boolean = false;
 
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
         this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
         this.effect.anchor.set(0.5);
-
+        this.effect.visible = false;
         playerContainer.addChild(this.effect);
     }
     play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
-        this.inverseRotation = false;
         this.progress = 0;
         this.baseX = this.sprite.x;
         this.baseY = this.sprite.y;
         this.sprite.anchor.copyTo(this.baseAnchor)
 
         let rotation = Math.atan2(direction.y, direction.x);
-        this.targetRotation = rotation + Math.PI * 5/2;
         this.baseRotation = rotation;
-
+        this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
+        this.sprite.scale.x = this.flipX ? 1 : -1;
         this.sprite.anchor.set(1, 0.25)
-
-        // Vérifie si on est dans la moitié gauche du cercle
 
     }
     stop(): void {
@@ -50,78 +47,54 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.sprite.anchor.copyFrom(this.baseAnchor);
     }
     update(delta: number): void {
-        if (!this.targetRotation || !this.baseRotation || this.baseX == undefined || this.baseY == undefined)
+        if (this.baseRotation == undefined || this.baseX == undefined || this.baseY == undefined)
             return;
-        if (this.sprite.rotation > this.targetRotation){
-            
-            this.inverseRotation = true;
-        }
-        if(this.inverseRotation){
-        
-            this.sprite.rotation -= 0.05;
-            return;
-        }
-           
+        const dir = this.flipX ? -1 : 1;
+
         this.progress += delta / this.duration;
 
 
-        let normalizedRotation = this.sprite.rotation % Math.PI*2;
+        let normalizedRotation = this.sprite.rotation % (Math.PI * 2);
 
-        if(this.progress < 0.3){
-            this.sprite.x = this.lerp(0,-8,this.progress*3.33)
+        if (this.progress < 0.3) {
+            this.sprite.x = dir * this.lerp(0, -8, this.progress * 3.33);
             this.sprite.y = -5
             return;
         }
 
-        if(this.progress >= 0.66 && this.progress <= 0.8){
+        if (this.progress >= 0.9) {
+            const t = (this.progress - 0.9) / (1 - 0.9);
+            this.sprite.anchor.x = this.lerp(1, 0.92, t);
+            this.sprite.rotation = this.lerp(dir * Math.PI * 11 / 4, dir * Math.PI * 2, t);
+            this.sprite.scale.y = 1;
+        }
+
+        if (this.progress >= 0.8 && this.progress < 0.9) {
+            const t = (this.progress - 0.8) / (0.9 - 0.8);
+            this.sprite.scale.y = this.lerp(2, 1, t);
+        }
+
+        if (this.progress >= 0.66 && this.progress < 0.8) {
+            // this.sprite.y = Math.sin(normalizedRotation) * -5;
             const t = (this.progress - 0.66) / (0.8 - 0.66);
-            this.sprite.rotation = this.lerp(this.baseRotation + Math.PI*2, this.baseRotation + Math.PI*3,t);
+            const easedT = (1 - Math.cos(Math.PI * t)) / 2;
+            this.sprite.scale.y = Math.max(1, easedT * 2)
+            this.sprite.anchor.y = this.lerp(0.25, 0.5, t);
+            this.sprite.rotation = this.lerp(dir * Math.PI, dir * Math.PI * 11 / 4, easedT);
             this.sprite.x = this.baseX;
-            this.sprite.anchor.set(1,0.5);
+            this.sprite.y = this.baseY;
+            this.playEffect();
             return;
         }
 
-        if(this.progress > 0.3 && this.progress < 0.66){
+        if (this.progress >= 0.3 && this.progress < 0.66) {
             this.sprite.y = Math.sin(normalizedRotation) * -5;
+            // this.sprite.anchor.set(1, 0.25);
             const t = (this.progress - 0.3) / (0.66 - 0.3);
-            this.sprite.rotation = this.lerp(0,this.baseRotation + Math.PI*2,t)
+            console.log(this.sprite.rotation)
+            this.sprite.rotation = this.lerp(0, 0 + dir * Math.PI, t);
             return;
         }
-        
-        else {
-            
-        }
-        
-        let distFrom2PI = Math.abs(this.sprite.rotation - (this.baseRotation + Math.PI * 2));
-
-
-        let factor;
-        if (distFrom2PI > 4 * Math.PI / 4) {
-            // 0.3 à 0.65
-            factor = 0.9;
-        } else {
-            // progress = 0.67
-            
-            const flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
-
-            if (flipX) {
-                this.effect.scale.x = -1;           // Flip horizontal
-                this.baseRotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
-            } else {
-                this.effect.scale.x = 1;
-            }
-
-            this.effect.animationSpeed = 0.5;
-            this.effect.visible = true;
-            this.effect.loop = false;
-            this.effect.currentFrame = 0;
-            this.effect.rotation = this.baseRotation;
-
-            this.effect.play();
-            factor = 4;
-        }
-        this.sprite.rotation += Math.PI / 13 * delta * factor;
-        // this.sprite.scale.y = Math.max(1, 2 - 0.5 * Math.abs(distFrom2PI));
 
     }
     setDirection(_dir: Direction): void {
@@ -135,8 +108,27 @@ export class HeavySwordAttack1 implements IWeaponAnim {
      * @param t [0,1]
      * @returns 
      */
-    private lerp(a:number, b:number, t:number):number{
-        return a+(b-a)*t;
+    private lerp(a: number, b: number, t: number): number {
+        return a + (b - a) * t;
+    }
+
+    private playEffect() {
+        if (this.baseRotation == undefined || this.effect == undefined) return;
+
+        if (this.flipX) {
+            this.effect.scale.x = -1;           // Flip horizontal
+            this.baseRotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
+        } else {
+            this.effect.scale.x = 1;
+        }
+
+        this.effect.animationSpeed = 0.5;
+        this.effect.visible = true;
+        this.effect.loop = false;
+        this.effect.currentFrame = 0;
+        this.effect.rotation = this.baseRotation;
+
+        this.effect.play();
     }
 
 }

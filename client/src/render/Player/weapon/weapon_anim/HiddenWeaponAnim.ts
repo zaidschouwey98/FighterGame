@@ -11,7 +11,7 @@ export class HiddenWeaponAnim implements IWeaponAnim{
   }
 
   stop() {
-    
+    this.sprite.visible = true;
   }
 
   setDirection(_dir: Direction): void {

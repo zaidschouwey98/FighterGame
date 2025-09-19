@@ -8,6 +8,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     private effect: AnimatedSprite;
 
     private baseRotation?: number;
+    private effectPlaying:boolean = false;
 
     private baseX?: number;
     private baseY?: number;
@@ -38,6 +39,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
         this.sprite.scale.x = this.flipX ? 1 : -1;
         this.sprite.anchor.set(1, 0.25)
+        this.effectPlaying = false;
 
     }
     stop(): void {
@@ -59,7 +61,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
 
         const normalizedRotation = this.sprite.rotation % (Math.PI * 2);
 
-        if (this.progress < 0.3) {
+        if (this.progress < 0.25) {
             this.sprite.x = dir * this.lerp(0, -8, this.progress * 3.33);
             this.sprite.y = -5
             return;
@@ -77,24 +79,29 @@ export class HeavySwordAttack1 implements IWeaponAnim {
             this.sprite.scale.y = this.lerp(2, 1, t);
         }
 
-        if (this.progress >= 0.66 && this.progress < 0.8) {
+        if (this.progress >= 0.45 && this.progress < 0.8) {
             // this.sprite.y = Math.sin(normalizedRotation) * -5;
-            const t = (this.progress - 0.66) / (0.8 - 0.66);
+            const t = (this.progress - 0.45) / (0.8 - 0.45);
             const easedT = (1 - Math.cos(Math.PI * t)) / 2;
             this.sprite.scale.y = Math.max(1, easedT * 2)
             this.sprite.anchor.y = this.lerp(0.25, 0.5, t);
             this.sprite.rotation = this.lerp(dir * Math.PI, dir * Math.PI * 11 / 4, easedT);
             this.sprite.x = this.baseX;
             this.sprite.y = this.baseY;
-            this.playEffect();
+            if(!this.effectPlaying){
+                this.playEffect();
+                this.effectPlaying = true;
+            }
+            
             return;
         }
 
-        if (this.progress >= 0.3 && this.progress < 0.66) {
+        if (this.progress >= 0.25 && this.progress < 0.45) {
             this.sprite.y = Math.sin(normalizedRotation) * -5;
             // this.sprite.anchor.set(1, 0.25);
-            const t = (this.progress - 0.3) / (0.66 - 0.3);
+            const t = (this.progress - 0.25) / (0.45 - 0.25);
             this.sprite.rotation = this.lerp(0, 0 + dir * Math.PI, t);
+            
             return;
         }
 
@@ -123,7 +130,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
             this.effect.scale.x = 1;
         }
 
-        this.effect.animationSpeed = 0.6;
+        this.effect.animationSpeed = 0.4;
         this.effect.visible = true;
         this.effect.loop = false;
         this.effect.currentFrame = 0;

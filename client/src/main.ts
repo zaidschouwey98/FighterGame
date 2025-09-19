@@ -3,7 +3,7 @@ import { getSpritesheets } from './AssetLoader';
 import { initDevtools } from '@pixi/devtools';
 import { SceneManager } from './scene/SceneManager';
 import { GameScene } from './scene/GameScene';
-
+// https://youtu.be/Uy-dey7tUT0?t=19 ANIM ATTACK
 // TOdo add credits song for my death, but I refused
 (async () => {
   const app = new Application();
@@ -19,7 +19,7 @@ import { GameScene } from './scene/GameScene';
   
   document.body.appendChild(app.canvas);
   const sceneManager = new SceneManager(app);
-  const gameScene = new GameScene(window.location.origin, app, spritesheets);
+  const gameScene = new GameScene("localhost:3000", app, spritesheets);
 
   sceneManager.changeScene(gameScene);
 

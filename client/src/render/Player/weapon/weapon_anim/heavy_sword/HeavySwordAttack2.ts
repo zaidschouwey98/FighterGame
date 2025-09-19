@@ -120,16 +120,17 @@ export class HeavySwordAttack2 implements IWeaponAnim {
 
         if (this.flipX) {
             this.effect.scale.x = -1;           // Flip horizontal
-            this.baseRotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
+                   // Ajuste la rotation (retourne le sprite)
         } else {
             this.effect.scale.x = 1;
         }
 
-        this.effect.animationSpeed = 0.5;
+        this.effect.animationSpeed = 0.6;
         this.effect.visible = true;
         this.effect.loop = false;
         this.effect.currentFrame = 0;
-        this.effect.rotation = this.baseRotation;
+
+        this.effect.rotation = this.flipX ? this.baseRotation! - Math.PI : this.baseRotation!;
 
         this.effect.play();
     }

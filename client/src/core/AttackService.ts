@@ -5,6 +5,7 @@ import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import type { AttackData } from "../../../shared/AttackData";
 import AnimHelper from "../helper/AnimHelper";
 import { Direction } from "../../../shared/Direction";
+import type Position from "../../../shared/Position";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
@@ -58,11 +59,17 @@ export class AttackService {
         const dx = world.x - player.position.x;
         const dy = world.y - player.position.y;
         const dir = Math.atan2(dy, dx);
-        player.mouseDirection = {x:dx, y:dy}
         let res = player.weapon.useWeapon(player.position, dir);
-        player.attackIndex = res.attackIndex;
         res.playerId = player.id;
         return res;
+    }
+
+     public getAttackDir(playerPos: Position): {x:number,y:number} {
+        const mouse = this.input.getMousePosition();
+        const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
+        const dx = world.x - playerPos.x;
+        const dy = world.y - playerPos.y;
+        return {x:dx, y:dy}
     }
 
     public isAttackReady() {

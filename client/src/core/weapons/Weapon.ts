@@ -37,5 +37,7 @@ export abstract class Weapon {
 
     public abstract isDashAttack():boolean;
 
+    public abstract getAttackDuration():number;
+
     public abstract useWeapon(playerPos:Position, attackDir:number):AttackData;
 }

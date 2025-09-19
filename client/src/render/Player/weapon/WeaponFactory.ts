@@ -19,7 +19,7 @@ export class WeaponFactory {
       case WeaponType.HEAVY_SWORD:
         playerController.register(PlayerState.ATTACK, [new HeavySwordBodyAttack1(spriteSheets, parent), new HeavySwordBodyAttack2(spriteSheets, parent),new HeavySwordBodyAttack1(spriteSheets, parent)]);
         return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, this.skin, {x:0.92, y:0.5},0,3);
-
+        
     //   case WeaponType.FIST:
     //     playerController.register(PlayerState.ATTACK, new FistAttackAnim(effectRenderer, spriteSheets, parent));
     //     return new WeaponSprite(spriteSheets, parent, WeaponType.FIST, this.skin);

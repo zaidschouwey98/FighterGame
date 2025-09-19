@@ -69,6 +69,14 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
     }
   })
 
+  socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (playerInfo: PlayerInfo) => {
+    if (players[socket.id]) {
+      players[socket.id] = playerInfo;
+      socket.broadcast.emit(ServerToSocketMsg.PLAYER_POS_UPDATE, players[socket.id]);
+    }
+  })
+
+
   socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo: PlayerInfo) => {
     if (players[socket.id]) {
       players[socket.id] = playerInfo;

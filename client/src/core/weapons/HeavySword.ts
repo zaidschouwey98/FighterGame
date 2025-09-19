@@ -24,6 +24,12 @@ export class HeavySword extends Weapon {
         this._attackCurrentCombo = ((this._attackCurrentCombo + 1)% this._attackMaxCombo)
         return res;
     }
+
+    public getAttackDuration():number{
+        if(this._attackCurrentCombo == 0 ||this._attackCurrentCombo == 1)
+            return 40;
+        return 10;
+    }
     
     public isDashAttack(): boolean {
         return this._attackCurrentCombo === 2;

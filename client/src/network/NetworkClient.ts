@@ -26,6 +26,10 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
         });
 
+        this.socket.on(ServerToSocketMsg.PLAYER_POS_UPDATE, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, player);
+        });
+
         this.socket.on(ServerToSocketMsg.DISCONNECT, (playerId: string) => {
             this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
         });
@@ -52,6 +56,11 @@ export class NetworkClient {
             this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
         });
+
+        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, (playerInfo)=>{
+            this.socket.emit(ClientToSocketMsg.PLAYER_POS_UPDATE, playerInfo);
+            this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, playerInfo);
+        })
     }
 
     public spawnPlayer(name: string) {

@@ -32,7 +32,7 @@ export class BlockState extends BaseState {
 
     update(delta: number) {
         if(this.inputHandler.consumeAttack()){
-            this.player.changeState(this.player.attackDashState);
+            this.player.changeState(this.player.attackState);
         }
         if (this.player.blockTimer !== undefined) {
             this.player.blockTimer -= delta;

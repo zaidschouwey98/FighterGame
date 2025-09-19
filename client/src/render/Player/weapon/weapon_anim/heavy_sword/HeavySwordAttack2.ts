@@ -46,14 +46,15 @@ export class HeavySwordAttack2 implements IWeaponAnim {
         this.sprite.x = this.baseX;
         this.sprite.y = this.baseY;
         this.sprite.rotation = 0;
+        this.sprite.scale.y = 1;
         this.sprite.scale.x = this.flipX ? -1 : 1;
         this.sprite.anchor.copyFrom(this.baseAnchor);
     }
     update(delta: number): void {
         if (this.baseRotation == undefined || this.baseX == undefined || this.baseY == undefined) return;
 
-        const dir = this.flipX ? -1 : 1;     // gauche/droite (miroir)
-        const swing = -dir;                  // ✅ inverse le sens du slash pour les deux côtés
+        const dir = this.flipX ? -1 : 1;
+        const swing = -dir;                
 
         this.progress += delta / this.duration;
 

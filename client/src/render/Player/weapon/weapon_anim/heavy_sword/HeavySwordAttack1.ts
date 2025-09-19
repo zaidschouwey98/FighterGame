@@ -46,6 +46,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.effect.visible = false;
         this.sprite.x = this.baseX;
         this.sprite.y = this.baseY;
+        this.sprite.scale.y = 1;
         this.sprite.anchor.copyFrom(this.baseAnchor);
     }
     update(delta: number): void {

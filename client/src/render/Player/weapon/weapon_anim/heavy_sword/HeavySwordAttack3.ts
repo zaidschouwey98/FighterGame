@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, Sprite, Spritesheet } from "pixi.js";
+import { AnimatedSprite, Container, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
 import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
@@ -6,84 +6,111 @@ import { findAnimation } from "../../../../../AssetLoader";
 export class HeavySwordAttack3 implements IWeaponAnim {
     private sprite: Sprite;
     private effect: AnimatedSprite;
-    private previousSpriteData: any;
+
+    private baseRotation?: number;
+    private effectPlaying:boolean = false;
+
+    private baseX?: number;
+    private baseY?: number;
+    private baseAnchor: PointLike = new Point();
+    private spriteBaseRot?:number;
+    private duration: number = 10;
+    private progress = 0; // entre 0 et 1
 
     private flipX: boolean = false;
 
-
-    private baseRotation?: number;
-    private currentRotation?: number;
-    private targetRotation?: number;
-
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
         this.sprite = sprite;
-        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "player_attack_effect_right_2")!);
+        this.effect = new AnimatedSprite(findAnimation(spriteSheets, "sword_1_attack_effect_right_1")!);
         this.effect.anchor.set(0.5);
-        this.effect.scale.y = -1;
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
     }
     play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
-        this.previousSpriteData = {
-            rotation: this.sprite.rotation,
-            anchor: this.sprite.anchor,
-        };
-        let rotation = Math.atan2(direction.y, direction.x);
+        this.progress = 0;
+        this.baseX = this.sprite.x;
+        this.baseY = this.sprite.y;
+        this.sprite.anchor.copyTo(this.baseAnchor)
 
-        // Vérifie si on est dans la moitié gauche du cercle
-        const flipX = rotation > Math.PI / 2 || rotation < -Math.PI / 2;
-        this.flipX = flipX;
-        if (flipX) {
-            this.effect.scale.x = -1;           // Flip horizontal
-            rotation += Math.PI;           // Ajuste la rotation (retourne le sprite)
-            this.baseRotation = rotation;
-            this.currentRotation = rotation;
-            this.targetRotation = this.sprite.rotation + 2 * Math.PI;
-            this.sprite.anchor.set(1.1, 0.5)
-        } else {
-            this.effect.scale.x = 1;
-            this.baseRotation = rotation;
-            this.currentRotation = rotation;
-            this.targetRotation = this.sprite.rotation - 2 * Math.PI;
-            this.sprite.anchor.set(1.1, 0.5)
+        this.spriteBaseRot = this.sprite.rotation;
+
+        let rotation = Math.atan2(direction.y, direction.x);
+        this.baseRotation = rotation;
+        this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
+        this.sprite.scale.x = this.flipX ? -1 : 1;
+        this.sprite.anchor.set(1, 0.25)
+        this.effectPlaying = false;
+    }
+    stop(): void {
+        if (this.baseX == undefined || this.baseY == undefined)
+            throw new Error("Shouldn't be undefined.")
+        this.sprite.x = this.baseX;
+        this.sprite.y = this.baseY;
+        this.sprite.rotation = 0;
+        this.sprite.scale.y = 1;
+        this.sprite.scale.x = this.flipX ? -1 : 1;
+        this.sprite.anchor.copyFrom(this.baseAnchor);
+    }
+    update(delta: number): void {
+        if (this.baseRotation == undefined || this.baseX == undefined || this.baseY == undefined || this.spriteBaseRot == undefined) return;
+
+        const dir = this.flipX ? -1 : 1;
+        const swing = -dir;                
+
+        this.progress += delta / this.duration;
+
+        if (this.progress >= 0.0 && this.progress < 1) {
+            const t = (this.progress - 0) / (1 - 0);
+            this.sprite.zIndex = 1;
+            const easedT = (1 - Math.cos(Math.PI * t)) / 2;
+            this.sprite.scale.y = Math.max(1, easedT * 2);
+            this.sprite.anchor.y = this.lerp(0.25, 0.5, t);
+            this.sprite.rotation = this.lerp(this.spriteBaseRot, swing * Math.PI*2, easedT);
+
+            // this.sprite.x = this.baseX;
+            // this.sprite.y = this.baseY;
+            if(!this.effectPlaying){
+                this.playEffect();
+                this.effectPlaying = true;
+            }
+            return;
         }
 
-        this.effect.animationSpeed = this.effect.totalFrames / 20;
+    }
+
+    setDirection(_dir: Direction): void {
+
+    }
+
+    /**
+     * 
+     * @param a Source
+     * @param b Dest
+     * @param t [0,1]
+     * @returns 
+     */
+    private lerp(a: number, b: number, t: number): number {
+        return a + (b - a) * t;
+    }
+
+    private playEffect() {
+        if (this.baseRotation == undefined || this.effect == undefined) return;
+
+        if (this.flipX) {
+            this.effect.scale.x = -1;           // Flip horizontal
+                   // Ajuste la rotation (retourne le sprite)
+        } else {
+            this.effect.scale.x = 1;
+        }
+
+        this.effect.animationSpeed = 0.6;
         this.effect.visible = true;
         this.effect.loop = false;
         this.effect.currentFrame = 0;
-        this.effect.rotation = rotation;
 
+        this.effect.rotation = this.flipX ? this.baseRotation! - Math.PI : this.baseRotation!;
+        this.effect.onComplete = ()=>{this.effect.visible = false};
         this.effect.play();
-    }
-    stop(): void {
-        this.effect.visible = false;
-        this.sprite.anchor = this.previousSpriteData.anchor;
-        this.sprite.rotation = this.previousSpriteData.rotation;
-    }
-    update(_delta: number): void {
-        // delta = 0.36 quand ordi puissant, 0.88 quand ordit a chier
-        if (this.currentRotation == undefined || this.baseRotation == undefined || this.targetRotation == undefined) return;
-
-        if (this.flipX) {
-            
-            if (this.sprite.rotation + (Math.PI / 2) * _delta > this.targetRotation) {
-                this.sprite.anchor.set(0.92, 0.5)
-                return;
-            }
-            this.sprite.rotation += (Math.PI / 2) * _delta;
-        } else {
-            if (this.sprite.rotation - (Math.PI / 2) * _delta < this.targetRotation) {
-                this.sprite.anchor.set(0.92, 0.5)
-                return;
-            }
-            this.sprite.rotation -= (Math.PI / 2) * _delta;
-        }
-
-
-    }
-    setDirection(_dir: Direction): void {
-
     }
 
 }

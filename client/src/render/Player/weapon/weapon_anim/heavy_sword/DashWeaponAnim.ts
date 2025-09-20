@@ -33,7 +33,6 @@ export class DashWeaponAnim implements IWeaponAnim {
     }
 
     stop() {
-        this.sprite.rotation = 0;
         this.sprite.y = this.baseY;
     }
 

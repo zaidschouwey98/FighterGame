@@ -17,7 +17,6 @@ export class IdleWeaponAnim implements IWeaponAnim {
   }
 
   stop() {
-    this.sprite.rotation = 0;
     this.sprite.y = this.baseY;
   }
 
@@ -25,7 +24,6 @@ export class IdleWeaponAnim implements IWeaponAnim {
     this.time += delta * 0.3; // Oscillation lente
     const offset = Math.sin(this.time) * 0.5; // Petit offset vertical
     this.sprite.y = this.baseY + offset;
-    this.sprite.rotation = 0; // Pas de rotation idle
   }
 
   setDirection(_dir: Direction): void {

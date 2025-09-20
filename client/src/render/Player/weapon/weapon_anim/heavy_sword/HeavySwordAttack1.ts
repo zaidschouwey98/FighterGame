@@ -13,7 +13,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     private baseX?: number;
     private baseY?: number;
     private baseAnchor: PointLike = new Point();
-
+    private spriteBaseRot?:number;
     private duration: number = 40;
     private progress = 0; // entre 0 et 1
 
@@ -23,7 +23,6 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.sprite = sprite;
         this.effect = new AnimatedSprite(findAnimation(spriteSheets, "sword_1_attack_effect_right_1")!);
         this.effect.scale.y = -1;
-
         this.effect.anchor.set(0.5);
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
@@ -33,6 +32,8 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.baseX = this.sprite.x;
         this.baseY = this.sprite.y;
         this.sprite.anchor.copyTo(this.baseAnchor)
+
+        this.spriteBaseRot = this.sprite.rotation;
 
         let rotation = Math.atan2(direction.y, direction.x);
         this.baseRotation = rotation;
@@ -45,14 +46,15 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     stop(): void {
         if (this.baseX == undefined || this.baseY == undefined)
             throw new Error("Shouldn't be undefined.")
-        this.effect.visible = false;
+
         this.sprite.x = this.baseX;
         this.sprite.y = this.baseY;
         this.sprite.scale.y = 1;
         this.sprite.anchor.copyFrom(this.baseAnchor);
+        this.sprite.rotation = this.sprite.rotation % (Math.PI*2);
     }
     update(delta: number): void {
-        if (this.baseRotation == undefined || this.baseX == undefined || this.baseY == undefined)
+        if (this.baseRotation == undefined || this.baseX == undefined || this.baseY == undefined || this.spriteBaseRot == undefined)
             return;
         const dir = this.flipX ? -1 : 1;
 
@@ -61,21 +63,31 @@ export class HeavySwordAttack1 implements IWeaponAnim {
 
         const normalizedRotation = this.sprite.rotation % (Math.PI * 2);
 
-        if (this.progress < 0.25) {
-            this.sprite.x = dir * this.lerp(0, -8, this.progress * 3.33);
+        if (this.progress < 0.125) {
+            // put weapon in starting pos
+            const t = (this.progress - 0) / (0.125 - 0);
+            this.sprite.rotation = dir * this.lerp(this.spriteBaseRot, 0, t);
+            // this.sprite.x = dir * this.lerp(0, -8, t);
             this.sprite.y = -5
             return;
         }
 
-        if (this.progress >= 0.9) {
-            const t = (this.progress - 0.9) / (1 - 0.9);
-            this.sprite.anchor.x = this.lerp(1, 0.92, t);
-            this.sprite.rotation = this.lerp(dir * Math.PI * 11 / 4, dir * Math.PI * 2, t);
+        if (this.progress >= 0.125 && this.progress < 0.25) {
+            const t = (this.progress - 0.125) / (0.25 - 0.125);
+
+            this.sprite.x = dir * this.lerp(0, -8, t);
+            this.sprite.y = -5
+            return;
+        }
+
+        if (this.progress >= 0.9) {            
+            // this.sprite.rotation = this.lerp(dir * Math.PI * 11 / 4, dir * Math.PI * 2, t);
             this.sprite.scale.y = 1;
         }
 
         if (this.progress >= 0.8 && this.progress < 0.9) {
             const t = (this.progress - 0.8) / (0.9 - 0.8);
+            this.sprite.anchor.x = this.lerp(1, 0.92, t);
             this.sprite.scale.y = this.lerp(2, 1, t);
         }
 
@@ -129,13 +141,13 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         } else {
             this.effect.scale.x = 1;
         }
-
+        this.effect.alpha = 0.8;
         this.effect.animationSpeed = 0.4;
         this.effect.visible = true;
         this.effect.loop = false;
         this.effect.currentFrame = 0;
         this.effect.rotation = this.flipX ? this.baseRotation! - Math.PI : this.baseRotation!;
-
+        this.effect.onComplete = ()=>{this.effect.visible = false;}
 
         this.effect.play();
     }

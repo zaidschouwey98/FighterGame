@@ -118,11 +118,11 @@ const atlasConfig = [
     },
     {
         file: "/assets/swords/sword_1/attack_effect_right_1.png",
-        spriteAmount: { w: 7, h: 1 },
+        spriteAmount: { w: 10, h: 1 },
         assetDimensions: { w: 128, h: 128 },
-        textures: ["1","2","3","4","5","6","7"] as const,
+        textures: ["1","2","3","4","5","6","7","8","9","10"] as const,
         animations: {
-            sword_1_attack_effect_right_1:["1","2","3","4","5","6","7"],
+            sword_1_attack_effect_right_1:["1","2","3","4","5","6","7","8","9","10"],
         }
     },
     {

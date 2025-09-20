@@ -146,13 +146,12 @@ export class GameController {
         this.localPlayer.update(delta);
 
         for(const value of GameState.instance.players.values()){
-            if(value.movingVector.dx != 0 || value.movingVector.dy != 0)
+            if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
                 this.movementService.movePlayer(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
                 this.renderer.playersRenderer.syncPlayers([value]);
             }
         }
-        // this.renderer.playersRenderer.syncPlayers(Array.from(GameState.instance.players.values()));
         // render world
         const tileX = Math.floor(this.localPlayer.position.x / TILE_SIZE);
         const tileY = Math.floor(this.localPlayer.position.y / TILE_SIZE);

@@ -1,6 +1,7 @@
 import type Player from "./player/Player";
 import { InputHandler } from "./InputHandler";
 import { TILE_SIZE } from "../constantes";
+import type PlayerInfo from "../../../shared/PlayerInfo";
 
 export class MovementService {
   constructor(private inputHandler: InputHandler) {}
@@ -16,7 +17,7 @@ export class MovementService {
     return { dx, dy };
   }
 
-  public movePlayer(player: Player, dx: number, dy: number, delta: number, speed:number = player.speed) {
+  public movePlayer(player: Player | PlayerInfo, dx: number, dy: number, delta: number, speed:number = player.speed) {
     if (dx === 0 && dy === 0) return;
 
     const length = Math.sqrt(dx * dx + dy * dy);

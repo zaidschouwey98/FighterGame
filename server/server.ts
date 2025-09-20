@@ -53,6 +53,7 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
       isDead: false,
       killCounter:0,
       killStreak:0,
+      movingVector:{dx:0,dy:0},
       weapon: WeaponType.HEAVY_SWORD
     };
     players[socket.id] = player;
@@ -66,6 +67,13 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
     if (players[socket.id]) {
       players[socket.id] = playerInfo;
       socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, players[socket.id]);
+    }
+  })
+
+  socket.on(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, (playerInfo: PlayerInfo) => {
+    if (players[socket.id]) {
+      players[socket.id] = playerInfo;
+      socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, players[socket.id]);
     }
   })
 

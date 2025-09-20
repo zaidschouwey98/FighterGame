@@ -123,7 +123,7 @@ export class Renderer {
     }
 
     public get playersRenderer(): PlayersRenderer {
-        return this.playersRenderer;
+        return this._playersRenderer;
     }
 
 

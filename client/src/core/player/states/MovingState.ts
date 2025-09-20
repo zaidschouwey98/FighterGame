@@ -8,7 +8,8 @@ import { BaseState } from "./BaseState";
 
 export class MovingState extends BaseState {
   readonly name = PlayerState.MOVING;
-
+  private lastDx:number;
+  private lastDy:number;
   constructor(
     player: Player,
     private inputHandler:InputHandler,
@@ -16,6 +17,8 @@ export class MovingState extends BaseState {
     private eventBus: EventBus
   ) {
     super(player);
+    this.lastDx = 0;
+    this.lastDy = 0;
   }
 
   public enter() {
@@ -51,8 +54,20 @@ export class MovingState extends BaseState {
     if (dy > 0) this.player.movingDirection = Direction.BOTTOM;
     if (dx < 0) this.player.movingDirection = Direction.LEFT;
     if (dx > 0) this.player.movingDirection = Direction.RIGHT;
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_MOVING, this.player.toInfo());
+    if (dx !== this.lastDx || dy !== this.lastDy) {
+      this.player.movingVector = {dx:dx,dy:dy};
+      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.player.toInfo());
+
+      this.lastDx = dx;
+      this.lastDy = dy;
+    }
   }
 
-  public exit() { }
+  public exit() { 
+    this.player.movingVector = {dx:0,dy:0};
+    this.lastDx = 0;
+    this.lastDy = 0;
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.player.toInfo());
+  }
 }

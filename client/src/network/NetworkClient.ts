@@ -26,6 +26,10 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
         });
 
+        this.socket.on(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+        });
+
         this.socket.on(ServerToSocketMsg.PLAYER_POS_UPDATE, (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, player);
         });
@@ -55,6 +59,14 @@ export class NetworkClient {
             // TODO SHOULD SEPARATE EVENTS
             this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
             this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
+        });
+
+        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_MOVING, (playerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
+        });
+
+        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, (playerInfo:PlayerInfo) => {
+            this.socket.emit(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, playerInfo);
         });
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, (playerInfo)=>{

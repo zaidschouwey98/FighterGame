@@ -12,6 +12,7 @@ export default interface PlayerInfo {
     name?:string;
     state:PlayerState;
     movingDirection:Direction;
+    movingVector: {dx:number, dy:number};
     weapon:WeaponType;
 
     killStreak:number;

@@ -52,13 +52,9 @@ export class AttackService {
     }
 
     /** Crée une hitbox d'attaque */
-    public performAttack(player: Player): AttackData | undefined {
+    public performAttack(player: Player, attackDirection: {x:number, y:number}): AttackData | undefined {
         this.attackResetTimer = ATTACK_RESET;
-        const mouse = this.input.getMousePosition();
-        const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
-        const dx = world.x - player.position.x;
-        const dy = world.y - player.position.y;
-        const dir = Math.atan2(dy, dx);
+        const dir = Math.atan2(attackDirection.y, attackDirection.x);
         let res = player.weapon.useWeapon(player.position, dir);
         res.playerId = player.id;
         return res;

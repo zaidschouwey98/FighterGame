@@ -42,8 +42,8 @@ export class AttackState extends BaseState {
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.player.toInfo());
 
     this.timer -= delta;
-    if(this.timer <= 5 && !this.attackDone){
-      let attackData = this.attackService.performAttack(this.player);
+    if(this.timer <= 15 && !this.attackDone){
+      let attackData = this.attackService.performAttack(this.player,this.player.mouseDirection);
       if (!attackData) throw new Error("AttackData shouldn't be unset.");
       this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
       this.attackDone = true;

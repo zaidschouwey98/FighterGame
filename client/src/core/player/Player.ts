@@ -33,9 +33,10 @@ export default class Player {
     public isDead: boolean = false;
     public position: Position;
     public movingDirection: Direction = Direction.BOTTOM;
+    public movingVector: { dx: number, dy: number } = { dx: 0, dy: 0 }
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
 
-    public weapon:Weapon;
+    public weapon: Weapon;
 
     public killCounter = 0;
     public killStreak = 0;
@@ -82,7 +83,7 @@ export default class Player {
         this.currentState = this.idleState;
         this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
         this.attackDashState = new AttackDashState(this, attackService, eventBus, inputHandler);
-        this.attackState = new AttackState(this, attackService,movementService, eventBus);
+        this.attackState = new AttackState(this, attackService, movementService, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this, eventBus, blockService, inputHandler);
 
@@ -94,9 +95,9 @@ export default class Player {
     }
 
     public handleAttackReceived(attackResult: AttackResult) {
-        
+
         const hitPlayers = attackResult.hitPlayers;
-        if(attackResult.attackerId === this.id && attackResult.killNumber > 0){
+        if (attackResult.attackerId === this.id && attackResult.killNumber > 0) {
             this.killCounter += attackResult.killNumber;
         }
         if (attackResult.attackerId === this.id && attackResult.blockedBy != undefined) {
@@ -116,17 +117,17 @@ export default class Player {
                 if (attackResult.blockedBy?.id === this.id)
                     continue;
                 this.knockbackReceivedVector = PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.attackerId)!.position, this.position, attackResult.knockbackStrength),
-                this.takeDamage(hit.hp, PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.attackerId)!.position, this.position, attackResult.knockbackStrength),
+                    this.takeDamage(hit.hp, PhysicsService.computeKnockback(GameState.instance.getPlayer(attackResult.attackerId)!.position, this.position, attackResult.knockbackStrength),
                         attackResult.knockbackTimer);
             }
         }
     }
 
-    public takeDamage(newHp: number, knockbackVector:{x:number,y:number}, knockbackStrength:number) {
+    public takeDamage(newHp: number, knockbackVector: { x: number, y: number }, knockbackStrength: number) {
         this.hp = newHp;
         if (this.currentState.name === PlayerState.DEAD)
             return;
-        this.changeState(new HitState(this,this.eventBus,this.inputHandler,knockbackVector,knockbackStrength));
+        this.changeState(new HitState(this, this.eventBus, this.inputHandler, knockbackVector, knockbackStrength));
     }
 
 
@@ -186,8 +187,9 @@ export default class Player {
             id: this.id,
             state: this.state,
             killCounter: this.killCounter,
-            killStreak:this.killStreak,
+            killStreak: this.killStreak,
             weapon: this.weapon.name,
+            movingVector: this.movingVector,
         };
     }
 }

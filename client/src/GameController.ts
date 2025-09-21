@@ -115,7 +115,7 @@ export class GameController {
             if (player.id === this.localPlayer?.id) {
                 this.localPlayer!.die();
                 this.onDeath?.()
-            }
+            } else 
             this.gameState.updatePlayer(player);
         });
 
@@ -146,6 +146,8 @@ export class GameController {
         this.localPlayer.update(delta);
 
         for(const value of GameState.instance.players.values()){
+            if(value.id === this.localPlayer.id)
+                throw new Error("Local Player shouldn't be in gameState")
             if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
                 this.movementService.movePlayer(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);

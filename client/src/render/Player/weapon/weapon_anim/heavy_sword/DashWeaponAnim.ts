@@ -9,7 +9,7 @@ export class DashWeaponAnim implements IWeaponAnim {
     private rotation = 0;
     private targetRotation = 0;
     private direction: Direction = Direction.RIGHT;
-    private steps = 3; // Nombre de crans
+    private steps = 10; // Nombre de crans
 
     constructor(private sprite: Sprite) {
         this.baseY = sprite.y;

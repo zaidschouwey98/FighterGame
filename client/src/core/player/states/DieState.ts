@@ -18,8 +18,6 @@ export class DieState extends BaseState {
   }
 
   update(_delta: number) {
-    // Mort → pas d'input ni de mouvement
-    // Ici tu peux faire du "ragdoll" ou laisser le cadavre
   }
 
   exit() {

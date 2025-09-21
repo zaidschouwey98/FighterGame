@@ -98,10 +98,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
             const easedT = (1 - Math.cos(Math.PI * t)) / 2;
             this.sprite.scale.y = Math.min(-1, easedT * -2);
             this.sprite.anchor.y = this.lerp(0.25, 0.5, t);
-            console.log("sprite rot : " +this.sprite.rotation + " - start : " + swing * Math.PI + "- DEST : " + swing * Math.PI * 11 / 4)
             this.sprite.rotation = this.lerp(swing * Math.PI, swing * Math.PI * 11 / 4, easedT);
-            // this.sprite.x = this.baseX;
-            // this.sprite.y = this.baseY;
             if(!this.effectPlaying){
                 this.playEffect();
                 this.effectPlaying = true;

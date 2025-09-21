@@ -29,8 +29,10 @@ export class KnockBackState extends BaseState {
             this.player.position.x += this.knockbackVector.x * delta;
             this.player.position.y += this.knockbackVector.y * delta;
 
-            this.knockbackVector.x *= 0.85;
-            this.knockbackVector.y *= 0.85;
+            const decayPerSecond = 0.85;
+            const decay = Math.pow(decayPerSecond, delta);
+            this.knockbackVector.x *= decay;
+            this.knockbackVector.y *= decay;
 
             this.knockbackTimer -= delta;
             if (this.knockbackTimer <= 0) {

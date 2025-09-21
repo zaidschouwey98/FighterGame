@@ -1,9 +1,9 @@
-import type { AttackData } from "../../../../shared/AttackData";
-import { PlayerState } from "../../../../shared/PlayerState";
-import type Position from "../../../../shared/Position";
+import type { AttackData } from "../../AttackData";
+import { PlayerState } from "../../PlayerState";
+import type Position from "../../Position";
 import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
-import { WeaponType } from "../../../../shared/WeaponType";
+import { WeaponType } from "../../WeaponType";
 
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;

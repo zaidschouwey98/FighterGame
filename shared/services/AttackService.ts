@@ -1,10 +1,10 @@
-import type Player from "./player/Player";
+import { Player } from "../player/Player";
 import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
-import type { AttackData } from "../../../shared/AttackData";
-import AnimHelper from "../helper/AnimHelper";
-import { Direction } from "../../../shared/Direction";
-import type Position from "../../../shared/Position";
-import type { IInputHandler } from "./IInputHandler";
+import type { AttackData } from "../AttackData";
+import DirectionHelper from "../DirectionHelper";
+import { Direction } from "../Direction";
+import type Position from "../Position";
+import type { IInputHandler } from "../../client/src/core/IInputHandler";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
@@ -42,7 +42,7 @@ export class AttackService {
         player.mouseDirection = { x: dx / len, y: dy / len };
         player.attackDashDuration = DASH_ATTACK_DURATION;
         player.attackDashTimer = DASH_ATTACK_DURATION;
-        player.movingDirection = AnimHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
+        player.movingDirection = DirectionHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
         this.attackCooldownTimer = player.weapon.attackCoolDown;
         this.attackResetTimer = ATTACK_RESET;
         // Notifier les autres systèmes

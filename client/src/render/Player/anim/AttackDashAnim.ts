@@ -1,10 +1,10 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
 import { findAnimation } from "../../../AssetLoader";
-import AnimHelper from "../../../helper/AnimHelper";
+import DirectionHelper from "../../../../../shared/DirectionHelper";
 import type { EffectRenderer } from "../../EffectRenderer";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
-import { DASH_ATTACK_DURATION } from "../../../constantes";
+import { DASH_ATTACK_DURATION } from "../../../../../shared/constantes";
 import type { IAnimState } from "../IAnimState";
 
 
@@ -71,7 +71,7 @@ export class AttackDashAnim implements IAnimState{
 
   public play(player: PlayerInfo) {
     const vec = player.mouseDirection ?? { x: 1, y: 0 };
-    const dir = AnimHelper.getDirectionByVector(vec, [
+    const dir = DirectionHelper.getDirectionByVector(vec, [
       Direction.RIGHT, Direction.LEFT
     ]);
 

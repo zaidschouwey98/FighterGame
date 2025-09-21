@@ -1,4 +1,4 @@
-import type Player from "../player/Player";
+import type { Player } from "../../../../shared/player/Player";
 import { Command } from "./Command";
 
 export class MoveCommand extends Command{

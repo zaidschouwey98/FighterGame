@@ -4,10 +4,10 @@ import { WorldRenderer } from "./WorldRenderer";
 import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
 import { Minimap } from "./UI/Minimap";
-import { GameState } from "../core/GameState";
+import { GameState } from "../../../shared/services/GameState";
 import type PlayerInfo from "../../../shared/PlayerInfo";
-import { EventBusMessage, type EventBus } from "../core/EventBus";
-import type Player from "../core/player/Player";
+import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
+import type { Player } from "../../../shared/player/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 
 export class Renderer {

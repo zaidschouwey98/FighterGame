@@ -1,6 +1,6 @@
 import { BLOCK_COOLDOWN } from "../constantes";
-import type { IInputHandler } from "./IInputHandler";
-import type Player from "./player/Player";
+import type { IInputHandler } from "../../client/src/core/IInputHandler";
+import type { Player } from "../player/Player";
 
 
 export class BlockService {

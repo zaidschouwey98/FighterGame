@@ -1,9 +1,9 @@
-import { Direction } from "../../../../../shared/Direction";
-import { PlayerState } from "../../../../../shared/PlayerState";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { IInputHandler } from "../../IInputHandler";
-import type { MovementService } from "../../MovementService";
-import type Player from "../Player";
+import { Direction } from "../../Direction";
+import { PlayerState } from "../../PlayerState";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { IInputHandler } from "../../../client/src/core/IInputHandler";
+import type { MovementService } from "../../services/MovementService";
+import type { Player } from "../Player";
 import { BaseState } from "./BaseState";
 
 export class MovingState extends BaseState {

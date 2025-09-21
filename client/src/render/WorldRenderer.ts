@@ -2,7 +2,7 @@ import { Container, Sprite, Spritesheet } from "pixi.js";
 import seedrandom from "seedrandom";
 import * as Simplex from "simplex-noise";
 import { findTexture, type TextureName } from "../AssetLoader";
-import { CHUNK_SIZE, MAP_FREQUENCY, RENDER_DISTANCE, TILE_SIZE } from "../constantes";
+import { CHUNK_SIZE, MAP_FREQUENCY, RENDER_DISTANCE, TILE_SIZE } from "../../../shared/constantes";
 
 
 export class WorldRenderer {

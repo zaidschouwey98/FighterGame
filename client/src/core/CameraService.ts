@@ -1,5 +1,5 @@
 import type Position from "../../../shared/Position";
-import { CAMERA_ZOOM, TILE_SIZE } from "../constantes";
+import { CAMERA_ZOOM, TILE_SIZE } from "../../../shared/constantes";
 
 export class CameraService {
     public x = 0;

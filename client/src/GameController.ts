@@ -1,15 +1,15 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import Player from "./core/player/Player";
+import { Player } from "../../shared/player/Player";
 import type { AttackResult } from "../../shared/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
-import { EventBus, EventBusMessage } from "./core/EventBus";
-import { GameState } from "./core/GameState";
+import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
+import { GameState } from "../../shared/services/GameState";
 import { InputHandler } from "./core/InputHandler";
-import { MovementService } from "./core/MovementService";
+import { MovementService } from "../../shared/services/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
 import type PlayerInfo from "../../shared/PlayerInfo";
-import { CHUNK_SIZE, TILE_SIZE } from "./constantes";
+import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
 
 export class GameController {
     private gameState: GameState;

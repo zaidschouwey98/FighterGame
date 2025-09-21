@@ -1,8 +1,8 @@
-import { Direction } from "../../../shared/Direction";
+import { Direction } from "./Direction";
 
 
 
-export default class AnimHelper {
+export default class DirectionHelper {
 
   static getDirectionByVector(
     vector: { x: number; y: number },

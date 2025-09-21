@@ -1,6 +1,6 @@
-import type { AttackData } from "../../../../shared/AttackData";
-import type Position from "../../../../shared/Position";
-import type { WeaponType } from "../../../../shared/WeaponType";
+import type { AttackData } from "../../AttackData";
+import type Position from "../../Position";
+import type { WeaponType } from "../../WeaponType";
 
 export abstract class Weapon {
     abstract readonly name: WeaponType;

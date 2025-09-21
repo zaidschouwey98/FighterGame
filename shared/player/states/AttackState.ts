@@ -1,9 +1,9 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
+import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type Player from "../Player";
-import type { AttackService } from "../../AttackService";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { MovementService } from "../../MovementService";
+import type { Player } from "../Player";
+import type { AttackService } from "../../services/AttackService";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { MovementService } from "../../services/MovementService";
 
 export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;

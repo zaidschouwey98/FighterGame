@@ -1,8 +1,8 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
+import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type Player from "../Player";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { TeleportService } from "../../TeleportService";
+import type { Player } from "../Player";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { TeleportService } from "../../services/TeleportService";
 
 export class TeleportState extends BaseState {
     readonly name = PlayerState.TELEPORTING;

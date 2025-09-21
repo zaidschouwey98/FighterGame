@@ -1,7 +1,7 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { IInputHandler } from "../../IInputHandler";
-import type Player from "../Player";
+import { PlayerState } from "../../PlayerState";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { IInputHandler } from "../../../client/src/core/IInputHandler";
+import type { Player } from "../Player";
 import { BaseState } from "./BaseState";
 
 export class KnockBackState extends BaseState {

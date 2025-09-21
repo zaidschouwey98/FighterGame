@@ -1,9 +1,9 @@
 // core/player/states/IdleState.ts
 import { BaseState } from "./BaseState";
-import { PlayerState } from "../../../../../shared/PlayerState";
-import type Player from "../Player";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { IInputHandler } from "../../IInputHandler";
+import { PlayerState } from "../../PlayerState";
+import type { Player } from "../Player";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 
 export class IdleState extends BaseState {
     readonly name = PlayerState.IDLE;

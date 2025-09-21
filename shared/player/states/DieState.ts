@@ -1,7 +1,7 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
+import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type Player from "../Player";
-import { EventBusMessage, type EventBus } from "../../EventBus";
+import type { Player } from "../Player";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
 
 export class DieState extends BaseState {
   readonly name = PlayerState.DEAD;

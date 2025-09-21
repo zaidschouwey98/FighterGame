@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { Direction } from "../../../../../shared/Direction";
 import { findAnimation } from "../../../AssetLoader";
-import AnimHelper from "../../../helper/AnimHelper";
-import { KNOCKBACK_TIMER } from "../../../constantes";
+import DirectionHelper from "../../../../../shared/DirectionHelper";
+import { KNOCKBACK_TIMER } from "../../../../../shared/constantes";
 import type PlayerInfo from "../../../../../shared/PlayerInfo";
 import type { IAnimState } from "../IAnimState";
 
@@ -39,7 +39,7 @@ export class KnockBackAnim implements IAnimState {
 
     public play(player: PlayerInfo) {
         if (!player.knockbackReceivedVector) return;
-        const dir = AnimHelper.getDirectionByVector(player.knockbackReceivedVector, [
+        const dir = DirectionHelper.getDirectionByVector(player.knockbackReceivedVector, [
             Direction.RIGHT,
             Direction.LEFT
         ]);

@@ -11,9 +11,10 @@ import { Direction } from "../shared/Direction";
 import { ClientToSocketMsg } from "../shared/ClientToSocketMsg";
 import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
 import { WeaponType } from "../shared/WeaponType";
-import Player from "../client/src/core/player/Player";
-import { EventBus } from "../client/src/core/EventBus";
+import { EventBus } from "../shared/services/EventBus";
 import { BotInputHandler } from "./bots/BotInputHandler";
+import { Player } from "../shared/player/Player";
+import { HeavySword } from "../shared/player/weapons/HeavySword";
 
 
 const app = express();
@@ -34,8 +35,8 @@ const PORT = process.env.PORT || 3000;
 
 
 const players: Record<string, PlayerInfo> = {};
-new BotInputHandler()
-// const player = new Player("bot1",{x:0,y:0},100,10,"dsadw",new EventBus(),new BotInputHandler());
+
+const player = new Player("bot1",{x:0,y:0},100,10,"dsadw",new EventBus(),new BotInputHandler());
 io.on("connection", (socket) => { // RESERVED MESSAGE
   console.log(`Player connected: ${socket.id}`);
 

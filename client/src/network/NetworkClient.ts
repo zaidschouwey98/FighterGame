@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { EventBusMessage, type EventBus } from "../core/EventBus";
+import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import type { AttackResult } from "../../../shared/AttackResult";
 import type { AttackData } from "../../../shared/AttackData";

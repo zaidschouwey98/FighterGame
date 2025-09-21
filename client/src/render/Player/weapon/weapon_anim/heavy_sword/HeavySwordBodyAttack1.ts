@@ -2,7 +2,7 @@ import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { findAnimation } from "../../../../../AssetLoader";
 import { Direction } from "../../../../../../../shared/Direction";
-import AnimHelper from "../../../../../helper/AnimHelper";
+import DirectionHelper from "../../../../../../../shared/DirectionHelper";
 import type { IAnimState } from "../../../IAnimState";
 
 export class HeavySwordBodyAttack1 implements IAnimState {
@@ -35,7 +35,7 @@ export class HeavySwordBodyAttack1 implements IAnimState {
 
     play(player: PlayerInfo): void {
         if (!player.mouseDirection) return;
-        const dir = AnimHelper.getDirectionByVector(player.mouseDirection, [
+        const dir = DirectionHelper.getDirectionByVector(player.mouseDirection, [
             Direction.RIGHT,
             Direction.LEFT
         ]);

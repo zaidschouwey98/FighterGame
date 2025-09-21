@@ -1,9 +1,9 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
-import type Player from "../Player";
-import type { AttackService } from "../../AttackService";
+import { PlayerState } from "../../PlayerState";
+import type {Player} from "../Player";
+import type { AttackService } from "../../services/AttackService";
 import { BaseState } from "./BaseState";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { IInputHandler } from "../../IInputHandler";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 
 export class AttackDashState extends BaseState {
     readonly name = PlayerState.ATTACK_DASH;

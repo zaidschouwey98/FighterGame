@@ -1,6 +1,6 @@
 // core/player/states/BaseState.ts
-import type Player from "../Player";
-import { PlayerState } from "../../../../../shared/PlayerState";
+import type { Player } from "../Player";
+import { PlayerState } from "../../PlayerState";
 
 export abstract class BaseState {
   constructor(protected player: Player) {}

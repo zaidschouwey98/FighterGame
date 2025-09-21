@@ -1,10 +1,10 @@
-import { PlayerState } from "../../../../../shared/PlayerState";
+import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type Player from "../Player";
-import { EventBusMessage, type EventBus } from "../../EventBus";
-import { BLOCK_DURATION } from "../../../constantes";
-import type { BlockService } from "../../BlockService";
-import type { IInputHandler } from "../../IInputHandler";
+import type { Player } from "../Player";
+import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import { BLOCK_DURATION } from "../../constantes";
+import type { BlockService } from "../../services/BlockService";
+import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 
 export class BlockState extends BaseState {
     readonly name = PlayerState.BLOCKING;

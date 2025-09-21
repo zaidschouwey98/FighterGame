@@ -1,31 +1,31 @@
-import { PlayerState } from "../../../../shared/PlayerState";
-import type PlayerInfo from "../../../../shared/PlayerInfo";
-import Position from "../../../../shared/Position";
-import { Direction } from "../../../../shared/Direction";
+import { PlayerState } from "../PlayerState";
+import type PlayerInfo from "../PlayerInfo";
+import Position from "../Position";
+import { Direction } from "../Direction";
 import { BaseState } from "./states/BaseState";
 import { IdleState } from "./states/IdleState";
 import { MovingState } from "./states/MovingState";
-import type { EventBus } from "../EventBus";
-import { MovementService } from "../MovementService";
+import type { EventBus } from "../services/EventBus";
+import { MovementService } from "../services/MovementService";
 import { AttackDashState } from "./states/AttackDashState";
 import { AttackState } from "./states/AttackState";
-import { AttackService } from "../AttackService";
+import { AttackService } from "../services/AttackService";
 import { HitState } from "./states/HitState";
 import { DieState } from "./states/DieState";
 import { BlockState } from "./states/BlockState";
-import { BlockService } from "../BlockService";
+import { BlockService } from "../services/BlockService";
 import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
-import { TeleportService } from "../TeleportService";
-import type { AttackResult } from "../../../../shared/AttackResult";
-import { PhysicsService } from "../PhysicsService";
-import { GameState } from "../GameState";
-import type { Weapon } from "../weapons/Weapon";
-import { HeavySword } from "../weapons/HeavySword";
-import type { IInputHandler } from "../IInputHandler";
+import { TeleportService } from "../services/TeleportService";
+import type { AttackResult } from "../AttackResult";
+import { PhysicsService } from "../services/PhysicsService";
+import { GameState } from "../services/GameState";
+import type { Weapon } from "./weapons/Weapon";
+import { HeavySword } from "./weapons/HeavySword";
+import type { IInputHandler } from "../../client/src/core/IInputHandler";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
-export default class Player {
+export class Player {
     public hp: number;
     public speed: number;
     public id: string;

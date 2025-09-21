@@ -1,5 +1,5 @@
 import { IInputHandler } from "../../client/src/core/IInputHandler";
-import Player from "../../client/src/core/player/Player";
+import {Player} from "../../shared/player/Player";
 
 export class BotInputHandler implements IInputHandler {
     private keys: Set<string> = new Set();

@@ -1,6 +1,5 @@
 import { TP_COOLDOWN, TP_DISTANCE } from "../constantes";
-import type { CoordinateService } from "./CoordinateService";
-import type { InputHandler } from "./InputHandler";
+import type { IInputHandler } from "./IInputHandler";
 import type Player from "./player/Player";
 
 export class TeleportService {
@@ -8,8 +7,7 @@ export class TeleportService {
   private readonly teleportDistance = TP_DISTANCE;
 
   constructor(
-    private inputHandler: InputHandler,
-    private coordinateService: CoordinateService
+    private inputHandler: IInputHandler,
   ) { }
 
   public update(delta: number) {
@@ -27,8 +25,7 @@ export class TeleportService {
   }
 
   public teleportPlayer(player: Player) {
-    const mousePos = this.inputHandler.getMousePosition();
-    const worldMousePos = this.coordinateService.screenToWorld(mousePos.x, mousePos.y);
+    const worldMousePos = this.inputHandler.getMousePosition();
 
     const dx = worldMousePos.x - player.position.x;
     const dy = worldMousePos.y - player.position.y;

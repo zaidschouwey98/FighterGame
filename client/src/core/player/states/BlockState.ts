@@ -4,7 +4,7 @@ import type Player from "../Player";
 import { EventBusMessage, type EventBus } from "../../EventBus";
 import { BLOCK_DURATION } from "../../../constantes";
 import type { BlockService } from "../../BlockService";
-import type { InputHandler } from "../../InputHandler";
+import type { IInputHandler } from "../../IInputHandler";
 
 export class BlockState extends BaseState {
     readonly name = PlayerState.BLOCKING;
@@ -13,7 +13,7 @@ export class BlockState extends BaseState {
         player: Player,
         private eventBus: EventBus,
         private blockService: BlockService,
-        private inputHandler:InputHandler,
+        private inputHandler:IInputHandler,
     ) {
         super(player);
     }

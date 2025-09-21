@@ -1,12 +1,16 @@
-export class InputHandler {
+import type { CoordinateService } from "./CoordinateService";
+import type { IInputHandler } from "./IInputHandler";
 
+export class InputHandler implements IInputHandler{
     private keysPressed: Set<string> = new Set();
     private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
     private attackPressed: boolean = false;
     private stopAttackPressed: boolean = false;
     private spacePressed: boolean = false;
+    private coordinateService: CoordinateService;
 
-    constructor() {
+    constructor(coordinateService:CoordinateService) {
+        this.coordinateService = coordinateService;
         this.setupEventListeners();
     }
 
@@ -57,7 +61,8 @@ export class InputHandler {
     }
 
     public getMousePosition(): { x: number; y: number } {
-        return { ...this.mousePosition };
+        const mousePos = this.mousePosition;
+        return {...this.coordinateService.screenToWorld(mousePos.x, mousePos.y)};
     }
 
     public consumeAttack(): boolean {

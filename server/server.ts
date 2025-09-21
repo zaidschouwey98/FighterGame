@@ -11,6 +11,9 @@ import { Direction } from "../shared/Direction";
 import { ClientToSocketMsg } from "../shared/ClientToSocketMsg";
 import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
 import { WeaponType } from "../shared/WeaponType";
+import Player from "../client/src/core/player/Player";
+import { EventBus } from "../client/src/core/EventBus";
+import { BotInputHandler } from "./bots/BotInputHandler";
 
 
 const app = express();
@@ -29,8 +32,10 @@ var counter = 1;
 const PORT = process.env.PORT || 3000;
 
 
-const players: Record<string, PlayerInfo> = {};
 
+const players: Record<string, PlayerInfo> = {};
+new BotInputHandler()
+// const player = new Player("bot1",{x:0,y:0},100,10,"dsadw",new EventBus(),new BotInputHandler());
 io.on("connection", (socket) => { // RESERVED MESSAGE
   console.log(`Player connected: ${socket.id}`);
 
@@ -177,21 +182,6 @@ io.on("connection", (socket) => { // RESERVED MESSAGE
 
     // Notifier tous les clients
     io.emit(ServerToSocketMsg.PLAYER_DIED, player);
-
-    // Optionnel : Respawn après 3s
-    // setTimeout(() => {
-    //   respawnPlayer(playerId);
-    // }, 4000);
-  }
-
-  function respawnPlayer(playerId: string) {
-    const player = players[playerId];
-    if (!player) return;
-    player.hp = 100;
-    player.isDead = false;
-    player.position = { x: 0, y: 0 }; // Spawn point
-    player.state = PlayerState.IDLE;
-    io.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
   }
 });
 

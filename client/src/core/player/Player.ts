@@ -7,22 +7,22 @@ import { IdleState } from "./states/IdleState";
 import { MovingState } from "./states/MovingState";
 import type { EventBus } from "../EventBus";
 import { MovementService } from "../MovementService";
-import type { InputHandler } from "../InputHandler";
 import { AttackDashState } from "./states/AttackDashState";
 import { AttackState } from "./states/AttackState";
 import { AttackService } from "../AttackService";
 import { HitState } from "./states/HitState";
 import { DieState } from "./states/DieState";
 import { BlockState } from "./states/BlockState";
-import type { BlockService } from "../BlockService";
+import { BlockService } from "../BlockService";
 import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
-import type { TeleportService } from "../TeleportService";
+import { TeleportService } from "../TeleportService";
 import type { AttackResult } from "../../../../shared/AttackResult";
 import { PhysicsService } from "../PhysicsService";
 import { GameState } from "../GameState";
 import type { Weapon } from "../weapons/Weapon";
 import { HeavySword } from "../weapons/HeavySword";
+import type { IInputHandler } from "../IInputHandler";
 
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export default class Player {
@@ -60,6 +60,11 @@ export default class Player {
     public dieState: DieState;
     public blockState: BlockState;
     public teleportState: TeleportState;
+
+    public attackService: AttackService;
+    public movementService: MovementService;
+    public teleportService: TeleportService;
+    public blockService: BlockService;
     constructor(
         playerName: string = "Unknown",
         position: Position,
@@ -67,11 +72,7 @@ export default class Player {
         speed: number = 10,
         id: string,
         private eventBus: EventBus,
-        private inputHandler: InputHandler,
-        attackService: AttackService,
-        movementService: MovementService,
-        blockService: BlockService,
-        teleportService: TeleportService
+        private inputHandler: IInputHandler,
     ) {
         this.playerName = playerName
         this.id = id;
@@ -81,18 +82,29 @@ export default class Player {
         this.weapon = new HeavySword();
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;
-        this.movingState = new MovingState(this, inputHandler, movementService, eventBus);
-        this.attackDashState = new AttackDashState(this, attackService, eventBus, inputHandler);
-        this.attackState = new AttackState(this, attackService, movementService, eventBus);
-        this.dieState = new DieState(this, eventBus);
-        this.blockState = new BlockState(this, eventBus, blockService, inputHandler);
 
-        this.teleportState = new TeleportState(this, teleportService, eventBus);
+        this.attackService = new AttackService(inputHandler);
+        this.movementService = new MovementService(inputHandler);
+        this.blockService = new BlockService(inputHandler);
+        this.teleportService = new TeleportService(inputHandler);
+
+        this.movingState = new MovingState(this, inputHandler, this.movementService, eventBus);
+        this.attackDashState = new AttackDashState(this, this.attackService, eventBus, inputHandler);
+        this.attackState = new AttackState(this, this.attackService, this.movementService, eventBus);
+        this.dieState = new DieState(this, eventBus);
+        this.blockState = new BlockState(this, eventBus, this.blockService, inputHandler);
+        this.teleportState = new TeleportState(this, this.teleportService, eventBus);
     }
 
     public update(delta: number) {
         this.currentState.update(delta);
+        this.blockService.update(delta);
+        this.attackService.update(delta,this);
+        this.teleportService.update(delta);
+        this.inputHandler.update();
     }
+
+
 
     public handleAttackReceived(attackResult: AttackResult) {
 

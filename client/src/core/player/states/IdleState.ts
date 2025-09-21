@@ -2,12 +2,12 @@
 import { BaseState } from "./BaseState";
 import { PlayerState } from "../../../../../shared/PlayerState";
 import type Player from "../Player";
-import type { InputHandler } from "../../InputHandler";
 import { EventBusMessage, type EventBus } from "../../EventBus";
+import type { IInputHandler } from "../../IInputHandler";
 
 export class IdleState extends BaseState {
     readonly name = PlayerState.IDLE;
-    constructor(player: Player, private inputHandler: InputHandler, private eventBus:EventBus) {
+    constructor(player: Player, private inputHandler: IInputHandler, private eventBus:EventBus) {
         super(player)
     }
     enter() {

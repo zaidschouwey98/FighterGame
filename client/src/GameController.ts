@@ -1,7 +1,6 @@
 import { Application, Container, Spritesheet } from "pixi.js";
 import Player from "./core/player/Player";
 import type { AttackResult } from "../../shared/AttackResult";
-import { AttackService } from "./core/AttackService";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus, EventBusMessage } from "./core/EventBus";
 import { GameState } from "./core/GameState";
@@ -9,16 +8,13 @@ import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "./core/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
-import { BlockService } from "./core/BlockService";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "./constantes";
-import { TeleportService } from "./core/TeleportService";
-
 
 export class GameController {
     private gameState: GameState;
     private eventBus = new EventBus();
-    private inputHandler = new InputHandler();
+    private inputHandler;
     private renderer: Renderer;
     private localPlayerId: string | null = null;
     private currentChunkX?: number;
@@ -28,9 +24,6 @@ export class GameController {
 
     // Services
     private coordinateService: CoordinateService;
-    private attackService: AttackService;
-    private blockService: BlockService
-    private teleportService: TeleportService;
     private movementService: MovementService;
 
     private onDeath?: () => void;
@@ -53,11 +46,8 @@ export class GameController {
         this.gameState = GameState.instance;
         this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus);
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
-
+        this.inputHandler = new InputHandler(this.coordinateService);
         this.movementService = new MovementService(this.inputHandler);
-        this.attackService = new AttackService(this.inputHandler, this.coordinateService);
-        this.blockService = new BlockService(this.inputHandler, this.coordinateService);
-        this.teleportService = new TeleportService(this.inputHandler, this.coordinateService);
         this.renderer.worldRenderer.update(0, 0);
     }
 
@@ -90,10 +80,6 @@ export class GameController {
                     this.localPlayerId!,
                     this.eventBus,
                     this.inputHandler,
-                    this.attackService,
-                    this.movementService,
-                    this.blockService,
-                    this.teleportService
                 );
                 this.localPlayer.updateFromInfo(player);
                 return;
@@ -166,11 +152,7 @@ export class GameController {
         }
 
         this.renderer.updateCamera(this.localPlayer.position)
-        this.inputHandler.update();
         this.renderer.updateMinimap(this.localPlayer);
-        this.teleportService.update(delta);
-        this.blockService.update(delta);
-        this.attackService.update(delta, this.localPlayer);
         this.renderer.update(delta);
     }
 }

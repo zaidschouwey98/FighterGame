@@ -1,7 +1,7 @@
 import { Direction } from "../../../../../shared/Direction";
 import { PlayerState } from "../../../../../shared/PlayerState";
 import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { InputHandler } from "../../InputHandler";
+import type { IInputHandler } from "../../IInputHandler";
 import type { MovementService } from "../../MovementService";
 import type Player from "../Player";
 import { BaseState } from "./BaseState";
@@ -12,7 +12,7 @@ export class MovingState extends BaseState {
   private lastDy:number;
   constructor(
     player: Player,
-    private inputHandler:InputHandler,
+    private inputHandler:IInputHandler,
     private movementService: MovementService,
     private eventBus: EventBus
   ) {

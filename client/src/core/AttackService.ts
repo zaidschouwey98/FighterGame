@@ -1,19 +1,17 @@
-import { CoordinateService } from "./CoordinateService";
-import type { InputHandler } from "./InputHandler";
 import type Player from "./player/Player";
 import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import type { AttackData } from "../../../shared/AttackData";
 import AnimHelper from "../helper/AnimHelper";
 import { Direction } from "../../../shared/Direction";
 import type Position from "../../../shared/Position";
+import type { IInputHandler } from "./IInputHandler";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
     private attackCooldownTimer = 0;
 
     constructor(
-        private input: InputHandler,
-        private coordinate: CoordinateService,
+        private input: IInputHandler,
     ) { }
 
     /** Appelée chaque frame pour gérer cooldown et reset combo */
@@ -35,8 +33,7 @@ export class AttackService {
 
     /** Prépare une attaque (dash) */
     public initiateAttack(player: Player) {
-        const mouse = this.input.getMousePosition();
-        const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
+        const world = this.input.getMousePosition();
         const dx = world.x - player.position.x;
         const dy = world.y - player.position.y;
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -61,8 +58,7 @@ export class AttackService {
     }
 
      public getAttackDir(playerPos: Position): {x:number,y:number} {
-        const mouse = this.input.getMousePosition();
-        const world = this.coordinate.screenToWorld(mouse.x, mouse.y);
+        const world = this.input.getMousePosition();
         const dx = world.x - playerPos.x;
         const dy = world.y - playerPos.y;
         return {x:dx, y:dy}

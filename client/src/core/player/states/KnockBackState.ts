@@ -1,6 +1,6 @@
 import { PlayerState } from "../../../../../shared/PlayerState";
 import { EventBusMessage, type EventBus } from "../../EventBus";
-import type { InputHandler } from "../../InputHandler";
+import type { IInputHandler } from "../../IInputHandler";
 import type Player from "../Player";
 import { BaseState } from "./BaseState";
 
@@ -9,7 +9,7 @@ export class KnockBackState extends BaseState {
     constructor(
         player: Player,
         private eventBus: EventBus,
-        private inputHandler: InputHandler,
+        private inputHandler: IInputHandler,
         private knockbackVector: { x: number; y: number },
         private knockbackTimer: number
     ) {

@@ -31,20 +31,20 @@ export class HumanEventListener {
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) =>
-            this.updateSystem.handlePlayerUpdated(this.socket, playerInfo)
+            this.updateSystem.handlePlayerUpdated(playerInfo, this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (playerInfo: PlayerInfo) => {
-            this.movementSystem.handlePosUpdated(this.socket, playerInfo);
+            this.movementSystem.handlePosUpdated(playerInfo, this.socket);
         })
 
         this.socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo: PlayerInfo) => {
-            this.attackSystem.handleStartAttack(this.socket, playerInfo);
+            this.attackSystem.handleStartAttack(playerInfo, this.socket);
         })
         this.socket.on(
             ClientToSocketMsg.PLAYER_DIRECTION_UPDATED,
             (playerInfo: PlayerInfo) =>
-                this.directionSystem.handleDirectionUpdate(this.socket, playerInfo)
+                this.directionSystem.handleDirectionUpdate(playerInfo, this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {

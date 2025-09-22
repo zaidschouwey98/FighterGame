@@ -122,7 +122,6 @@ export class Player {
                     attackResult.knockbackTimer
                 ))
         }
-
         for (const hit of hitPlayers) {
             if (hit.id === this.id) {
                 if (attackResult.blockedBy?.id === this.id)

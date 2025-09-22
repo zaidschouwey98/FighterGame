@@ -11,7 +11,7 @@ import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 export class AttackSystem {
     constructor(private serverState: ServerState, private eventBus:EventBus) { }
 
-    handleAttack(data: AttackData, socket:Socket) {
+    handleAttack(data: AttackData, socket?:Socket) {
         const attacker = this.serverState.getPlayer(data.playerId);
         if (!attacker) return;
 
@@ -58,18 +58,18 @@ export class AttackSystem {
         } as AttackResult, socket:socket})
 
         for (const player of killedPlayers) {
-            this.handlePlayerDeath(socket,player.id);
+            this.handlePlayerDeath(player.id,socket);
         }
     }
 
-    public handleStartAttack(socket:Socket, playerInfo:PlayerInfo) {
+    public handleStartAttack(playerInfo:PlayerInfo, socket?:Socket) {
         if (this.serverState.playerExists(playerInfo.id)) {
             this.serverState.updatePlayer(playerInfo);
             this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id), socket:socket})
         }
     }
 
-    private handlePlayerDeath(socket:Socket, playerId: string) {
+    private handlePlayerDeath( playerId: string, socket?:Socket) {
         const player = this.serverState.getPlayer(playerId);
         if (!player) return;
         player.isDead = true;

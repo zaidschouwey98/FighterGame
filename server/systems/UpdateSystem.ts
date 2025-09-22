@@ -7,7 +7,7 @@ import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 export class UpdateSystem {
     constructor(private eventBus:EventBus, private serverState: ServerState) { }
 
-    handlePlayerUpdated(socket: Socket, playerInfo: PlayerInfo) {
+    handlePlayerUpdated(playerInfo: PlayerInfo, socket?: Socket) {
         const player = this.serverState.getPlayer(playerInfo.id);
         if (!player) return;
 

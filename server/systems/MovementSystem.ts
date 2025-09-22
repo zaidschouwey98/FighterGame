@@ -7,7 +7,7 @@ import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 export class MovementSystem {
     constructor(private eventBus:EventBus, private serverState: ServerState) { }
 
-    handlePosUpdated(socket: Socket, playerInfo:PlayerInfo){
+    handlePosUpdated(playerInfo:PlayerInfo, socket?: Socket){
         const player = this.serverState.getPlayer(playerInfo.id);
         if (!player) return;
 

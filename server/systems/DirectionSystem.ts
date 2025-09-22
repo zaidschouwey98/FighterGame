@@ -5,13 +5,13 @@ import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 
 export class DirectionSystem {
-    constructor(private eventBus:EventBus, private serverState: ServerState) { }
+    constructor(private eventBus: EventBus, private serverState: ServerState) { }
 
-    handleDirectionUpdate(socket: Socket, playerInfo: PlayerInfo) {
+    handleDirectionUpdate(playerInfo: PlayerInfo, socket?: Socket) {
         const player = this.serverState.getPlayer(playerInfo.id);
         if (!player) return;
-        
+
         this.serverState.updatePlayer(playerInfo);
-        this.eventBus.emit(EventBusMessage.PLAYER_DIRECTION_UPDATED, {playerInfo:this.serverState.getPlayer(playerInfo.id),socket: socket})
+        this.eventBus.emit(EventBusMessage.PLAYER_DIRECTION_UPDATED, { playerInfo: this.serverState.getPlayer(playerInfo.id), socket: socket })
     }
 }

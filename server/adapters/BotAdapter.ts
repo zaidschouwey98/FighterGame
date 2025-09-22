@@ -1,23 +1,65 @@
+import { AttackData } from "../../shared/AttackData";
+import { AttackResult } from "../../shared/AttackResult";
+import { Player } from "../../shared/player/Player";
+import PlayerInfo from "../../shared/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { BotManager } from "../BotManager";
+import { ServerState } from "../ServerState";
+import { AttackSystem } from "../systems/AttackSystem";
+import { DirectionSystem } from "../systems/DirectionSystem";
+import { MovementSystem } from "../systems/MovementSystem";
+import { UpdateSystem } from "../systems/UpdateSystem";
 
 
 export class BotAdapter {
-    constructor(private botManager: BotManager, private eventBus: EventBus) {}
+    constructor(
+        private botManager: BotManager,
+        private serverState: ServerState,
+        private eventBus: EventBus,
+        private attackSystem: AttackSystem,
+        private movementSystem: MovementSystem,
+        private directionSystem: DirectionSystem,
+        private updateSystem: UpdateSystem
+    ) {
 
-    start() {
-        this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult) => {
-            // const attackerBot = this.botManager.getBot(attackResult.attackerId);
-            // if (attackerBot) {
-            //     attackerBot.handleAttackResult(attackResult);
-            // }
+        eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attack: AttackData) =>
+            this.attackSystem.handleAttack(attack)
+        );
 
-            // for (const hit of attackResult.hitPlayers) {
-            //     const hitBot = this.botManager.getBot(hit.id);
-            //     if (hitBot) {
-            //         hitBot.handleAttackReceived(hit);
-            //     }
-            // }
+        eventBus.on(
+            EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED,
+            (player: PlayerInfo) => {
+                this.movementSystem.handlePosUpdated(player);
+
+            }
+        );
+
+        eventBus.on(
+            EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED,
+            (player: PlayerInfo) => {
+                this.directionSystem.handleDirectionUpdate(player);
+            }
+        );
+
+        eventBus.on(
+            EventBusMessage.LOCAL_PLAYER_UPDATED,
+            (player: PlayerInfo) => {
+                this.updateSystem.handlePlayerUpdated(player);
+            }
+        );
+
+        eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerId:string, socket:any}) => {
+            for (const bot of this.botManager.getBots()) {
+                if(res.playerId == bot.id)
+                    bot.die();
+            }
         });
+
+        eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult, socket:any}) => {
+            for (const bot of this.botManager.getBots()) {
+                bot.handleAttackReceived(res.attackResult, (id)=>this.serverState.getPlayer(id).position);
+            }
+            
+        })
     }
 }

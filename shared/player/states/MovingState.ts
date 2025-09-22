@@ -2,7 +2,7 @@ import { Direction } from "../../Direction";
 import { PlayerState } from "../../PlayerState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import type { MovementService } from "../../services/MovementService";
+import { MovementService } from "../../services/MovementService";
 import type { Player } from "../Player";
 import { BaseState } from "./BaseState";
 
@@ -47,7 +47,7 @@ export class MovingState extends BaseState {
       return;
     }
     // Déplacement
-    this.movementService.movePlayer(this.player, dx, dy, delta);
+    MovementService.movePlayer(this.player, dx, dy, delta);
 
     // Direction
     if (dy < 0) this.player.movingDirection = Direction.TOP;

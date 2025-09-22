@@ -1,4 +1,4 @@
-import type PlayerInfo from "../PlayerInfo";
+import type PlayerInfo from "../../../shared/PlayerInfo";
 
 export class GameState{
     private static _instance: GameState;

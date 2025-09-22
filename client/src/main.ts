@@ -22,6 +22,9 @@ import { GameScene } from './scene/GameScene';
   const gameScene = new GameScene("localhost:3000", app, spritesheets);
 
   sceneManager.changeScene(gameScene);
-
-  app.ticker.add((delta) => sceneManager.update(delta.deltaTime));
+  
+  app.ticker.add((delta) => {
+    sceneManager.update(delta.deltaTime);
+    
+  });
 })();

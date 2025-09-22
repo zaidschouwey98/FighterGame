@@ -3,7 +3,7 @@ import { Player } from "../../shared/player/Player";
 import type { AttackResult } from "../../shared/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
-import { GameState } from "../../shared/services/GameState";
+import { GameState } from "./core/GameState";
 import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "../../shared/services/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
@@ -24,7 +24,6 @@ export class GameController {
 
     // Services
     private coordinateService: CoordinateService;
-    private movementService: MovementService;
 
     private onDeath?: () => void;
     private onRespawn?: () => void;
@@ -47,7 +46,6 @@ export class GameController {
         this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus);
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.inputHandler = new InputHandler(this.coordinateService);
-        this.movementService = new MovementService(this.inputHandler);
         this.renderer.worldRenderer.update(0, 0);
     }
 
@@ -94,7 +92,7 @@ export class GameController {
 
         // Résultat attaque
         this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.localPlayer?.handleAttackReceived(attackResult);
+            this.localPlayer?.handleAttackReceived(attackResult, (id) => this.gameState.players.get(id)!.position);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
@@ -136,7 +134,7 @@ export class GameController {
                 throw new Error("Local Player shouldn't be in gameState")
             if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
-                this.movementService.movePlayer(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
+                MovementService.movePlayer(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
                 this.renderer.playersRenderer.syncPlayers([value]);
             }
         }

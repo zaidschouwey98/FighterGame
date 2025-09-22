@@ -8,5 +8,5 @@
     "outDir": "./dist",
     "rootDir": "./"
   },
-  "include": ["server/**/*.ts", "shared/**/*.ts"]
+  "include": ["server/**/*.ts", "shared/**/*.ts", "client/src/core/GameState.ts"]
 }

@@ -27,16 +27,16 @@ export class HitboxValidationService {
 
     static getTargetsInHitbox(
         hitbox: any,
-        players: Record<string, PlayerInfo>,
+        players: PlayerInfo[],
         excludePlayerId: string
     ): string[] {
         const hitPlayers: string[] = [];
 
-        for (const [playerId, player] of Object.entries(players)) {
-            if (playerId === excludePlayerId) continue;
+        for (const player of players) {
+            if (player.id === excludePlayerId) continue;
 
             if (this.isPositionInHitbox(player.position, hitbox)) {
-                hitPlayers.push(playerId);
+                hitPlayers.push(player.id);
             }
         }
 

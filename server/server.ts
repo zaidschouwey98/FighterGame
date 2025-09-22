@@ -1,6 +1,6 @@
 import express from "express";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { PlayerState } from "../shared/PlayerState";
 import { AttackData } from "../shared/AttackData";
 import { HitboxValidationService } from "./HitboxValidationService";
@@ -14,7 +14,14 @@ import { WeaponType } from "../shared/WeaponType";
 import { EventBus } from "../shared/services/EventBus";
 import { BotInputHandler } from "./bots/BotInputHandler";
 import { Player } from "../shared/player/Player";
-import { HeavySword } from "../shared/player/weapons/HeavySword";
+import { ServerState } from "./ServerState";
+import { GameLoop } from "./GameLoop";
+import { AttackSystem } from "./systems/AttackSystem";
+import { MovementSystem } from "./systems/MovementSystem";
+import { DirectionSystem } from "./systems/DirectionSystem";
+import { HumanEventListener } from "./listeners/PlayerEventListener";
+import { BotManager } from "./BotManager";
+import { UpdateSystem } from "./systems/UpdateSystem";
 
 
 const app = express();
@@ -29,163 +36,35 @@ app.get(/.*/, (_, res) => {
 const io = new Server(server, {
   cors: { origin: "*" } // Pour le dev avec Vite
 });
-var counter = 1;
 const PORT = process.env.PORT || 3000;
 
+const serverState = new ServerState();
+
+// systèmes
+const attackSystem = new AttackSystem(io, serverState);
+const movementSystem = new MovementSystem(io, serverState);
+const directionSystem = new DirectionSystem(io, serverState);
+const updateSystem = new UpdateSystem(io,serverState);
+const botEventBus = new EventBus();
 
 
-const players: Record<string, PlayerInfo> = {};
+const botManager = new BotManager(io,serverState,botEventBus,attackSystem,directionSystem,movementSystem, updateSystem);
+botManager.spawnBot("bibitee");
 
-const player = new Player("bot1",{x:0,y:0},100,10,"dsadw",new EventBus(),new BotInputHandler());
-io.on("connection", (socket) => { // RESERVED MESSAGE
+const gameLoop = new GameLoop(serverState,botManager,io);
+io.on("connection", (socket: Socket) => {
   console.log(`Player connected: ${socket.id}`);
 
+  const listener = new HumanEventListener(socket, attackSystem, movementSystem, directionSystem, updateSystem, serverState);
+  listener.register();
 
-  socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
-  socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, players);
-
-  socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
-    const player: PlayerInfo = {
-      id: socket.id,
-      name: name?.trim(),
-      position: { x: 0, y: 0 },
-      hp: 100,
-      speed: 10,
-      mouseDirection: { x: 0, y: 0 },
-      state: PlayerState.IDLE,
-      movingDirection: Direction.BOTTOM,
-      attackIndex: 0,
-      attackDashMaxSpeed: 3,
-      isDead: false,
-      killCounter:0,
-      killStreak:0,
-      movingVector:{dx:0,dy:0},
-      weapon: WeaponType.HEAVY_SWORD
-    };
-    players[socket.id] = player;
-    console.log(`Spawn player ${player.name} (${socket.id})`);
-    socket.emit(ServerToSocketMsg.NEW_PLAYER, player);
-    socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, player);
-  });
-
-  // Gestion mouvement
-  socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) => {
-    if (players[socket.id]) {
-      players[socket.id] = playerInfo;
-      socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, players[socket.id]);
-    }
-  })
-
-  socket.on(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, (playerInfo: PlayerInfo) => {
-    if (players[socket.id]) {
-      players[socket.id] = playerInfo;
-      socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, players[socket.id]);
-    }
-  })
-
-  socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (playerInfo: PlayerInfo) => {
-    if (players[socket.id]) {
-      players[socket.id] = playerInfo;
-      socket.broadcast.emit(ServerToSocketMsg.PLAYER_POS_UPDATE, players[socket.id]);
-    }
-  })
-
-
-  socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo: PlayerInfo) => {
-    if (players[socket.id]) {
-      players[socket.id] = playerInfo;
-      socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, players[socket.id]);
-    }
-  })
-
-
-  socket.on(ClientToSocketMsg.ATTACK, (data: AttackData) => {
-    const attacker = players[data.playerId];
-    if (!attacker) return;
-    // Mettre à jour l'état du joueur
-    attacker.position = data.position;
-    attacker.state = data.playerAction;
-
-    // Trouver les joueurs touchés
-    const hitPlayerIds = HitboxValidationService.getTargetsInHitbox(
-      data.hitbox,
-      players,
-      data.playerId
-    );
-
-    const attackResults = [];
-    let blockedBy: PlayerInfo | undefined;
-    let killNumber: number = 0;
-    let killedPlayers = [];
-    // Appliquer les dégâts
-    for (const targetId of hitPlayerIds) {
-      const target = players[targetId];
-      if (!target) continue;
-
-      const damage = 20; // todo CHANGE THIS
-      if (target.state != PlayerState.BLOCKING
-      ) {
-        target.hp -= damage;
-      } else {
-        blockedBy = target;
-      }
-
-
-      attackResults.push(target);
-
-      // Vérifier la mort
-      if (target.hp <= 0 && !target.isDead) {
-        attacker.hp += 20
-        killNumber++;
-        killedPlayers.push(target);
-      }
-    }
-    // Envoyer les résultats à tous les clients
-    io.emit(ServerToSocketMsg.ATTACK_RESULT, {
-      attackerId: data.playerId,
-      hitPlayers: attackResults,
-      knockbackStrength: data.knockbackStrength,
-      blockedBy: blockedBy,
-      killNumber: killNumber,
-      knockbackTimer:40 // todo change that depending on attack
-    } as AttackResult);
-
-    for (const player of killedPlayers) {
-      handlePlayerDeath(player.id);
-    }
-  });
-  socket.on(ClientToSocketMsg.RESPAWN_PLAYER, () => {
-    const player = players[socket.id];
-    if (!player) return;
-
-    player.hp = 100;
-    player.isDead = false;
-    player.position = { x: 0, y: 0 };
-    player.state = PlayerState.IDLE;
-
-    io.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
-  });
-  // Déconnexion
-  socket.on("disconnect", () => { // RESERVED MESSAGE
+  socket.on("disconnect", () => {
     console.log(`Player disconnected: ${socket.id}`);
-    delete players[socket.id];
-    io.emit(ServerToSocketMsg.DISCONNECT, socket.id);
+    serverState.removePlayer(socket.id);
+    io.emit(ServerToSocketMsg.DISCONNECT, { id: socket.id });
   });
-
-  function handlePlayerDeath(playerId: string) {
-    const player = players[playerId];
-    if (!player) return;
-
-    console.log(`Player ${playerId} is dead`);
-
-    player.isDead = true;
-    player.state = PlayerState.DEAD;
-
-    // Notifier tous les clients
-    io.emit(ServerToSocketMsg.PLAYER_DIED, player);
-  }
 });
 
-
+gameLoop.start();
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

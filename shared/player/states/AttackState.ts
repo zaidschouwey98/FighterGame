@@ -3,7 +3,7 @@ import { BaseState } from "./BaseState";
 import type { Player } from "../Player";
 import type { AttackService } from "../../services/AttackService";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
-import type { MovementService } from "../../services/MovementService";
+import { MovementService } from "../../services/MovementService";
 
 export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;
@@ -38,7 +38,7 @@ export class AttackState extends BaseState {
     let v = this.movementService.getMovementDelta();
     v.dx = v.dx / 2;
     v.dy = v.dy / 2;
-    this.movementService.movePlayer(this.player, v.dx, v.dy, delta, this.player.speed / 3)
+    MovementService.movePlayer(this.player, v.dx, v.dy, delta, this.player.speed / 3)
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.player.toInfo());
 
     this.timer -= delta;

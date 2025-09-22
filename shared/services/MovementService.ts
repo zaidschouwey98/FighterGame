@@ -17,14 +17,14 @@ export class MovementService {
     return { dx, dy };
   }
 
-  public movePlayer(player: Player | PlayerInfo, dx: number, dy: number, delta: number, speed:number = player.speed) {
+  public static movePlayer(player: Player | PlayerInfo, dx: number, dy: number, delta: number, speed:number = player.speed) {
     if (dx === 0 && dy === 0) return;
-
+    if(Math.abs(dx) > 1 || Math.abs(dy) > 1)
+      throw new Error("Should be normalized vector");
     const length = Math.sqrt(dx * dx + dy * dy);
     dx /= length;
     dy /= length;
-
-    player.position.x += dx * speed * TILE_SIZE * delta / 60;
-    player.position.y += dy * speed * TILE_SIZE * delta / 60;
+    player.position.x += dx * speed/4 * delta;
+    player.position.y += dy * speed/4 * delta;
   }
 }

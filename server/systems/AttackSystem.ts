@@ -6,11 +6,12 @@ import { PlayerState } from "../../shared/PlayerState";
 import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { HitboxValidationService } from "../HitboxValidationService";
+import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 
 export class AttackSystem {
-    constructor(private io: Server, private serverState: ServerState) { }
+    constructor(private serverState: ServerState, private eventBus:EventBus) { }
 
-    handleAttack(data: AttackData) {
+    handleAttack(data: AttackData, socket:Socket) {
         const attacker = this.serverState.getPlayer(data.playerId);
         if (!attacker) return;
 
@@ -47,38 +48,31 @@ export class AttackSystem {
                 killedPlayers.push(target);
             }
         }
-
-        // 🔥 ATTENTION : résultat autoritaire → tout le monde doit le recevoir
-        this.io.emit(ServerToSocketMsg.ATTACK_RESULT, {
+        this.eventBus.emit(EventBusMessage.ATTACK_RESULT,{attackResult:{
             attackerId: data.playerId,
             hitPlayers: attackResults,
             knockbackStrength: data.knockbackStrength,
             blockedBy,
             killNumber,
             knockbackTimer: 40,
-        } as AttackResult);
+        } as AttackResult, socket:socket})
 
         for (const player of killedPlayers) {
-            this.handlePlayerDeath(player.id);
+            this.handlePlayerDeath(socket,player.id);
         }
     }
 
-    public handleStartAttack(socket:Socket | undefined, playerInfo:PlayerInfo) {
+    public handleStartAttack(socket:Socket, playerInfo:PlayerInfo) {
         if (this.serverState.playerExists(playerInfo.id)) {
             this.serverState.updatePlayer(playerInfo);
-            if(socket)
-                socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, this.serverState.getPlayer(playerInfo.id));
-            else 
-                this.io.emit(ServerToSocketMsg.START_ATTACK, this.serverState.getPlayer(playerInfo.id))
+            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id), socket:socket})
         }
     }
 
-    private handlePlayerDeath(playerId: string) {
+    private handlePlayerDeath(socket:Socket, playerId: string) {
         const player = this.serverState.getPlayer(playerId);
         if (!player) return;
         player.isDead = true;
-
-        // 🔥 Mort = info autoritaire → broadcast à tout le monde
-        this.io.emit(ServerToSocketMsg.PLAYER_DIED, { id: playerId });
+        this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerId:playerId, socket:socket });
     }
 }

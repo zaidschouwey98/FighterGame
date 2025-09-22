@@ -22,6 +22,7 @@ import { DirectionSystem } from "./systems/DirectionSystem";
 import { HumanEventListener } from "./listeners/PlayerEventListener";
 import { BotManager } from "./BotManager";
 import { UpdateSystem } from "./systems/UpdateSystem";
+import { SocketIoAdapter } from "./adapters/SocketIoAdapter";
 
 
 const app = express();
@@ -40,16 +41,20 @@ const PORT = process.env.PORT || 3000;
 
 const serverState = new ServerState();
 
+const eventBus = new EventBus();
 // systèmes
-const attackSystem = new AttackSystem(io, serverState);
-const movementSystem = new MovementSystem(io, serverState);
-const directionSystem = new DirectionSystem(io, serverState);
-const updateSystem = new UpdateSystem(io,serverState);
-const botEventBus = new EventBus();
+const socketIoAdapter = new SocketIoAdapter(eventBus);
 
 
-const botManager = new BotManager(io,serverState,botEventBus,attackSystem,directionSystem,movementSystem, updateSystem);
-botManager.spawnBot("bibitee");
+const attackSystem = new AttackSystem(serverState,eventBus);
+const movementSystem = new MovementSystem(eventBus, serverState);
+const directionSystem = new DirectionSystem(eventBus, serverState);
+const updateSystem = new UpdateSystem(eventBus,serverState);
+
+
+
+const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem);
+// botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);
 io.on("connection", (socket: Socket) => {

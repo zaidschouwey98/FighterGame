@@ -6,7 +6,7 @@ export enum EventBusMessage{
     LOCAL_PLAYER_UPDATED,
     PLAYER_JOINED,
     PLAYER_LEFT,
-    ATTACK_PERFORMED,
+    START_ATTACK,
     PLAYER_DIED,
     ATTACK_RESULT,
     LOCAL_ATTACK_PERFORMED,
@@ -14,7 +14,8 @@ export enum EventBusMessage{
     PLAYER_POSITION_UPDATED,
     LOCAL_PLAYER_POSITION_UPDATED,
     LOCAL_PLAYER_DIRECTION_UPDATED,
-    LOCAL_PLAYER_MOVING
+    LOCAL_PLAYER_MOVING,
+    PLAYER_DIRECTION_UPDATED
 }
 export class EventBus {
     private listeners: Map<EventBusMessage, EventHandler[]> = new Map();

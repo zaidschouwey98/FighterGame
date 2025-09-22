@@ -41,7 +41,7 @@ export class BotInputHandler implements IInputHandler {
         // viser et attaquer
         this.mouse = { x: target.position.x, y: target.position.y };
         if (Math.sqrt(best) < attackDist) {
-            // this.attack = true;
+            this.attack = true;
         }
     }
 

@@ -39,7 +39,7 @@ export class BotManager {
         );
         this.serverState.addBot(bot.toInfo());
         this.bots.set(bot.id,bot);
-        new BotEventListener(this.io,this.botEventBus,this.attackSystem,this.movementSystem,this.directionSystem, this.updateSystem);
+        new BotEventListener(this.io,this.botEventBus,bot,this.serverState,this.attackSystem,this.movementSystem,this.directionSystem, this.updateSystem);
         return bot;
     }
 

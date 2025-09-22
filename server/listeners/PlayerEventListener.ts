@@ -27,7 +27,7 @@ export class HumanEventListener {
 
     register() {
         this.socket.on(ClientToSocketMsg.ATTACK, (data: AttackData) =>
-            this.attackSystem.handleAttack(data)
+            this.attackSystem.handleAttack(data,this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) =>

@@ -107,10 +107,8 @@ export class GameController {
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
             if (player.id === this.localPlayer?.id) {
                 this.onRespawn?.();
-                this.eventBus.emit(EventBusMessage.PLAYER_JOINED,player)
-            } else {
-                this.gameState.updatePlayer(player);
-            }
+            } 
+            this.eventBus.emit(EventBusMessage.PLAYER_JOINED,player)
         });
     }
 

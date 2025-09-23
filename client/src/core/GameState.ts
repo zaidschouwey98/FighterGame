@@ -17,8 +17,8 @@ export class GameState{
     updatePlayer(info: PlayerInfo) {
         let player = this.players.get(info.id);
         if (!player) {
-            console.warn(`Player ${info.id} not found, creating it.`);
-            this.addPlayer(info);
+            console.warn(`Player ${info.id} not found`);
+            // this.addPlayer(info);
             return;
         }
         

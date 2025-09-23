@@ -90,6 +90,10 @@ export class Renderer {
         this._eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
             this._playersRenderer.removePlayer(playerId);
         });
+
+        this._eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
+            this._playersRenderer.removePlayer(player.id)
+        });
     }
 
     updateMinimap(localPlayer: Player) {

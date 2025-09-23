@@ -100,7 +100,7 @@ export class GameController {
                 this.localPlayer!.die();
                 this.onDeath?.()
             } else 
-            this.gameState.updatePlayer(player);
+            this.gameState.removePlayer(player.id);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {

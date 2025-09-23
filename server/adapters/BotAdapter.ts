@@ -50,8 +50,11 @@ export class BotAdapter {
 
         eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerId:string, socket:any}) => {
             for (const bot of this.botManager.getBots()) {
-                if(res.playerId == bot.id)
+                if(res.playerId == bot.id){
                     bot.die();
+                    this.botManager.deleteBot(bot.id);
+                }
+                    
             }
         });
 

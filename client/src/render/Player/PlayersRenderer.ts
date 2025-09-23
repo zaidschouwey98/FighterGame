@@ -41,8 +41,8 @@ export default class PlayersRenderer {
         }
 
         if (container) {
-            container.destroy({ children: true });
             this.playerContainer.removeChild(container);
+            container.destroy({ children: true,texture:true });
         }
 
         this.playerContainers.delete(playerId);

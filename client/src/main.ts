@@ -7,24 +7,27 @@ import { GameScene } from './scene/GameScene';
 // TOdo add credits song for my death, but I refused
 (async () => {
   const app = new Application();
-  await app.init({ 
-    background: '#1099bb', 
+  await app.init({
+    background: '#1099bb',
     resizeTo: window,
+    // textureGCActive: true, // Enable texture garbage collection
+    // textureGCMaxIdle: 7200, // 2 hours idle time
+    // textureGCCheckCountMax: 1200,
   });
   initDevtools({ app });
   // Chargez d'abord les assets
   console.log("Chargement des assets...");
   const spritesheets = await getSpritesheets();
   console.log("Assets chargés !");
-  
+
   document.body.appendChild(app.canvas);
   const sceneManager = new SceneManager(app);
   const gameScene = new GameScene("localhost:3000", app, spritesheets);
 
   sceneManager.changeScene(gameScene);
-  
+
   app.ticker.add((delta) => {
     sceneManager.update(delta.deltaTime);
-    
+
   });
 })();

@@ -61,4 +61,9 @@ export class WeaponSprite {
     this.shadowSprite.visible = this.sprite.visible;
     this.controller.update(delta);
   }
+
+  destroy(){
+    this.sprite.destroy({children:true});
+    this.shadowSprite.destroy({children:true});
+  }
 }

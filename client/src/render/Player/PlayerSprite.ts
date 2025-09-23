@@ -67,6 +67,7 @@ export default class PlayerSprite {
 
     public destroy() {
         this.controller.stop();
-        this.playerContainer.destroy({ children: true });
+        this.weapon.destroy();
+        this.hpBar.destroy();
     }
 }

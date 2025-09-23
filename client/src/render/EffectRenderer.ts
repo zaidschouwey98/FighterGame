@@ -34,22 +34,25 @@ export class EffectRenderer {
         newDashCloud.animationSpeed = 0.2;
         newDashCloud.currentFrame = 0;
         newDashCloud.play();
-        newDashCloud.onComplete = () => { newDashCloud.destroy() }
+        newDashCloud.onComplete = () => { 
+            this.staticEffectsContainer.removeChild(newDashCloud);
+            newDashCloud.destroy() 
+        }
         this.staticEffectsContainer.addChild(newDashCloud)
     }
 
     renderTpEffect(playerPos: Position) {
-        const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
-        tp_effect.anchor.set(0.5)
-        tp_effect.x = playerPos.x;
-        tp_effect.y = playerPos.y;
-        tp_effect.visible = true;
-        tp_effect.loop = false;
-        tp_effect.animationSpeed = 0.2;
-        tp_effect.currentFrame = 0;
-        tp_effect.play();
-        tp_effect.onComplete = () => { tp_effect.destroy() }
-        this.staticEffectsContainer.addChild(tp_effect)
+        // const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
+        // tp_effect.anchor.set(0.5)
+        // tp_effect.x = playerPos.x;
+        // tp_effect.y = playerPos.y;
+        // tp_effect.visible = true;
+        // tp_effect.loop = false;
+        // tp_effect.animationSpeed = 0.2;
+        // tp_effect.currentFrame = 0;
+        // tp_effect.play();
+        // tp_effect.onComplete = () => { tp_effect.destroy() }
+        // this.staticEffectsContainer.addChild(tp_effect)
     }
 
     renderAttackEffect(_action: PlayerState, _direction: { x: number; y: number }) {

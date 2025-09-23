@@ -22,7 +22,7 @@ import { GameScene } from './scene/GameScene';
 
   document.body.appendChild(app.canvas);
   const sceneManager = new SceneManager(app);
-  const gameScene = new GameScene("localhost:3000", app, spritesheets);
+  const gameScene = new GameScene(window.location.origin, app, spritesheets);
 
   sceneManager.changeScene(gameScene);
 

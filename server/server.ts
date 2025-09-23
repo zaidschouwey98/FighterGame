@@ -45,6 +45,7 @@ const eventBus = new EventBus();
 // systèmes
 const socketIoAdapter = new SocketIoAdapter(eventBus, io);
 
+let playerNb = 0;
 
 const attackSystem = new AttackSystem(serverState,eventBus);
 const movementSystem = new MovementSystem(eventBus, serverState);
@@ -54,27 +55,27 @@ const updateSystem = new UpdateSystem(eventBus,serverState);
 
 
 const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem);
-// botManager.spawnBot("bibitee");
-// botManager.spawnBot("bibitee");
-// botManager.spawnBot("bibitee");
-// botManager.spawnBot("bibitee");
-// botManager.spawnBot("bibitee");
-// botManager.spawnBot("bibitee");
+botManager.spawnBot("bibitee");
+botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);
 io.on("connection", (socket: Socket) => {
   console.log(`Player connected: ${socket.id}`);
-
+  if(++playerNb > 0){
+    gameLoop.start();
+  };
   const listener = new HumanEventListener(socket, attackSystem, movementSystem, directionSystem, updateSystem, serverState);
   listener.register();
 
   socket.on("disconnect", () => {
     console.log(`Player disconnected: ${socket.id}`);
+    if(--playerNb <= 0){
+      gameLoop.stop();
+    }
     serverState.removePlayer(socket.id);
     io.emit(ServerToSocketMsg.DISCONNECT, { id: socket.id });
   });
 });
 
-gameLoop.start();
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

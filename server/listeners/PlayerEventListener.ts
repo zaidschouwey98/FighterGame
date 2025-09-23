@@ -53,6 +53,7 @@ export class HumanEventListener {
                 name: name?.trim(),
                 position: { x: 0, y: 0 },
                 hp: 100,
+                maxHp:100,
                 speed: 10,
                 mouseDirection: { x: 0, y: 0 },
                 state: PlayerState.IDLE,
@@ -64,7 +65,10 @@ export class HumanEventListener {
                 killStreak: 0,
                 movingVector: { dx: 0, dy: 0 },
                 attackSpeed:1,
-                weapon: WeaponType.HEAVY_SWORD
+                weapon: WeaponType.HEAVY_SWORD,
+                lvlXp:100,
+                currentLvl:1,
+                currentXp:0,
             };
             this.serverState.addPlayer(player);
             console.log(`Spawn player ${player.name} (${this.socket.id})`);

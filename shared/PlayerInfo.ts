@@ -7,6 +7,7 @@ export default interface PlayerInfo {
     mouseDirection: { x: number; y: number; };
     position: Position;
     hp: number;
+    maxHp: number;
     speed: number;
     id: string;
     name?:string;
@@ -14,6 +15,9 @@ export default interface PlayerInfo {
     movingDirection:Direction;
     movingVector: {dx:number, dy:number};
     weapon:WeaponType;
+    currentXp:number;
+    lvlXp: number;
+    currentLvl: number;
 
     killStreak:number;
     killCounter:number;

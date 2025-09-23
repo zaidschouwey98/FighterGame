@@ -26,6 +26,7 @@ import type { IInputHandler } from "../../client/src/core/IInputHandler";
 // WHEN ADDING PROP, ENSURE TO ADD PROP IN PLAYERINFO AND IN toInfo() DOWN THERE
 export class Player {
     public hp: number;
+    public maxHp: number;
     public speed: number;
     public id: string;
     public playerName?: string;
@@ -34,6 +35,9 @@ export class Player {
     public movingDirection: Direction = Direction.BOTTOM;
     public movingVector: { dx: number, dy: number } = { dx: 0, dy: 0 }
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
+    public currentXp:number = 0;
+    public lvlXp: number = 100;
+    public currentLvl: number = 1;
 
     public weapon: Weapon;
 
@@ -78,6 +82,7 @@ export class Player {
         this.id = id;
         this.position = new Position(position.x, position.y);
         this.hp = hp;
+        this.maxHp = hp;
         this.speed = speed;
         this.weapon = new HeavySword();
         this.idleState = new IdleState(this, inputHandler, eventBus);
@@ -184,6 +189,7 @@ export class Player {
     public toInfo(): PlayerInfo {
         return {
             position: this.position,
+            maxHp: this.maxHp,
             hp: this.hp,
             speed: this.speed,
             attackDashDuration: this.attackDashDuration,
@@ -202,6 +208,10 @@ export class Player {
             weapon: this.weapon.name,
             movingVector: this.movingVector,
             attackSpeed: this.attackSpeed,
+
+            currentXp: this.currentXp,
+            lvlXp: this.lvlXp,
+            currentLvl: this.currentLvl,
         };
     }
 }

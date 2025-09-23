@@ -8,16 +8,16 @@ import { EffectRenderer } from "../EffectRenderer";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
 import { DieAnim } from "./anim/DieAnim";
-import { HpBar } from "../UI/HpBar";
 import { TeleportingAnim } from "./anim/TeleportAnim";
 import { KnockBackAnim } from "./anim/KnockBackAnim";
 import { WeaponSprite } from "./weapon/WeaponSprite";
 import { BlockAnim } from "./anim/BlockAnim";
 import type { WeaponFactory } from "./weapon/WeaponFactory";
+import { PlayerPlate } from "../UI/PlayerPlate";
 
 export default class PlayerSprite {
     private controller: AnimController;
-    private hpBar: HpBar;
+    private playerPlate: PlayerPlate;
     private weapon: WeaponSprite;
     constructor(
         public id: string,
@@ -29,15 +29,10 @@ export default class PlayerSprite {
         weaponFactory: WeaponFactory
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
-        this.hpBar = new HpBar(this.playerContainer, 0, -24, 40, 10);
+        
         // Label au-dessus du joueur
-        const style = new TextStyle({ fontFamily: "Arial", fontSize: 8, fill: "#ffffff", stroke: "#000000" });
-        const name = new Text(playerName, style);
-        name.anchor.set(0.5);
-        name.resolution = 2;
-        name.y = -20;
-        this.playerContainer.addChild(name);
-
+        
+        this.playerPlate = new PlayerPlate(this.playerContainer, playerName, 1);
         
 
         this.controller = new AnimController({
@@ -55,7 +50,7 @@ export default class PlayerSprite {
     }
 
     public syncPlayer(player: PlayerInfo) {
-        this.hpBar.update(player.hp, 100);
+        this.playerPlate.update(player.hp, player.maxHp, player.currentXp, player.lvlXp, player.currentLvl);
         this.controller.update(player);
         this.weapon.setState(player);
         this.weapon.setDirection(player.movingDirection);
@@ -68,6 +63,6 @@ export default class PlayerSprite {
     public destroy() {
         this.controller.stop();
         this.weapon.destroy();
-        this.hpBar.destroy();
+        this.playerPlate.destroy();
     }
 }

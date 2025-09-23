@@ -1,5 +1,4 @@
 import type { Player } from "../player/Player";
-import { TILE_SIZE } from "../constantes";
 import type PlayerInfo from "../PlayerInfo";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 

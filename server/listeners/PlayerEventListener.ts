@@ -63,6 +63,7 @@ export class HumanEventListener {
                 killCounter: 0,
                 killStreak: 0,
                 movingVector: { dx: 0, dy: 0 },
+                attackSpeed:1,
                 weapon: WeaponType.HEAVY_SWORD
             };
             this.serverState.addPlayer(player);

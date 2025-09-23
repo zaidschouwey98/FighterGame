@@ -1,10 +1,10 @@
 import { Container, Spritesheet, Sprite } from "pixi.js";
 import { WeaponAnimController } from "./weapon_anim/WeaponAnimController";
-import { PlayerState } from "../../../../../shared/PlayerState";
 import { findTexture } from "../../../AssetLoader";
 import { Direction } from "../../../../../shared/Direction";
 import type { WeaponType } from "../../../../../shared/WeaponType";
 import { createWeaponAnimations } from "./CreateWeaponAnimation";
+import type PlayerInfo from "../../../../../shared/PlayerInfo";
 
 
 
@@ -40,8 +40,8 @@ export class WeaponSprite {
     this.controller = new WeaponAnimController(createWeaponAnimations(this.sprite, type, playerContainer, spriteSheets));
   }
 
-  setState(state: PlayerState, comboIndex = 0, mouseDirection: { x: number, y: number }) {
-    this.controller.setState(state, comboIndex, mouseDirection);
+  setState(playerInfo:PlayerInfo) {
+    this.controller.setState(playerInfo);
   }
 
   setDirection(direction: Direction) {

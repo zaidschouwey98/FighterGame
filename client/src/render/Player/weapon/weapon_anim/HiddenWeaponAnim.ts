@@ -1,12 +1,13 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "./IWeaponAnim";
 import type { Direction } from "../../../../../../shared/Direction";
+import type PlayerInfo from "../../../../../../shared/PlayerInfo";
 
 export class HiddenWeaponAnim implements IWeaponAnim{
 
   constructor(private sprite: Sprite) {}
 
-  play() {
+  play(_playerInfo:PlayerInfo) {
     this.sprite.visible = false;
   }
 

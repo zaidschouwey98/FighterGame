@@ -57,7 +57,7 @@ export default class PlayerSprite {
     public syncPlayer(player: PlayerInfo) {
         this.hpBar.update(player.hp, 100);
         this.controller.update(player);
-        this.weapon.setState(player.state, player.attackIndex,player.mouseDirection);
+        this.weapon.setState(player);
         this.weapon.setDirection(player.movingDirection);
     }
 

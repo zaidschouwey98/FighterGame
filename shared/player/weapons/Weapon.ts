@@ -6,14 +6,12 @@ export abstract class Weapon {
     abstract readonly name: WeaponType;
     protected _weaponDamage:number;
     protected _attackCoolDown:number;
-    protected _attackDuration: number;
     protected _attackMaxCombo: number;
     protected _attackCurrentCombo: number;
 
-    constructor(weaponDamage:number, attackCoolDown:number, attackDuration:number, attackMaxCombo:number){
+    constructor(weaponDamage:number, attackCoolDown:number, attackMaxCombo:number){
         this._weaponDamage = weaponDamage;
         this._attackCoolDown = attackCoolDown;
-        this._attackDuration = attackDuration;
         this._attackMaxCombo = attackMaxCombo;
         this._attackCurrentCombo = 0;
     }
@@ -26,8 +24,8 @@ export abstract class Weapon {
         return this._attackCurrentCombo;
     }
     
-    public get attackCoolDown() : number {
-        return this._attackCoolDown;
+    public attackCoolDown(attackSpeed:number) : number {
+        return this._attackCoolDown / attackSpeed;
     }
     
 
@@ -37,7 +35,7 @@ export abstract class Weapon {
 
     public abstract isDashAttack():boolean;
 
-    public abstract getAttackDuration():number;
+    public abstract getAttackDuration(attackSpeed:number):number;
 
     public abstract useWeapon(playerPos:Position, attackDir:number):AttackData;
 }

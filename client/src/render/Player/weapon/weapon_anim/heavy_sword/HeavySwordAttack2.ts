@@ -2,6 +2,8 @@ import { AnimatedSprite, Container, Point, Sprite, Spritesheet, type PointLike }
 import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
+import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
+import { HEAVY_SWORD_ATTACK_2_BASE_DURATION } from "../../../../../../../shared/constantes";
 
 export class HeavySwordAttack2 implements IWeaponAnim {
     private sprite: Sprite;
@@ -14,7 +16,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
     private baseY?: number;
     private baseAnchor: PointLike = new Point();
     private spriteBaseRot?:number;
-    private duration: number = 40;
+    private duration: number = 0;
     private progress = 0; // entre 0 et 1
 
     private flipX: boolean = false;
@@ -26,7 +28,8 @@ export class HeavySwordAttack2 implements IWeaponAnim {
         this.effect.visible = false;
         playerContainer.addChild(this.effect);
     }
-    play(direction: { x: number, y: number } = { x: 0, y: 0 }): void {
+    play(playerInfo:PlayerInfo): void {
+        this.duration = HEAVY_SWORD_ATTACK_2_BASE_DURATION / playerInfo.attackSpeed;
         this.sprite.scale.y = -1;
         this.progress = 0;
         this.baseX = this.sprite.x;
@@ -35,7 +38,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
 
         this.spriteBaseRot = this.sprite.rotation;
 
-        let rotation = Math.atan2(direction.y, direction.x);
+        let rotation = Math.atan2(playerInfo.mouseDirection.y, playerInfo.mouseDirection.x);
         this.baseRotation = rotation;
         this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
         this.sprite.scale.x = this.flipX ? 1 : -1;

@@ -1,6 +1,7 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { Direction } from "../../../../../../../shared/Direction";
+import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
 
 export class IdleWeaponAnim implements IWeaponAnim {
   private time = 0;
@@ -10,7 +11,7 @@ export class IdleWeaponAnim implements IWeaponAnim {
     this.baseY = sprite.y; // On enregistre la position Y de base
   }
 
-  play() {
+  play(_playerInfo:PlayerInfo) {
     this.sprite.visible = true;
     this.time = 0;
     this.baseY = this.sprite.y; // Toujours reprendre la position courante comme base

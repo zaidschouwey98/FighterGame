@@ -4,6 +4,7 @@ import { findAnimation } from "../../../../../AssetLoader";
 import { Direction } from "../../../../../../../shared/Direction";
 import DirectionHelper from "../../../../../../../shared/DirectionHelper";
 import type { IAnimState } from "../../../IAnimState";
+import { HEAVY_SWORD_ATTACK_2_BASE_DURATION } from "../../../../../../../shared/constantes";
 
 export class HeavySwordBodyAttack2 implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
@@ -22,7 +23,6 @@ export class HeavySwordBodyAttack2 implements IAnimState {
         const all = [right, left];
         for (const s of all) {
             s.visible = false;
-            s.animationSpeed = 0.2;
             s.anchor.set(0.5);
             s.loop = false;
             playerContainer.addChild(s);
@@ -49,6 +49,7 @@ export class HeavySwordBodyAttack2 implements IAnimState {
 
         const next = this.sprites.get(dir) ?? this.sprites.get(Direction.RIGHT)!;
         next.visible = true;
+        next.animationSpeed = next.totalFrames/(HEAVY_SWORD_ATTACK_2_BASE_DURATION / player.attackSpeed);
         next.gotoAndPlay(0);
         this.current = next;
 

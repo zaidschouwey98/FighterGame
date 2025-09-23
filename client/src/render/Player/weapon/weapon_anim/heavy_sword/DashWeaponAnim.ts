@@ -2,6 +2,7 @@ import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { Direction } from "../../../../../../../shared/Direction";
 import DirectionHelper from "../../../../../../../shared/DirectionHelper";
+import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
 
 export class DashWeaponAnim implements IWeaponAnim {
     private progress = 0;
@@ -20,11 +21,11 @@ export class DashWeaponAnim implements IWeaponAnim {
         this.setTargetRotation();
     }
 
-    play(direction: { x: number, y: number } = { x: 0, y: 0 }) {
-        const rot = Math.atan2(direction.y,direction.x);
+    play(playerInfo:PlayerInfo) {
+        const rot = Math.atan2(playerInfo.mouseDirection.y,playerInfo.mouseDirection.x);
         const flipX = rot > Math.PI / 2 || rot< -Math.PI / 2;
         this.sprite.scale.x = flipX ? -1 : 1;
-        this.direction = DirectionHelper.getDirectionByVector(direction,[Direction.LEFT, Direction.RIGHT]);
+        this.direction = DirectionHelper.getDirectionByVector(playerInfo.mouseDirection,[Direction.LEFT, Direction.RIGHT]);
         this.setTargetRotation();
 
         this.sprite.visible = true;

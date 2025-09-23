@@ -1,4 +1,5 @@
 import type { Direction } from "../../../../../../shared/Direction";
+import type PlayerInfo from "../../../../../../shared/PlayerInfo";
 import { PlayerState } from "../../../../../../shared/PlayerState";
 import type { IWeaponAnim } from "./IWeaponAnim";
 
@@ -10,24 +11,19 @@ export class WeaponAnimController {
     private animations: Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>>
   ) { }
 
-  setState(state: PlayerState, comboIndex = 0, attackDir?: { x: number, y: number }) {
+  setState(playerInfo:PlayerInfo) {
     const needTransition =
-      state !== this.currentState || state === PlayerState.ATTACK;
+      playerInfo.state !== this.currentState || playerInfo.state === PlayerState.ATTACK;
 
     if (!needTransition) return;
 
     this.current?.stop();
-    this.currentState = state;
+    this.currentState = playerInfo.state;
 
-    this.current = this.resolveAnim(state, comboIndex);
+    this.current = this.resolveAnim(playerInfo.state, playerInfo.attackIndex);
 
-    // 👇 si attaque et qu’on a un vecteur, on le passe à play()
     if (this.current) {
-      if (state === PlayerState.ATTACK || state === PlayerState.ATTACK_DASH && attackDir) {
-        this.current.play(attackDir);
-      } else {
-        this.current.play();
-      }
+      this.current.play(playerInfo);
     }
   }
 

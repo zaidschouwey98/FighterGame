@@ -43,7 +43,7 @@ export class AttackService {
         player.attackDashDuration = DASH_ATTACK_DURATION;
         player.attackDashTimer = DASH_ATTACK_DURATION;
         player.movingDirection = DirectionHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
-        this.attackCooldownTimer = player.weapon.attackCoolDown;
+        this.attackCooldownTimer = player.weapon.attackCoolDown(player.attackSpeed);
         this.attackResetTimer = ATTACK_RESET;
         // Notifier les autres systèmes
     }

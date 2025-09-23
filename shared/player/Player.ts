@@ -41,6 +41,7 @@ export class Player {
     public killStreak = 0;
 
     public attackIndex: number = 0;
+    public attackSpeed: number = 1;
 
     public blockTimer?: number;   // Frames restantes de block
 
@@ -200,6 +201,7 @@ export class Player {
             killStreak: this.killStreak,
             weapon: this.weapon.name,
             movingVector: this.movingVector,
+            attackSpeed: this.attackSpeed,
         };
     }
 }

@@ -4,11 +4,12 @@ import type Position from "../../Position";
 import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
 import { WeaponType } from "../../WeaponType";
+import { HEAVY_SWORD_ATTACK_1_BASE_DURATION, HEAVY_SWORD_ATTACK_3_BASE_DURATION, HEAVY_SWORD_CD } from "../../constantes";
 
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;
     constructor() {
-        super(20, 20, 20, 3)
+        super(20, HEAVY_SWORD_CD, 3)
     }
 
     public useWeapon(playerPos: Position, attackDir: number): AttackData {
@@ -25,10 +26,10 @@ export class HeavySword extends Weapon {
         return res;
     }
 
-    public getAttackDuration():number{
+    public getAttackDuration(attackSpeed:number):number{
         if(this._attackCurrentCombo == 0 ||this._attackCurrentCombo == 1)
-            return 40;
-        return 10;
+            return HEAVY_SWORD_ATTACK_1_BASE_DURATION / attackSpeed;
+        return HEAVY_SWORD_ATTACK_3_BASE_DURATION / attackSpeed;
     }
     
     public isDashAttack(): boolean {

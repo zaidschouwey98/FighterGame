@@ -20,6 +20,7 @@ export default interface PlayerInfo {
 
     pendingAttack?: boolean;
     attackIndex: number;
+    attackSpeed: number;
     
     attackDashTimer?: number;   // Durée restante du dash
     attackDashDuration?: number; // Durée en frames

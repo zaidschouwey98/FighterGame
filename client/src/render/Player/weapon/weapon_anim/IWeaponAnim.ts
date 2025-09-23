@@ -1,8 +1,9 @@
 import type { Direction } from "../../../../../../shared/Direction";
+import type PlayerInfo from "../../../../../../shared/PlayerInfo";
 
 export interface IWeaponAnim {
 
-  play(direction?: {x: number, y: number}):void;
+  play(playerInfo:PlayerInfo):void;
 
   stop():void;
 

@@ -11,3 +11,9 @@ export const TP_DISTANCE = 120;
 export const DASH_ATTACK_DURATION = 30;
 export const BLOCK_DURATION = 30;
 export const BLOCK_COOLDOWN = 30;
+
+// Heavy sword
+export const HEAVY_SWORD_ATTACK_1_BASE_DURATION = 40;
+export const HEAVY_SWORD_ATTACK_2_BASE_DURATION = 40;
+export const HEAVY_SWORD_ATTACK_3_BASE_DURATION = 10;
+export const HEAVY_SWORD_CD = 20;

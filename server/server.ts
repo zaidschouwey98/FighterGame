@@ -54,12 +54,12 @@ const updateSystem = new UpdateSystem(eventBus,serverState);
 
 
 const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem);
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);
 io.on("connection", (socket: Socket) => {

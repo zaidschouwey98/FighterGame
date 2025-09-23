@@ -38,7 +38,10 @@ export class Minimap {
     this.playerDot.y = centerY;
 
     // Nettoyer anciens points
-    this.playerDots.forEach(dot => this.container.removeChild(dot));
+    this.playerDots.forEach(dot => {
+      this.container.removeChild(dot);
+      dot.destroy();
+    });
     this.playerDots = [];
 
     // Dessiner les autres joueurs

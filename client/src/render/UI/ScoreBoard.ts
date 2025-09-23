@@ -14,9 +14,9 @@ export class ScoreBoard {
     update(player: PlayerInfo): void {
         // Met à jour ou ajoute le joueur
         this.players.set(player.id, player);
-
+        
         // Efface l'ancien affichage
-        this.scoreBoardContainer.removeChildren();
+        this.scoreBoardContainer.removeChildren().forEach(c => c.destroy());
 
         // Titre
         const title = new Text({

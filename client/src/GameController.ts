@@ -39,7 +39,7 @@ export class GameController {
     ) {
         this.onDeath = opts?.onDeath;
         this.onRespawn = opts?.onRespawn;
-
+    
         this.setupEventListeners();
         this.networkClient = new NetworkClient(serverUrl, this.eventBus);
         this.gameState = GameState.instance;
@@ -47,6 +47,7 @@ export class GameController {
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.inputHandler = new InputHandler(this.coordinateService);
         this.renderer.worldRenderer.update(0, 0);
+        
     }
 
     private setupEventListeners() {
@@ -122,22 +123,22 @@ export class GameController {
     }
 
     public update(delta: number) {
-
-        if (!this.localPlayer) return;
-
-
-        // Handle attack dash if ongoing
-        this.localPlayer.update(delta);
-
         for(const value of GameState.instance.players.values()){
-            if(value.id === this.localPlayer.id)
-                throw new Error("Local Player shouldn't be in gameState")
             if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
                 MovementService.movePlayer(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
                 this.renderer.playersRenderer.syncPlayers([value]);
             }
         }
+        this.renderer.update(delta);
+
+
+
+        if (!this.localPlayer) return;
+        // Handle attack dash if ongoing
+        this.localPlayer.update(delta);
+
+        
         // render world
         const tileX = Math.floor(this.localPlayer.position.x / TILE_SIZE);
         const tileY = Math.floor(this.localPlayer.position.y / TILE_SIZE);
@@ -151,6 +152,6 @@ export class GameController {
 
         this.renderer.updateCamera(this.localPlayer.position)
         this.renderer.updateMinimap(this.localPlayer);
-        this.renderer.update(delta);
+        
     }
 }

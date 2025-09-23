@@ -1,4 +1,4 @@
-import { Container, Spritesheet, TextStyle, Text } from "pixi.js";
+import { Container, Spritesheet } from "pixi.js";
 import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
@@ -32,7 +32,7 @@ export default class PlayerSprite {
         
         // Label au-dessus du joueur
         
-        this.playerPlate = new PlayerPlate(this.playerContainer, playerName, 1);
+        this.playerPlate = new PlayerPlate(this.playerContainer, playerName);
         
 
         this.controller = new AnimController({

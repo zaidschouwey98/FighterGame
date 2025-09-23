@@ -5,152 +5,193 @@ export class PlayerPlate {
     private hpwidth: number;
     private hpheight: number;
     private xpheight: number;
-    private skew: number = 3;
+    private skew: number = 3; // décalage horizontal (en px) entre top et bottom
 
-    private background: Graphics;
-    private health: Graphics;
-    private frame: Graphics;
-    private ticks: Graphics;
+    // HP
+    private hpBgContainer: Container;
+    private hpBgRect: Graphics;
+    private hpFillContainer: Container;
+    private hpFillRect: Graphics;
+    private hpFrame: Graphics;
+    private hpTicks: Graphics;
 
-    private xpBackground: Graphics;
-    private xpFill: Graphics;
+    // XP
+    private xpOffsetY: number;
+    private xpBgContainer: Container;
+    private xpBgRect: Graphics;
+    private xpFillContainer: Container;
+    private xpFillRect: Graphics;
     private xpFrame: Graphics;
     private xpTicks: Graphics;
 
-    private maxHp: number = 100;
-    private hp: number = 100;
-    private hpFrameColor: number = 0x000000;
+    // Level + name
+    private lvlFrame: Graphics;
+    private lvlText: Text;
+    private nameText: Text;
 
-    private maxXp: number = 100;
-    private xp: number = 0;
-    private xpFrameColor: number = 0x000000;
+    private maxHp = 100;
+    private hp = 100;
+    private maxXp = 100;
+    private xp = 0;
+    private hpFrameColor = 0x000000;
+    private xpFrameColor = 0x000000;
 
     constructor(
         parent: Container,
         playerName: string,
-        level: number,
         offsetY: number = -30,
         width = 40,
         height = 10
     ) {
         this.container = new Container();
+        this.container.zIndex = 10;
         this.container.y = offsetY;
         this.container.x = -width / 2;
         parent.addChild(this.container);
 
         this.hpwidth = width;
         this.hpheight = height - height / 4;
-        this.xpheight = this.hpheight / 2; // XP bar moins haute
+        this.xpheight = this.hpheight / 2;
+        this.xpOffsetY = this.hpheight + 2;
 
-        // HP graphics
-        this.background = new Graphics();
-        this.health = new Graphics();
-        this.ticks = new Graphics();
-        this.frame = new Graphics();
+        // ===== LEVEL & NAME =====
+        this.lvlFrame = new Graphics()
+            .rect(0, 0, 14, height - height / 4 + this.hpheight / 2)
+            .stroke({ width: 2, color: this.hpFrameColor })
+            .fill({ color: 0x444444 });
+        this.lvlFrame.x = width;
 
-        // XP graphics
-        this.xpBackground = new Graphics();
-        this.xpFill = new Graphics();
-        this.xpTicks = new Graphics();
-        this.xpFrame = new Graphics();
+        const lvlStyle = new TextStyle({ fontFamily: "Arial", fontSize: 8, fill: "#ffffff", stroke: "#000000" });
+        this.lvlText = new Text({ style: lvlStyle });
+        this.lvlText.x = 7;
+        this.lvlText.y = (height - height / 4 + this.hpheight / 2) / 2;
+        this.lvlText.anchor.set(0.3, 0.5);
+        this.lvlText.resolution = 5;
+        this.lvlText.text = "1";
+        this.lvlFrame.addChild(this.lvlText);
+        this.container.addChild(this.lvlFrame);
 
-        this.container.addChild(
-            this.background,
-            this.health,
-            this.ticks,
-            this.frame,
-            this.xpBackground,
-            this.xpFill,
-            this.xpTicks,
-            this.xpFrame
-        );
+        // ===== HP BAR =====
+        // Angle de cisaillement (skew) en radians: tan(angle) = -skew / hpheight
+        const hpShear = Math.atan(-this.skew / this.hpheight);
 
-        this.redraw();
-    }
+        // HP background (gris)
+        this.hpBgRect = new Graphics().rect(0, 0, this.hpwidth, this.hpheight).fill({ color: 0x444444 });
+        this.hpBgContainer = new Container();
+        this.hpBgContainer.addChild(this.hpBgRect);
+        this.hpBgContainer.skew.x = hpShear;
+        // translation: on pousse de +skew pour que le top-left visuel = skew, bottom-left = 0
+        this.hpBgContainer.x = this.skew;
+        this.container.addChild(this.hpBgContainer);
 
-    private drawParallelogram(g: Graphics, width: number, height: number, color: number, offsetY: number) {
-        g.moveTo(this.skew, offsetY);
-        g.lineTo(width + this.skew, offsetY);
-        g.lineTo(width, offsetY + height);
-        g.lineTo(0, offsetY + height);
-        g.closePath();
-        g.fill({ color });
-    }
+        // HP fill (vert)
+        this.hpFillRect = new Graphics().rect(0, 0, this.hpwidth, this.hpheight).fill({ color: 0x00ff00 });
+        this.hpFillContainer = new Container();
+        this.hpFillContainer.addChild(this.hpFillRect);
+        this.hpFillContainer.skew.x = hpShear;
+        this.hpFillContainer.x = this.skew;
+        this.container.addChild(this.hpFillContainer);
 
-    private redraw() {
-        this.background.clear();
-        this.health.clear();
-        this.frame.clear();
-        this.ticks.clear();
-
-        this.xpBackground.clear();
-        this.xpFill.clear();
-        this.xpFrame.clear();
-        this.xpTicks.clear();
-
-        // --- HP BAR ---
-        const hpRatio = this.hp / this.maxHp;
-        this.drawParallelogram(this.background, this.hpwidth, this.hpheight, 0x444444, 0);
-        this.drawParallelogram(this.health, this.hpwidth * hpRatio, this.hpheight, 0x00ff00, 0);
-
-        // Cadre HP
-        this.frame.poly([
+        // HP frame (parallélogramme)
+        this.hpFrame = new Graphics().poly([
             this.skew, 0,
             this.hpwidth + this.skew, 0,
             this.hpwidth, this.hpheight,
             0, this.hpheight
-        ]);
-        this.frame.stroke({ width: 2, color: this.hpFrameColor });
+        ]).stroke({ width: 2, color: this.hpFrameColor });
+        this.container.addChild(this.hpFrame);
 
-        // Ticks HP
-        const hpStep = 30;
-        const hpDivisions = Math.floor(this.maxHp / hpStep);
-        const hpTopLeft = { x: this.skew, y: 0 };
-        const hpTopRight = { x: this.hpwidth + this.skew, y: 0 };
-        const hpBotLeft = { x: 0, y: this.hpheight };
-        const hpBotRight = { x: this.hpwidth, y: this.hpheight };
+        // HP ticks (statique pour un max donné)
+        this.hpTicks = new Graphics();
+        this.container.addChild(this.hpTicks);
+        this.buildHpTicks(); // uses this.maxHp
 
-        for (let i = 1; i < hpDivisions; i++) {
-            const r = i / hpDivisions;
-            const topX = hpTopLeft.x + (hpTopRight.x - hpTopLeft.x) * r;
-            const topY = hpTopLeft.y + (hpTopRight.y - hpTopLeft.y) * r;
-            const botX = hpBotLeft.x + (hpBotRight.x - hpBotLeft.x) * r;
-            const botY = hpBotLeft.y + (hpBotRight.y - hpBotLeft.y) * r;
+        // ===== XP BAR (inversée) =====
+        // Ici on veut bottom décalé à DROITE de +skew par rapport au top
+        // tan(angle) = +skew / xpheight
+        const xpShear = Math.atan(this.skew / this.xpheight);
 
-            this.ticks.moveTo(topX, topY);
-            this.ticks.lineTo(botX, botY);
+        // XP background
+        this.xpBgRect = new Graphics().rect(0, 0, this.hpwidth, this.xpheight).fill({ color: 0x222222 });
+        this.xpBgContainer = new Container();
+        this.xpBgContainer.addChild(this.xpBgRect);
+        this.xpBgContainer.skew.x = xpShear;
+        this.xpBgContainer.y = this.xpOffsetY;
+        this.container.addChild(this.xpBgContainer);
+
+        // XP fill (violet)
+        this.xpFillRect = new Graphics().rect(0, 0, this.hpwidth, this.xpheight).fill({ color: 0x8000ff });
+        this.xpFillContainer = new Container();
+        this.xpFillContainer.addChild(this.xpFillRect);
+        this.xpFillContainer.skew.x = xpShear;
+        this.xpFillContainer.y = this.xpOffsetY;
+        this.container.addChild(this.xpFillContainer);
+
+        // XP frame
+        this.xpFrame = new Graphics().poly([
+            0, this.xpOffsetY,
+            this.hpwidth, this.xpOffsetY,
+            this.hpwidth + this.skew, this.xpOffsetY + this.xpheight,
+            this.skew, this.xpOffsetY + this.xpheight
+        ]).stroke({ width: 2, color: this.xpFrameColor });
+        this.container.addChild(this.xpFrame);
+
+        // XP ticks
+        this.xpTicks = new Graphics();
+        this.container.addChild(this.xpTicks);
+        this.buildXpTicks(); // uses this.maxXp
+
+
+
+        const nameStyle = new TextStyle({ fontFamily: "Arial", fontStyle: "italic", fontSize: 8, fill: "#ffffff", stroke: "#000000" });
+        this.nameText = new Text({ text: playerName, style: nameStyle, resolution: 5 });
+        this.nameText.x = 3;
+        this.nameText.y = -10;
+        this.container.addChild(this.nameText);
+
+        // init ratios
+        this.applyRatios();
+    }
+
+    /** Construit les ticks HP (appelé au ctor et quand maxHp change) */
+    private buildHpTicks(step = 30) {
+        this.hpTicks.clear();
+
+        const divisions = Math.floor(this.maxHp / step);
+        const topLeft = { x: this.skew, y: 0 };
+        const topRight = { x: this.hpwidth + this.skew, y: 0 };
+        const botLeft = { x: 0, y: this.hpheight };
+        const botRight = { x: this.hpwidth, y: this.hpheight };
+
+        for (let i = 1; i < divisions; i++) {
+            const r = i / divisions;
+            const topX = topLeft.x + (topRight.x - topLeft.x) * r;
+            const topY = topLeft.y + (topRight.y - topLeft.y) * r;
+            const botX = botLeft.x + (botRight.x - botLeft.x) * r;
+            const botY = botLeft.y + (botRight.y - botLeft.y) * r;
+
+            this.hpTicks.moveTo(topX, topY);
+            this.hpTicks.lineTo(botX, botY);
         }
-        this.ticks.stroke({ width: 1, color: this.hpFrameColor });
+        this.hpTicks.stroke({ width: 1, color: this.hpFrameColor });
+    }
 
-        // --- XP BAR (juste sous la barre de vie) ---
-        const offsetY = this.hpheight + 2; // petit espace
-        const xpRatio = this.xp / this.maxXp;
-        this.drawParallelogram(this.xpBackground, this.hpwidth, this.xpheight, 0x222222, offsetY);
-        this.drawParallelogram(this.xpFill, this.hpwidth * xpRatio, this.xpheight, 0x8000ff, offsetY);
+    /** Construit les ticks XP (appelé au ctor et quand maxXp change) */
+    private buildXpTicks(step = 10) {
+        this.xpTicks.clear();
 
-        // Cadre XP
-        this.xpFrame.poly([
-            this.skew, offsetY,
-            this.hpwidth + this.skew, offsetY,
-            this.hpwidth, offsetY + this.xpheight,
-            0, offsetY + this.xpheight
-        ]);
-        this.xpFrame.stroke({ width: 2, color: this.xpFrameColor });
+        const divisions = Math.floor(this.maxXp / step);
+        const topLeft = { x: 0, y: this.xpOffsetY };
+        const topRight = { x: this.hpwidth, y: this.xpOffsetY };
+        const botLeft = { x: this.skew, y: this.xpOffsetY + this.xpheight };
+        const botRight = { x: this.hpwidth + this.skew, y: this.xpOffsetY + this.xpheight };
 
-        // Ticks XP
-        const xpStep = 10; // graduation tous les 10 xp
-        const xpDivisions = Math.floor(this.maxXp / xpStep);
-        const xpTopLeft = { x: this.skew, y: offsetY };
-        const xpTopRight = { x: this.hpwidth + this.skew, y: offsetY };
-        const xpBotLeft = { x: 0, y: offsetY + this.xpheight };
-        const xpBotRight = { x: this.hpwidth, y: offsetY + this.xpheight };
-
-        for (let i = 1; i < xpDivisions; i++) {
-            const r = i / xpDivisions;
-            const topX = xpTopLeft.x + (xpTopRight.x - xpTopLeft.x) * r;
-            const topY = xpTopLeft.y + (xpTopRight.y - xpTopLeft.y) * r;
-            const botX = xpBotLeft.x + (xpBotRight.x - xpBotLeft.x) * r;
-            const botY = xpBotLeft.y + (xpBotRight.y - xpBotLeft.y) * r;
+        for (let i = 1; i < divisions; i++) {
+            const r = i / divisions;
+            const topX = topLeft.x + (topRight.x - topLeft.x) * r;
+            const topY = topLeft.y + (topRight.y - topLeft.y) * r;
+            const botX = botLeft.x + (botRight.x - botLeft.x) * r;
+            const botY = botLeft.y + (botRight.y - botLeft.y) * r;
 
             this.xpTicks.moveTo(topX, topY);
             this.xpTicks.lineTo(botX, botY);
@@ -158,15 +199,45 @@ export class PlayerPlate {
         this.xpTicks.stroke({ width: 1, color: this.xpFrameColor });
     }
 
-    public update(hp: number, maxHp: number, xp: number, maxXp: number, level: number) {
-        this.hp = Math.max(0, Math.min(maxHp, hp));
-        this.maxHp = maxHp;
-    
-        this.xp = Math.max(0, Math.min(maxXp, xp));
-        this.xp = 36;
-        this.maxXp = maxXp;
+    /** Applique les ratios en ne scalant QUE les rectangles, pas les conteneurs cisaillés */
+    private applyRatios() {
+        const hpRatio = this.maxHp > 0 ? this.hp / this.maxHp : 0;
+        const xpRatio = this.maxXp > 0 ? this.xp / this.maxXp : 0;
 
-        this.redraw();
+        // clamp
+        const hr = Math.max(0, Math.min(1, hpRatio));
+        const xr = Math.max(0, Math.min(1, xpRatio));
+
+        // Important: scale le RECTANGLE enfant, pas le container (pour ne pas toucher au skew)
+        this.hpFillRect.scale.x = hr;
+        this.xpFillRect.scale.x = xr;
+    }
+
+    public update(hp: number, maxHp: number, xp: number, maxXp: number, level: number) {
+        // clamp et assign
+        this.hp = Math.max(0, Math.min(maxHp, hp));
+        this.xp = Math.max(0, Math.min(maxXp, xp));
+
+        // Rebuild des ticks UNIQUEMENT si le max change (semi-statique = ok pour Graphics)
+        if (maxHp !== this.maxHp) {
+            this.maxHp = maxHp;
+            this.buildHpTicks();
+        } else {
+            this.maxHp = maxHp;
+        }
+
+        if (maxXp !== this.maxXp) {
+            this.maxXp = maxXp;
+            this.buildXpTicks();
+        } else {
+            this.maxXp = maxXp;
+        }
+
+        // Met à jour les barres
+        this.applyRatios();
+
+        // Texte
+        this.lvlText.text = String(level);
     }
 
     public destroy() {

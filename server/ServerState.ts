@@ -15,6 +15,7 @@ export class ServerState {
     }
 
     removeBot(botId:string){
+        this.players.delete(botId);
         this.bots.delete(botId);
     }
 

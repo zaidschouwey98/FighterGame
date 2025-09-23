@@ -23,6 +23,7 @@ import { HumanEventListener } from "./listeners/PlayerEventListener";
 import { BotManager } from "./BotManager";
 import { UpdateSystem } from "./systems/UpdateSystem";
 import { SocketIoAdapter } from "./adapters/SocketIoAdapter";
+import { ProgressionSystem } from "./systems/ProgressionSystem";
 
 
 const app = express();
@@ -51,10 +52,11 @@ const attackSystem = new AttackSystem(serverState,eventBus);
 const movementSystem = new MovementSystem(eventBus, serverState);
 const directionSystem = new DirectionSystem(eventBus, serverState);
 const updateSystem = new UpdateSystem(eventBus,serverState);
+const progressSystem = new ProgressionSystem(serverState,eventBus);
 
 
 
-const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem);
+const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem, progressSystem);
 botManager.spawnBot("bibitee");
 botManager.spawnBot("bibitee");
 

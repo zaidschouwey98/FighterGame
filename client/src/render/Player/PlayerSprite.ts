@@ -29,11 +29,11 @@ export default class PlayerSprite {
         weaponFactory: WeaponFactory
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
-        
+
         // Label au-dessus du joueur
-        
+
         this.playerPlate = new PlayerPlate(this.playerContainer, playerName);
-        
+
 
         this.controller = new AnimController({
             [PlayerState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
@@ -49,9 +49,9 @@ export default class PlayerSprite {
         this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
     }
 
-    public syncPlayer(player: PlayerInfo) {
+    public syncPlayer(player: PlayerInfo, onDeath?: () => void) {
         this.playerPlate.update(player.hp, player.maxHp, player.currentXp, player.lvlXp, player.currentLvl);
-        this.controller.update(player);
+        this.controller.update(player, onDeath);
         this.weapon.setState(player);
         this.weapon.setDirection(player.movingDirection);
     }

@@ -4,8 +4,8 @@ import { PlayerState } from "../../../../shared/PlayerState";
 import type { IAnimState } from "./IAnimState";
 
 export class AnimController {
-  private currentLogical?: PlayerState; 
-  private currentAnim?: IAnimState; 
+  private currentLogical?: PlayerState;
+  private currentAnim?: IAnimState;
 
   /**
    * @param registry  table qui mappe un PlayerState -> instance(s) d’état (IdleAnim, MovingAnim, Attack[], etc.)
@@ -14,12 +14,11 @@ export class AnimController {
   constructor(
     private registry: Partial<Record<PlayerState, IAnimState | IAnimState[]>>,
     private fallback: PlayerState = PlayerState.IDLE
-  ) {}
+  ) { }
 
-  public update(player: PlayerInfo) {
+  public update(player: PlayerInfo, onDeath?: () => void) {
     const logical = player.state;
 
-    // Si l'état logique change OU si c'est une attaque (comboIndex peut changer à chaque coup)
     const needTransition =
       logical !== this.currentLogical ||
       logical === PlayerState.ATTACK;
@@ -27,21 +26,29 @@ export class AnimController {
     if (needTransition) {
       if (this.currentAnim) this.currentAnim.stop();
 
-      const nextAnim = this.resolveAnim(logical, player.attackIndex) 
-                    ?? this.resolveAnim(this.fallback, 0);
+      const nextAnim = this.resolveAnim(logical, player.attackIndex)
+        ?? this.resolveAnim(this.fallback, 0);
 
       this.currentAnim = nextAnim;
       this.currentLogical = logical;
 
-      // enter (one-shot) si dispo
-      if (this.currentAnim?.enter) {
-        this.currentAnim.enter(player);
+      // Si c’est une anim de mort → on passe le callback
+      if (logical === PlayerState.DEAD) {
+        this.currentAnim?.play(player, () => {
+          onDeath?.();
+        });
+        return;
       }
+
+      this.currentAnim?.enter?.(player);
     }
 
-    // tick de l’état courant
-    this.currentAnim?.play(player);
+    // tick normal
+    if (logical !== PlayerState.DEAD) {
+      this.currentAnim?.play(player);
+    }
   }
+
 
   /** Choisit la bonne anim (supporte tableau pour combos) */
   private resolveAnim(state: PlayerState, comboIndex: number): IAnimState | undefined {

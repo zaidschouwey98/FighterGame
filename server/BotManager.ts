@@ -9,6 +9,7 @@ import { MovementSystem } from "./systems/MovementSystem";
 import { UpdateSystem } from "./systems/UpdateSystem";
 import { BotAdapter } from "./adapters/BotAdapter";
 import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+import { ProgressionSystem } from "./systems/ProgressionSystem";
 
 export class BotManager {
     static botCounter: number = 0;
@@ -23,7 +24,8 @@ export class BotManager {
         private attackSystem: AttackSystem,
         private directionSystem: DirectionSystem,
         private movementSystem: MovementSystem,
-        private updateSystem: UpdateSystem
+        private updateSystem: UpdateSystem,
+        private progressionSystem: ProgressionSystem
     ) {
         this.botAdapter = new BotAdapter(
             this,

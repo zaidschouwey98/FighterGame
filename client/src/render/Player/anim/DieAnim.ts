@@ -12,7 +12,7 @@ export class DieAnim implements IAnimState {
 
     }
 
-    public play(player: PlayerInfo) {
+    public play(player: PlayerInfo, stopCallBack?:()=>void) {
         const dir = Direction.BOTTOM
         // si même direction, ne pas reset l'anim
         if (dir === this.lastDir && this.current) return;
@@ -32,6 +32,7 @@ export class DieAnim implements IAnimState {
         dyingAnim.visible = true;
         dyingAnim.animationSpeed = 0.1;
         dyingAnim.currentFrame = 0;
+        dyingAnim.onComplete = stopCallBack;
         dyingAnim.play();
     }
 

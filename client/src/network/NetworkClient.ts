@@ -46,6 +46,10 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_DIED, player);
         });
 
+        this.socket.on(ServerToSocketMsg.PLAYER_PROGRESSED, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_PROGRESSED, player);
+        });
+
         this.socket.on(ServerToSocketMsg.PLAYER_RESPAWNED, (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_RESPAWNED, player);
         });

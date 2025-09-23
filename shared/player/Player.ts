@@ -173,6 +173,11 @@ export class Player {
     public updateFromInfo(info: PlayerInfo) {
         this.position = info.position;
         this.hp = info.hp;
+        this.maxHp = info.maxHp;
+        this.lvlXp = info.lvlXp;
+        this.currentLvl = info.currentLvl;
+        this.currentXp = info.currentXp;
+        this.attackSpeed = info.attackSpeed;
         this.playerName = info.name;
         this.speed = info.speed;
         this.attackDashDuration = info.attackDashDuration;
@@ -183,7 +188,6 @@ export class Player {
         this.mouseDirection = info.mouseDirection;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
-        // this.changeState(info.state);
     }
 
     public toInfo(): PlayerInfo {

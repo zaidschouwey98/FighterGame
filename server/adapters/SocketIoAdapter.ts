@@ -23,13 +23,13 @@ export class SocketIoAdapter {
             res.socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerId:string,socket:Socket})=>{
+        this.eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo,socket:Socket, killerId:string})=>{
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.PLAYER_DIED, {id:res.playerId});
+                this.serverSocket.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo);
                 return;
             }
-            res.socket.emit(ServerToSocketMsg.PLAYER_DIED, {id:res.playerId})
-            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIED, {id:res.playerId});
+            res.socket.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo)
+            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo);
         })
 
         this.eventBus.on(EventBusMessage.PLAYER_DIRECTION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
@@ -54,6 +54,10 @@ export class SocketIoAdapter {
                 return;
             }
             res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, res.playerInfo);
+        })
+
+        this.eventBus.on(EventBusMessage.PLAYER_PROGRESSED, (playerInfo:PlayerInfo)=>{
+            this.serverSocket.emit(ServerToSocketMsg.PLAYER_PROGRESSED, playerInfo);
         })
     }
 }

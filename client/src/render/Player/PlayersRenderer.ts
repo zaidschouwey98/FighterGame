@@ -59,6 +59,12 @@ export default class PlayersRenderer {
         }
     }
 
+    public playerDied(player:PlayerInfo){
+        let playerSprite = this.playerSprites.get(player.id);
+        if (!playerSprite) throw new Error("Dead player shouldn't be already deleted.");
+        playerSprite.syncPlayer(player, ()=>this.removePlayer(player.id));
+    }
+
     public syncPlayers(players: PlayerInfo[]) {
         for (const player of players) {
             let playerSprite = this.playerSprites.get(player.id);

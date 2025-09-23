@@ -15,7 +15,7 @@ export class BotAdapter {
     constructor(
         private botManager: BotManager,
         private serverState: ServerState,
-        private eventBus: EventBus,
+        eventBus: EventBus,
         private attackSystem: AttackSystem,
         private movementSystem: MovementSystem,
         private directionSystem: DirectionSystem,
@@ -48,9 +48,21 @@ export class BotAdapter {
             }
         );
 
-        eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerId:string, socket:any}) => {
+        eventBus.on(
+            EventBusMessage.PLAYER_PROGRESSED,
+            (player: PlayerInfo) => {
+                for (const bot of this.botManager.getBots()) {
+                    if(player.id == bot.id){
+                        bot.updateFromInfo(player)
+                    }
+                        
+                }
+            }
+        );
+
+        eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo, socket:any, killerId:any}) => {
             for (const bot of this.botManager.getBots()) {
-                if(res.playerId == bot.id){
+                if(res.playerInfo.id == bot.id){
                     bot.die();
                     this.botManager.deleteBot(bot.id);
                 }

@@ -1,9 +1,8 @@
-import { Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import { ServerState } from "../ServerState";
 import { AttackData } from "../../shared/AttackData";
 import { AttackResult } from "../../shared/AttackResult";
 import { PlayerState } from "../../shared/PlayerState";
-import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { HitboxValidationService } from "../HitboxValidationService";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
@@ -43,7 +42,6 @@ export class AttackSystem {
             attackResults.push(target);
 
             if (target.hp <= 0 && !target.isDead) {
-                attacker.hp += 20;
                 killNumber++;
                 killedPlayers.push(target);
             }
@@ -58,7 +56,7 @@ export class AttackSystem {
         } as AttackResult, socket:socket})
 
         for (const player of killedPlayers) {
-            this.handlePlayerDeath(player.id,socket);
+            this.handlePlayerDeath(player, attacker.id, socket);
         }
     }
 
@@ -69,10 +67,12 @@ export class AttackSystem {
         }
     }
 
-    private handlePlayerDeath( playerId: string, socket?:Socket) {
-        const player = this.serverState.getPlayer(playerId);
+    private handlePlayerDeath( playerInfo:PlayerInfo, killerId:string, socket?:Socket) {
+        const player = this.serverState.getPlayer(playerInfo.id);
         if (!player) return;
         player.isDead = true;
-        this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerId:playerId, socket:socket });
+        player.state = PlayerState.DEAD;
+        console.log("dswadwad")
+        this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerInfo:this.serverState.getPlayer(playerInfo.id), socket:socket, killerId:killerId });
     }
 }

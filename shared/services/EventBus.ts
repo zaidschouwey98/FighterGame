@@ -15,7 +15,8 @@ export enum EventBusMessage{
     LOCAL_PLAYER_POSITION_UPDATED,
     LOCAL_PLAYER_DIRECTION_UPDATED,
     LOCAL_PLAYER_MOVING,
-    PLAYER_DIRECTION_UPDATED
+    PLAYER_DIRECTION_UPDATED,
+    PLAYER_PROGRESSED
 }
 export class EventBus {
     private listeners: Map<EventBusMessage, EventHandler[]> = new Map();

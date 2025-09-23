@@ -218,7 +218,7 @@ export class PlayerPlate {
         this.hp = Math.max(0, Math.min(maxHp, hp));
         this.xp = Math.max(0, Math.min(maxXp, xp));
 
-        // Rebuild des ticks UNIQUEMENT si le max change (semi-statique = ok pour Graphics)
+        // HP : ticks reconstruits si max change
         if (maxHp !== this.maxHp) {
             this.maxHp = maxHp;
             this.buildHpTicks();
@@ -226,12 +226,8 @@ export class PlayerPlate {
             this.maxHp = maxHp;
         }
 
-        if (maxXp !== this.maxXp) {
-            this.maxXp = maxXp;
-            this.buildXpTicks();
-        } else {
-            this.maxXp = maxXp;
-        }
+        // XP : toujours les mêmes ticks, donc pas de rebuild
+        this.maxXp = maxXp;
 
         // Met à jour les barres
         this.applyRatios();
@@ -239,6 +235,7 @@ export class PlayerPlate {
         // Texte
         this.lvlText.text = String(level);
     }
+
 
     public destroy() {
         this.container.destroy({ children: true });

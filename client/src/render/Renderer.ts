@@ -91,8 +91,8 @@ export class Renderer {
             this._playersRenderer.removePlayer(playerId);
         });
 
-        this._eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
-            this._playersRenderer.removePlayer(player.id)
+        this._eventBus.on(EventBusMessage.PLAYER_DIED, (playerInfo:PlayerInfo) => {
+            this._playersRenderer.playerDied(playerInfo);
         });
     }
 

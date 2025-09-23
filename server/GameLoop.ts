@@ -36,7 +36,7 @@ export class GameLoop {
 
   stop(){
     this.running = false;
-    console.log("Gameloop stoping...");
+    console.log("Gameloop stopping...");
 
     clearInterval(this.interval);
   }

@@ -8,18 +8,20 @@ export abstract class Weapon {
     protected _attackCoolDown:number;
     protected _attackMaxCombo: number;
     protected _attackCurrentCombo: number;
+    protected _knockbackStrength: number;
 
-    constructor(weaponDamage:number, attackCoolDown:number, attackMaxCombo:number){
+    constructor(weaponDamage:number, attackCoolDown:number, attackMaxCombo:number, knockbackStrength:number){
         this._weaponDamage = weaponDamage;
         this._attackCoolDown = attackCoolDown;
         this._attackMaxCombo = attackMaxCombo;
+        this._knockbackStrength = knockbackStrength;
         this._attackCurrentCombo = 0;
     }
 
     public resetCombo(){
         this._attackCurrentCombo = 0;
     }
-    
+
     public get attackCurrentCombo(): number{
         return this._attackCurrentCombo;
     }

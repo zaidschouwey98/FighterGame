@@ -9,7 +9,7 @@ import { HEAVY_SWORD_ATTACK_1_BASE_DURATION, HEAVY_SWORD_ATTACK_3_BASE_DURATION,
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;
     constructor() {
-        super(20, HEAVY_SWORD_CD, 3)
+        super(20, HEAVY_SWORD_CD, 3, 10)
     }
 
     public useWeapon(playerPos: Position, attackDir: number): AttackData {
@@ -18,7 +18,7 @@ export class HeavySword extends Weapon {
             playerId: "",
             position: playerPos,
             rotation: attackDir,
-            knockbackStrength: 20,
+            knockbackStrength: this._knockbackStrength,
             playerAction: PlayerState.ATTACK,
             attackIndex:this._attackCurrentCombo,
         };

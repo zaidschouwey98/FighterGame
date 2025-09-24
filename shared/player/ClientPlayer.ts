@@ -128,40 +128,7 @@ export class ClientPlayer extends Player {
         if (!nextState.canEnter()) return;
         this.currentState.exit();
         this.currentState = nextState;
+        this.state = nextState.name;
         nextState.enter();
-    }
-
-    get state(): PlayerState {
-        return this.currentState.name;
-    }
-
-    public toInfo(): PlayerInfo {
-        return {
-            entityType: EntityType.PLAYER,
-            position: this.position,
-            maxHp: this.maxHp,
-            hp: this.hp,
-            speed: this.speed,
-            attackDashDuration: this.attackDashDuration,
-            attackDashMaxSpeed: this.attackDashMaxSpeed,
-            attackDashTimer: this.attackDashTimer,
-            attackIndex: this.attackIndex,
-            mouseDirection: this.mouseDirection,
-            knockbackReceivedVector: this.knockbackReceivedVector,
-            movingDirection: this.movingDirection,
-            isDead: this.isDead,
-            name: this.playerName,
-            id: this.id,
-            state: this.state,
-            killCounter: this.killCounter,
-            killStreak: this.killStreak,
-            weapon: this.weapon.name,
-            movingVector: this.movingVector,
-            attackSpeed: this.attackSpeed,
-            radius: this.radius,
-            currentXp: this.currentXp,
-            lvlXp: this.lvlXp,
-            currentLvl: this.currentLvl,
-        };
     }
 }

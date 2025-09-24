@@ -5,6 +5,7 @@ import type PlayerInfo from "../PlayerInfo";
 import type { Weapon } from "./weapons/Weapon";
 import { HeavySword } from "./weapons/HeavySword";
 import { Entity } from "./Entity";
+import { PlayerState } from "../PlayerState";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -17,6 +18,7 @@ export class Player extends Entity {
     public weapon: Weapon = new HeavySword();
     public killCounter = 0;
     public killStreak = 0;
+    public state: PlayerState = PlayerState.IDLE;
     
     public attackIndex = 0;
     public attackSpeed = 1;
@@ -77,7 +79,7 @@ export class Player extends Entity {
             isDead: this.isDead,
             name: this.playerName,
             id: this.id,
-            state: undefined as any,
+            state: this.state,
             killCounter: this.killCounter,
             killStreak: this.killStreak,
             weapon: this.weapon.name,

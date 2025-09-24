@@ -2,18 +2,14 @@ import { PlayerState } from "./PlayerState";
 import { Direction } from "./Direction";
 import Position from "./Position";
 import { WeaponType } from "./WeaponType";
+import { EntityInfo } from "./EntityInfo";
+import { EntityType } from "./EntityType";
 
-export default interface PlayerInfo {
+export default interface PlayerInfo extends EntityInfo{
     mouseDirection: { x: number; y: number; };
-    position: Position;
-    hp: number;
-    maxHp: number;
-    speed: number;
-    id: string;
     name?:string;
     state:PlayerState;
     movingDirection:Direction;
-    movingVector: {dx:number, dy:number};
     weapon:WeaponType;
     currentXp:number;
     lvlXp: number;
@@ -21,7 +17,7 @@ export default interface PlayerInfo {
 
     killStreak:number;
     killCounter:number;
-
+    entityType: EntityType.PLAYER;
     pendingAttack?: boolean;
     attackIndex: number;
     attackSpeed: number;
@@ -31,7 +27,4 @@ export default interface PlayerInfo {
     attackDashMaxSpeed: number;
 
     knockbackReceivedVector?: { x: number; y: number };
-
-    isDead:boolean;
-
 }

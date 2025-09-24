@@ -47,7 +47,7 @@ export class MovingState extends BaseState {
       return;
     }
     // Déplacement
-    MovementService.movePlayer(this.player, dx, dy, delta);
+    MovementService.moveEntity(this.player, dx, dy, delta);
 
     // Direction
     if (dy < 0) this.player.movingDirection = Direction.TOP;

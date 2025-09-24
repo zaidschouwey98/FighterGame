@@ -50,6 +50,7 @@ export class HumanEventListener {
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
             const player: PlayerInfo = {
                 id: this.socket.id,
+                radius:10,
                 name: name?.trim(),
                 position: { x: 0, y: 0 },
                 hp: 100,

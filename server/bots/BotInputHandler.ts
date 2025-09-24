@@ -1,4 +1,5 @@
 import { IInputHandler } from "../../client/src/core/IInputHandler";
+import { EntityInfo } from "../../shared/EntityInfo";
 import type PlayerInfo from "../../shared/PlayerInfo";
 
 export class BotInputHandler implements IInputHandler {
@@ -8,13 +9,13 @@ export class BotInputHandler implements IInputHandler {
     private rightClick = false;
     private space = false;
 
-    public think(self: PlayerInfo, others: PlayerInfo[], attackDist = 90, dangerDist = 70) {
+    public think(self: PlayerInfo, others: EntityInfo[], attackDist = 90, dangerDist = 70) {
         this.keys.clear();
         this.attack = false;
         this.rightClick = false;
         this.space = false;
 
-        let target: PlayerInfo | undefined;
+        let target: EntityInfo | undefined;
         let best = Infinity;
 
         for (const p of others) {

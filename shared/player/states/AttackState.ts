@@ -38,7 +38,7 @@ export class AttackState extends BaseState {
     let v = this.movementService.getMovementDelta();
     v.dx = v.dx / 2;
     v.dy = v.dy / 2;
-    MovementService.movePlayer(this.player, v.dx, v.dy, delta, this.player.speed / 3)
+    MovementService.moveEntity(this.player, v.dx, v.dy, delta, this.player.speed / 3)
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.player.toInfo());
 
     this.timer -= delta;

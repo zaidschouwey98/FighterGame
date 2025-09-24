@@ -1,9 +1,10 @@
 import type { Player } from "../player/Player";
-import type PlayerInfo from "../PlayerInfo";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
+import { EntityInfo } from "../EntityInfo";
+import Position from "../Position";
 
 export class MovementService {
-  constructor(private inputHandler: IInputHandler) {}
+  constructor(private inputHandler: IInputHandler) { }
 
   public getMovementDelta(): { dx: number; dy: number } {
     let dx = 0, dy = 0;
@@ -16,14 +17,27 @@ export class MovementService {
     return { dx, dy };
   }
 
-  public static movePlayer(player: Player | PlayerInfo, dx: number, dy: number, delta: number, speed:number = player.speed) {
-    if (dx === 0 && dy === 0) return;
-    if(Math.abs(dx) > 1 || Math.abs(dy) > 1)
+  public static calculateNextPos(entity: EntityInfo, delta:number): Position {
+    let dx = entity.movingVector.dx;
+    let dy = entity.movingVector.dy;
+    const speed = entity.speed;
+    if (dx === 0 && dy === 0) return entity.position;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1)
       throw new Error("Should be normalized vector");
     const length = Math.sqrt(dx * dx + dy * dy);
     dx /= length;
     dy /= length;
-    player.position.x += dx * speed/4 * delta;
-    player.position.y += dy * speed/4 * delta;
+    return {x: entity.position.x + dx * speed / 4 * delta, y:entity.position.y + dy * speed / 4 * delta};
+  }
+
+  public static moveEntity(player: Player | EntityInfo, dx: number, dy: number, delta: number, speed: number = player.speed) {
+    if (dx === 0 && dy === 0) return;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1)
+      throw new Error("Should be normalized vector");
+    const length = Math.sqrt(dx * dx + dy * dy);
+    dx /= length;
+    dy /= length;
+    player.position.x += dx * speed / 4 * delta;
+    player.position.y += dy * speed / 4 * delta;
   }
 }

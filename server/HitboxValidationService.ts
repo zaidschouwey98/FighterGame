@@ -1,3 +1,4 @@
+import { EntityInfo } from "../shared/EntityInfo";
 import PlayerInfo from "../shared/PlayerInfo"
 
 // server/HitboxValidationService.ts
@@ -27,7 +28,7 @@ export class HitboxValidationService {
 
     static getTargetsInHitbox(
         hitbox: any,
-        players: PlayerInfo[],
+        players: EntityInfo[],
         excludePlayerId: string
     ): string[] {
         const hitPlayers: string[] = [];

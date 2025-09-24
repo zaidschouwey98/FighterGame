@@ -57,8 +57,8 @@ const progressSystem = new ProgressionSystem(serverState,eventBus);
 
 
 const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem, progressSystem);
-botManager.spawnBot("bibitee");
-botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
+// botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);
 io.on("connection", (socket: Socket) => {

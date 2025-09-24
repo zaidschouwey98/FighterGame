@@ -38,6 +38,7 @@ export class Player {
     public currentXp:number = 0;
     public lvlXp: number = 100;
     public currentLvl: number = 1;
+    public radius: number = 10;
 
     public weapon: Weapon;
 
@@ -110,7 +111,7 @@ export class Player {
     }
 
 
-
+    // TODO METTRE CA DANS UN SERVICE AVEC (concernedPlayerm, attackresult etc...) comme ça utilisation du coté serveur et client
     public handleAttackReceived(attackResult: AttackResult, getPlayerPosition: (id: string) => Position) {
 
         const hitPlayers = attackResult.hitPlayers;
@@ -188,6 +189,7 @@ export class Player {
         this.mouseDirection = info.mouseDirection;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
+        this.radius = info.radius;
     }
 
     public toInfo(): PlayerInfo {
@@ -212,7 +214,7 @@ export class Player {
             weapon: this.weapon.name,
             movingVector: this.movingVector,
             attackSpeed: this.attackSpeed,
-
+            radius: this.radius,
             currentXp: this.currentXp,
             lvlXp: this.lvlXp,
             currentLvl: this.currentLvl,

@@ -1,6 +1,7 @@
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { ServerState } from "../ServerState";
+import { Player } from "../../shared/player/Player";
 
 export class ProgressionSystem {
     constructor(private serverState: ServerState, private eventBus: EventBus) {
@@ -17,11 +18,11 @@ export class ProgressionSystem {
             this.gainXp(killer, killer.currentLvl <= playerInfo.currentLvl ? this.getXpByKilledLevel(playerInfo.currentLvl)/2 : 100);
 
             this.checkLevelUp(killer);
-            this.eventBus.emit(EventBusMessage.PLAYER_PROGRESSED, killer);
+            this.eventBus.emit(EventBusMessage.PLAYER_PROGRESSED, killer.toInfo());
         });
     }
 
-    private gainXp(player: PlayerInfo, amount: number) {
+    private gainXp(player: Player, amount: number) {
         player.currentXp += amount;
     }
 
@@ -35,7 +36,7 @@ export class ProgressionSystem {
         return total;
     }
 
-    private checkLevelUp(player: PlayerInfo) {
+    private checkLevelUp(player: Player) {
         if (player.currentXp >= player.lvlXp) {
             player.currentXp -= player.lvlXp;
             player.currentLvl++;

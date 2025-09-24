@@ -6,6 +6,7 @@ import type { Weapon } from "./weapons/Weapon";
 import { HeavySword } from "./weapons/HeavySword";
 import { Entity } from "./Entity";
 import { PlayerState } from "../PlayerState";
+import { EntityInfo } from "../EntityInfo";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -42,24 +43,31 @@ export class Player extends Entity {
     }
 
     public updateFromInfo(info: PlayerInfo) {
+        this.entityType = EntityType.PLAYER;
         this.position = info.position;
-        this.hp = info.hp;
         this.maxHp = info.maxHp;
-        this.lvlXp = info.lvlXp;
-        this.currentLvl = info.currentLvl;
-        this.currentXp = info.currentXp;
-        this.attackSpeed = info.attackSpeed;
-        this.playerName = info.name;
+        this.hp = info.hp;
         this.speed = info.speed;
         this.attackDashDuration = info.attackDashDuration;
         this.attackDashMaxSpeed = info.attackDashMaxSpeed;
         this.attackDashTimer = info.attackDashTimer;
         this.attackIndex = info.attackIndex;
-        this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.mouseDirection = info.mouseDirection;
+        this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
+        this.playerName = info.name;
+        this.id = info.id;
+        this.state = info.state;
+        this.killCounter = info.killCounter;
+        this.killStreak = info.killStreak;
+        // this.weapon = info.weapon;
+        this.movingVector = info.movingVector;
+        this.attackSpeed = info.attackSpeed;
         this.radius = info.radius;
+        this.currentXp = info.currentXp;
+        this.lvlXp = info.lvlXp;
+        this.currentLvl = info.currentLvl;
     }
 
     public toInfo(): PlayerInfo {
@@ -90,5 +98,11 @@ export class Player extends Entity {
             lvlXp: this.lvlXp,
             currentLvl: this.currentLvl,
         };
+    }
+
+    public onCollideWith(entity: EntityInfo): void {
+        if(entity.entityType == EntityType.PROJECTILE){
+            
+        }
     }
 }

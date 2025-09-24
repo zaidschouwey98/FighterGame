@@ -24,7 +24,7 @@ export class HumanEventListener {
         private serverState: ServerState
     ) {
         socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
-        socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, this.serverState.getPlayers());
+        socket.emit(ServerToSocketMsg.CURRENT_PLAYERS, this.serverState.getPlayersAsInfo());
     }
 
     register() {
@@ -50,36 +50,11 @@ export class HumanEventListener {
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
-            // const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10);
-            const player: PlayerInfo = {
-                entityType:EntityType.PLAYER,
-                id: this.socket.id,
-                radius:10,
-                name: name?.trim(),
-                position: { x: 0, y: 0 },
-                hp: 100,
-                maxHp:100,
-                speed: 10,
-                mouseDirection: { x: 0, y: 0 },
-                state: PlayerState.IDLE,
-                movingDirection: Direction.BOTTOM,
-                attackIndex: 0,
-                attackDashMaxSpeed: 3,
-                isDead: false,
-                killCounter: 0,
-                killStreak: 0,
-                movingVector: { dx: 0, dy: 0 },
-                attackSpeed:1,
-                weapon: WeaponType.HEAVY_SWORD,
-                lvlXp:100,
-                currentLvl:1,
-                currentXp:0,
-            };
-        
+            const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10);
             this.serverState.addPlayer(player);
-            console.log(`Spawn player ${player.name} (${this.socket.id})`);
-            this.socket.emit(ServerToSocketMsg.NEW_PLAYER, player);
-            this.socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, player);
+            console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
+            this.socket.emit(ServerToSocketMsg.NEW_PLAYER, player.toInfo());
+            this.socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, player.toInfo());
         });
         this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, () => {
             const player = this.serverState.getPlayer(this.socket.id);
@@ -89,10 +64,8 @@ export class HumanEventListener {
             player.isDead = false;
             player.position = { x: 0, y: 0 };
             player.state = PlayerState.IDLE;
-
-            this.socket.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
-            this.socket.broadcast.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player);
-
+            this.socket.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player.toInfo());
+            this.socket.broadcast.emit(ServerToSocketMsg.PLAYER_RESPAWNED, player.toInfo());
         });
     }
 }

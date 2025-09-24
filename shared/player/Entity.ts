@@ -17,5 +17,7 @@ export abstract class Entity {
 
     public abstract updateFromInfo(info: EntityInfo):void;
 
+    public abstract onCollideWith(entity: EntityInfo):void;
+
     public abstract toInfo(): EntityInfo;
 }

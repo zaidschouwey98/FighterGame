@@ -36,14 +36,14 @@ export class AttackSystem {
             if (target.state !== PlayerState.BLOCKING) {
                 target.hp -= damage;
             } else {
-                blockedBy = target;
+                blockedBy = target.toInfo();
             }
 
-            attackResults.push(target);
+            attackResults.push(target.toInfo());
 
             if (target.hp <= 0 && !target.isDead) {
                 killNumber++;
-                killedPlayers.push(target);
+                killedPlayers.push(target.toInfo());
             }
         }
         this.eventBus.emit(EventBusMessage.ATTACK_RESULT,{attackResult:{
@@ -63,7 +63,7 @@ export class AttackSystem {
     public handleStartAttack(playerInfo:PlayerInfo, socket?:Socket) {
         if (this.serverState.playerExists(playerInfo.id)) {
             this.serverState.updatePlayer(playerInfo);
-            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id), socket:socket})
+            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket})
         }
     }
 
@@ -72,7 +72,6 @@ export class AttackSystem {
         if (!player) return;
         player.isDead = true;
         player.state = PlayerState.DEAD;
-        console.log("dswadwad")
-        this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerInfo:this.serverState.getPlayer(playerInfo.id), socket:socket, killerId:killerId });
+        this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket, killerId:killerId });
     }
 }

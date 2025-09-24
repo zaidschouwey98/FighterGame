@@ -12,6 +12,6 @@ export class DirectionSystem {
         if (!player) return;
 
         this.serverState.updatePlayer(playerInfo);
-        this.eventBus.emit(EventBusMessage.PLAYER_DIRECTION_UPDATED, { playerInfo: this.serverState.getPlayer(playerInfo.id), socket: socket })
+        this.eventBus.emit(EventBusMessage.PLAYER_DIRECTION_UPDATED, { playerInfo: this.serverState.getPlayer(playerInfo.id).toInfo(), socket: socket })
     }
 }

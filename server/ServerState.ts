@@ -1,19 +1,21 @@
 import { EntityInfo } from "../shared/EntityInfo";
 import { EntityType } from "../shared/EntityType";
+import { Entity } from "../shared/player/Entity";
+import { Player } from "../shared/player/Player";
 import PlayerInfo from "../shared/PlayerInfo";
 import { Projectile } from "../shared/Projectile";
 import { CollisionService } from "../shared/services/CollisionService";
 import { MovementService } from "../shared/services/MovementService";
 
 export class ServerState {
-    private entities: Map<string, EntityInfo> = new Map;
+    private entities: Map<string, Entity> = new Map;
     private bots: Set<string> = new Set();
 
-    addPlayer(player: EntityInfo) {
+    addPlayer(player: Player) {
         this.entities.set(player.id, player);
     }
 
-    addBot(bot: EntityInfo) {
+    addBot(bot: Player) {
         this.bots.add(bot.id);
         this.entities.set(bot.id, bot)
     }
@@ -29,26 +31,31 @@ export class ServerState {
 
     updatePlayer(playerInfo: PlayerInfo) {
         if (!this.entities.has(playerInfo.id)) throw new Error("Trying to update player not in map");
-        this.entities.set(playerInfo.id, playerInfo);
+        this.entities.get(playerInfo.id)?.updateFromInfo(playerInfo);
     }
 
     removePlayer(id: string) {
         this.entities.delete(id);
     }
 
-    getPlayers(): EntityInfo[] {
+    getPlayers(): Player[] {
         return Array.from(this.entities.values())
-            .filter((e): e is PlayerInfo => e.entityType === EntityType.PLAYER);
+            .filter((e): e is Player => e.entityType === EntityType.PLAYER);
     }
 
-    getProjectiles(): Projectile[] {
+    getPlayersAsInfo(): PlayerInfo[] {
         return Array.from(this.entities.values())
-            .filter((e): e is Projectile => e.entityType === EntityType.PROJECTILE);
+            .filter((e): e is Player => e.entityType === EntityType.PLAYER).map((val)=>val.toInfo());
     }
 
-    getPlayer(id: string): PlayerInfo {
+    // getProjectiles(): Projectile[] {
+    //     return Array.from(this.entities.values())
+    //         .filter((e): e is Projectile => e.entityType === EntityType.PROJECTILE);
+    // }
+
+    getPlayer(id: string): Player {
         if (!this.entities.has(id)) throw new Error("Trying to get unset player.");
-        return this.entities.get(id) as PlayerInfo;
+        return this.entities.get(id) as Player;
     }
 
     updatePlayers(delta: number) {
@@ -56,7 +63,6 @@ export class ServerState {
             if (this.bots.has(p.id))
                 continue;
             let t = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));
-            console.log(t);
             MovementService.moveEntity(p, p.movingVector.dx, p.movingVector.dy, delta);
         }
     }

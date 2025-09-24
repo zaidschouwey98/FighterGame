@@ -1,9 +1,9 @@
 import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type { Player } from "../Player";
 import type { AttackService } from "../../services/AttackService";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { MovementService } from "../../services/MovementService";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class AttackState extends BaseState {
   readonly name = PlayerState.ATTACK;
@@ -12,7 +12,7 @@ export class AttackState extends BaseState {
   private attackDone: boolean = false
   private timer = 40;
 
-  constructor(player: Player, private attackService: AttackService, private movementService: MovementService, private eventBus: EventBus) {
+  constructor(player: ClientPlayer, private attackService: AttackService, private movementService: MovementService, private eventBus: EventBus) {
     super(player);
   }
 

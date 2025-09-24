@@ -3,11 +3,12 @@ import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import type { Player } from "../Player";
 import { BaseState } from "./BaseState";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class KnockBackState extends BaseState {
     readonly name = PlayerState.KNOCKBACK;
     constructor(
-        player: Player,
+        player: ClientPlayer,
         private eventBus: EventBus,
         private inputHandler: IInputHandler,
         private knockbackVector: { x: number; y: number },

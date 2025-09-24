@@ -4,11 +4,12 @@ import type { AttackService } from "../../services/AttackService";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class AttackDashState extends BaseState {
     readonly name = PlayerState.ATTACK_DASH;
 
-    constructor(player: Player, private attackService: AttackService, private eventBus: EventBus, private inputHandler: IInputHandler) {
+    constructor(player: ClientPlayer, private attackService: AttackService, private eventBus: EventBus, private inputHandler: IInputHandler) {
         super(player);
     }
 

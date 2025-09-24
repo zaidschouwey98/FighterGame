@@ -60,21 +60,21 @@ export class BotAdapter {
             }
         );
 
-        eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo, socket:any, killerId:any}) => {
-            for (const bot of this.botManager.getBots()) {
-                if(res.playerInfo.id == bot.id){
-                    bot.die();
-                    this.botManager.deleteBot(bot.id);
-                }
+        // eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo, socket:any, killerId:any}) => {
+        //     for (const bot of this.botManager.getBots()) {
+        //         if(res.playerInfo.id == bot.id){
+        //             bot.die();
+        //             this.botManager.deleteBot(bot.id);
+        //         }
                     
-            }
-        });
+        //     }
+        // });
 
-        eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult, socket:any}) => {
-            for (const bot of this.botManager.getBots()) {
-                bot.handleAttackReceived(res.attackResult, (id)=>this.serverState.getPlayer(id).position);
-            }
+        // eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult, socket:any}) => {
+        //     for (const bot of this.botManager.getBots()) {
+        //         bot.handleAttackReceived(res.attackResult, (id)=>this.serverState.getPlayer(id).position);
+        //     }
             
-        })
+        // })
     }
 }

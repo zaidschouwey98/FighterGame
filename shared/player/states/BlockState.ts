@@ -1,16 +1,16 @@
 import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type { Player } from "../Player";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { BLOCK_DURATION } from "../../constantes";
 import type { BlockService } from "../../services/BlockService";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class BlockState extends BaseState {
     readonly name = PlayerState.BLOCKING;
     private blockDuration = BLOCK_DURATION;
     constructor(
-        player: Player,
+        player: ClientPlayer,
         private eventBus: EventBus,
         private blockService: BlockService,
         private inputHandler:IInputHandler,
@@ -26,7 +26,8 @@ export class BlockState extends BaseState {
 
     enter() {
         // Indiquer que le joueur est en blocage
-        this.blockService.startBlock(this.player,this.blockDuration)
+        this.blockDuration = BLOCK_DURATION
+        this.blockService.startBlock(this.player)
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
 
@@ -34,17 +35,16 @@ export class BlockState extends BaseState {
         if(this.inputHandler.consumeAttack()){
             this.player.changeState(this.player.attackState);
         }
-        if (this.player.blockTimer !== undefined) {
-            this.player.blockTimer -= delta;
-            if (this.player.blockTimer <= 0) {
-                this.blockService.resetBlockCD();
-                this.player.changeState(this.player.idleState);
-                return;
-            }
+        
+        this.blockDuration -= delta;
+        if (this.blockDuration <= 0) {
+            this.blockService.resetBlockCD();
+            this.player.changeState(this.player.idleState);
+            return;
         }
+        
     }
 
     exit() {
-        this.player.blockTimer = undefined;
     }
 }

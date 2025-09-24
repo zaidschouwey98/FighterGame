@@ -1,12 +1,12 @@
 import { PlayerState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
-import type { Player } from "../Player";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class DieState extends BaseState {
   readonly name = PlayerState.DEAD;
 
-  constructor(player: Player, private eventBus: EventBus) {
+  constructor(player: ClientPlayer, private eventBus: EventBus) {
     super(player);
   }
 

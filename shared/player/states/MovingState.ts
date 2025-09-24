@@ -5,13 +5,14 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
 import type { Player } from "../Player";
 import { BaseState } from "./BaseState";
+import { ClientPlayer } from "../ClientPlayer";
 
 export class MovingState extends BaseState {
   readonly name = PlayerState.MOVING;
   private lastDx:number;
   private lastDy:number;
   constructor(
-    player: Player,
+    player: ClientPlayer,
     private inputHandler:IInputHandler,
     private movementService: MovementService,
     private eventBus: EventBus

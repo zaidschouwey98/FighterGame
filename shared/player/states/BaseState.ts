@@ -1,9 +1,8 @@
-// core/player/states/BaseState.ts
-import type { Player } from "../Player";
 import { PlayerState } from "../../PlayerState";
+import { ClientPlayer } from "../ClientPlayer";
 
 export abstract class BaseState {
-  constructor(protected player: Player) {}
+  constructor(protected player: ClientPlayer) {}
 
   abstract readonly name: PlayerState;
 

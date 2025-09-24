@@ -1,5 +1,4 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import { Player } from "../../shared/player/Player";
 import type { AttackResult } from "../../shared/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
@@ -10,6 +9,7 @@ import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
+import { ClientPlayer } from "../../shared/player/ClientPlayer";
 
 export class GameController {
     private gameState: GameState;
@@ -19,7 +19,7 @@ export class GameController {
     private localPlayerId: string | null = null;
     private currentChunkX?: number;
     private currentChunkY?: number;
-    private localPlayer: Player | undefined;
+    private localPlayer: ClientPlayer | undefined;
     private networkClient: NetworkClient;
 
     // Services
@@ -71,12 +71,12 @@ export class GameController {
         // Nouveau joueur
         this.eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
             if (player.id === this.localPlayerId) {
-                this.localPlayer = new Player(
+                this.localPlayer = new ClientPlayer(
+                    this.localPlayerId,
                     player.name,
                     player.position,
                     player.hp,
                     player.speed,
-                    this.localPlayerId!,
                     this.eventBus,
                     this.inputHandler,
                 );

@@ -11,6 +11,8 @@ import { PlayerState } from "../../shared/PlayerState";
 import { Direction } from "../../shared/Direction";
 import { WeaponType } from "../../shared/WeaponType";
 import { UpdateSystem } from "../systems/UpdateSystem";
+import { EntityType } from "../../shared/EntityType";
+import { Player } from "../../shared/player/Player";
 
 export class HumanEventListener {
     constructor(
@@ -48,7 +50,9 @@ export class HumanEventListener {
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
+            // const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10);
             const player: PlayerInfo = {
+                entityType:EntityType.PLAYER,
                 id: this.socket.id,
                 radius:10,
                 name: name?.trim(),
@@ -71,6 +75,7 @@ export class HumanEventListener {
                 currentLvl:1,
                 currentXp:0,
             };
+        
             this.serverState.addPlayer(player);
             console.log(`Spawn player ${player.name} (${this.socket.id})`);
             this.socket.emit(ServerToSocketMsg.NEW_PLAYER, player);

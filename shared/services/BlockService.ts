@@ -18,8 +18,7 @@ export class BlockService {
     this.blockCooldown = BLOCK_COOLDOWN;
   }
 
-  public startBlock(player: Player, blockDuration:number) {
-    player.blockTimer = blockDuration;
+  public startBlock(player: Player) {
     const worldMousePos = this.inputHandler.getMousePosition();
     const dx = worldMousePos.x - player.position.x;
     const dy = worldMousePos.y - player.position.y;

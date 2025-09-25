@@ -16,7 +16,8 @@ export class Projectile extends Entity {
         readonly ownerId: string,
         public damage: number,
         readonly knockbackStrength: number,
-        projectileCollisionHandler: IEntityCollisionHandler
+        projectileCollisionHandler: IEntityCollisionHandler,
+        private onTimeOut: ()=>void
     ) {
         super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);
     }
@@ -46,7 +47,7 @@ export class Projectile extends Entity {
         MovementService.moveEntity(this, delta);
         this.lifeTime -= delta;
         if(this.lifeTime < 0)
-            this.isDead = true;
+            this.onTimeOut();
     }
 
 }

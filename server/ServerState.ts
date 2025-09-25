@@ -85,13 +85,6 @@ export class ServerState {
 
     updatePlayers(delta: number) {
         for (const p of this.entities.values()) {
-            if(p.hp <= 0 || p.isDead){
-                p.isDead = true;
-                p.state = EntityState.DEAD;
-                // this.eventBus.emit(EventBusMessage.ENTITY_DIED, { entityInfo: p.toInfo()});
-                // this.entities.delete(p.id);
-            }
-
             if (this.bots.has(p.id))
                 continue;
             let ovEnts = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));

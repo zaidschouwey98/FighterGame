@@ -4,13 +4,15 @@ import { AttackDataBase, AttackType } from "../../shared/AttackData";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { AttackHandler, MeleeAttackHandler, ProjectileAttackHandler } from "./AttackHandler";
+import { DamageSystem } from "./DamageSystem";
 
 export class AttackSystem {
     private handlers: Map<AttackType, AttackHandler> = new Map()
 
     constructor(private serverState: ServerState, private eventBus:EventBus) { 
-        this.handlers.set(AttackType.MELEE, new MeleeAttackHandler(serverState, eventBus));
-        this.handlers.set(AttackType.PROJECTILE, new ProjectileAttackHandler(serverState, eventBus));
+        const damageSystem = new DamageSystem(serverState,eventBus);
+        this.handlers.set(AttackType.MELEE, new MeleeAttackHandler(serverState, eventBus, damageSystem));
+        this.handlers.set(AttackType.PROJECTILE, new ProjectileAttackHandler(serverState, eventBus, damageSystem));
     }
 
     handleAttack(data: AttackDataBase, socket?:Socket) {

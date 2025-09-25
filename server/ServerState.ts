@@ -88,8 +88,8 @@ export class ServerState {
             if(p.hp <= 0 || p.isDead){
                 p.isDead = true;
                 p.state = EntityState.DEAD;
-                this.eventBus.emit(EventBusMessage.ENTITY_DIED, { entityInfo: p.toInfo()});
-                this.entities.delete(p.id);
+                // this.eventBus.emit(EventBusMessage.ENTITY_DIED, { entityInfo: p.toInfo()});
+                // this.entities.delete(p.id);
             }
 
             if (this.bots.has(p.id))

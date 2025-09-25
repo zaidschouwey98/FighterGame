@@ -24,7 +24,7 @@ export class SocketIoAdapter {
             res.socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{entityInfo:EntityInfo})=>{
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{entityInfo:EntityInfo, killerId:string})=>{
             this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res.entityInfo);
         })
 

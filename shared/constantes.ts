@@ -20,3 +20,4 @@ export const HEAVY_SWORD_CD = 20;
 
 // gun
 export const GUN_ATTACK_BASE_DURATION = 20;
+export const FIREBALL_SPEED = 30;

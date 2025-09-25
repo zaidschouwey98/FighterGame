@@ -3,12 +3,11 @@ import Position from "../Position";
 import { Direction } from "../Direction";
 import type PlayerInfo from "../PlayerInfo";
 import type { Weapon } from "./weapons/Weapon";
-import { HeavySword } from "./weapons/HeavySword";
 import { Entity } from "./Entity";
 import { PlayerState } from "../PlayerState";
-import { EntityInfo } from "../EntityInfo";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 import { Gun } from "./weapons/Gun";
+import { MovementService } from "../services/MovementService";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -43,6 +42,10 @@ export class Player extends Entity {
     ) {
         super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, speed, false, EntityType.PLAYER, playerCollisionHandler);
         this.playerName = playerName;
+    }
+
+    public update(delta: number): void {
+        MovementService.moveEntity(this, delta);
     }
 
     public updateFromInfo(info: PlayerInfo) {

@@ -34,6 +34,7 @@ export default class EntityRenderer {
         switch (entityInfo.entityType) {
             case EntityType.PLAYER:
                 const player = entityInfo as PlayerInfo;
+                container.label = "PlayerContainer"
                 sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", new WeaponFactory(player.weapon!));
                 break;
             // case EntityType.MOB:
@@ -41,7 +42,8 @@ export default class EntityRenderer {
             //     break;
             case EntityType.PROJECTILE:
                 const projectile = entityInfo as ProjectileInfo;
-                sprite = new ProjectileSprite(this._terrainContainer,this.spriteSheets);
+                container.label = "ProjectileContainer"
+                sprite = new ProjectileSprite(Math.atan2(projectile.movingVector.dy, projectile.movingVector.dx),container,this.spriteSheets);
 
                 break;
             // case EntityType.OBJECT:

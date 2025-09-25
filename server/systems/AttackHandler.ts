@@ -78,7 +78,7 @@ export class ProjectileAttackHandler implements AttackHandler {
     handle(data: ProjectileAttackData, serverState: ServerState, socket?:Socket): void {
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
-        let proj = new Projectile(data.position, {dx:dx, dy:dy}, data.playerId, 20, 20, new ServerProjectileCollisionHandler())
+        let proj = new Projectile(data.position, 40, {dx:dx, dy:dy}, data.playerId, 20, 20, new ServerProjectileCollisionHandler())
         serverState.addEntity(proj, socket);
     }
 }

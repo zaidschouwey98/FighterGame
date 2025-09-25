@@ -17,11 +17,13 @@ export abstract class Entity {
         private entityCollisionHandler: IEntityCollisionHandler,
     ) {}
 
+    public abstract update(delta: number): void;
+
     public abstract updateFromInfo(info: EntityInfo):void;
 
     public onCollideWith(entity: EntityInfo): void {
         this.entityCollisionHandler.handleCollision(this,entity);
     }
-
+    
     public abstract toInfo(): EntityInfo;
 }

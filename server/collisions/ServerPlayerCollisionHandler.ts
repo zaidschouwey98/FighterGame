@@ -6,9 +6,6 @@ import { ProjectileInfo } from "../../shared/player/weapons/projectiles/Projecti
 
 export class ServerPlayerCollisionHandler implements IEntityCollisionHandler{
     handleCollision(source: Entity, target: EntityInfo): void {
-        if(target.entityType === EntityType.PROJECTILE){
-            let proj = target as ProjectileInfo;
-            source.hp -= proj.damage;
-        }
+        
     }
 }

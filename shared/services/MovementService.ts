@@ -30,7 +30,10 @@ export class MovementService {
     return {x: entity.position.x + dx * speed / 4 * delta, y:entity.position.y + dy * speed / 4 * delta};
   }
 
-  public static moveEntity(player: Player | EntityInfo, dx: number, dy: number, delta: number, speed: number = player.speed) {
+  public static moveEntity(player: Player | EntityInfo, delta:number, changedSpeed?:number) {
+    let dx = player.movingVector.dx;
+    let dy = player.movingVector.dy;
+    let speed = changedSpeed || player.speed;
     if (dx === 0 && dy === 0) return;
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1)
       throw new Error("Should be normalized vector");

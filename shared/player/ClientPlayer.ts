@@ -65,7 +65,7 @@ export class ClientPlayer extends Player {
         this.teleportState = new TeleportState(this, this.teleportService, eventBus);
     }
 
-    public update(delta: number) {
+    public update(delta: number): void{
         this.currentState.update(delta);
         this.blockService.update(delta);
         this.attackService.update(delta, this);

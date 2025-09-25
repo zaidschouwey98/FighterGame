@@ -1,22 +1,24 @@
+import { FIREBALL_SPEED as PROJECTILE_SPEED } from "../../../constantes";
 import { EntityInfo } from "../../../EntityInfo";
 import { EntityType } from "../../../EntityType";
 import Position from "../../../Position";
+import { MovementService } from "../../../services/MovementService";
 import { Entity } from "../../Entity";
 import { IEntityCollisionHandler } from "../../IEntityCollisionHandler";
 import { ProjectileInfo } from "./ProjectileInfo";
 
-export class Projectile extends Entity{
+export class Projectile extends Entity {
     private static counter = 0;
-
     constructor(
         position: Position,
-        movingVector: {dx:number, dy:number},
-        private ownerId: string,
-        private damage: number,
+        private lifeTime: number,
+        movingVector: { dx: number, dy: number },
+        readonly ownerId: string,
+        public damage: number,
         private knockbackStrength: number,
         projectileCollisionHandler: IEntityCollisionHandler
-    ){
-        super(ownerId + "_proj_" + Projectile.counter++, position,movingVector, 5,10,10,10,false, EntityType.PROJECTILE, projectileCollisionHandler);
+    ) {
+        super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);
     }
 
     public updateFromInfo(info: EntityInfo): void {
@@ -37,7 +39,14 @@ export class Projectile extends Entity{
             maxHp: this.maxHp,
             speed: this.speed,
             isDead: this.isDead
-}
+        }
+    }
+
+    public update(delta: number) {
+        MovementService.moveEntity(this, delta);
+        this.lifeTime -= delta;
+        if(this.lifeTime < 0)
+            this.isDead = true;
     }
 
 }

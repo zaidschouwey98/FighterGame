@@ -132,7 +132,7 @@ export class GameController {
         for(const value of GameState.instance.entities.values()){
             if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
-                MovementService.moveEntity(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
+                MovementService.moveEntity(value, delta);
                 this.renderer.playersRenderer.syncEntities([value]);
             }
         }

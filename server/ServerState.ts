@@ -71,7 +71,8 @@ export class ServerState {
             let ovEnts = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));
             for(const ovEnt of ovEnts)
                 p.onCollideWith(ovEnt);
-            MovementService.moveEntity(p, p.movingVector.dx, p.movingVector.dy, delta);
+            p.update(delta);
+            
         }
     }
 }

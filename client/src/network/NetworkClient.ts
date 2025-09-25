@@ -47,8 +47,8 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.ENTITY_DIED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.ENTITY_SYNC, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_SYNC, (entity: EntityInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, entity);
         });
 
         this.socket.on(ServerToSocketMsg.ENTITY_RESPAWNED, (player: PlayerInfo) => {

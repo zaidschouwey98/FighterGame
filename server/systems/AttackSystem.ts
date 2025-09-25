@@ -23,7 +23,7 @@ export class AttackSystem {
     public handleStartAttack(playerInfo:PlayerInfo, socket?:Socket) {
         if (this.serverState.playerExists(playerInfo.id)) {
             this.serverState.updatePlayer(playerInfo);
-            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket})
+            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getEntity(playerInfo.id).toInfo(), socket:socket})
         }
     }
 }

@@ -106,11 +106,11 @@ export class GameController {
             this.gameState.removeEntity(entity.id);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (player:PlayerInfo) => {
-            if (player.id === this.localPlayer?.id) {
-                this.localPlayer?.updateFromInfo(player);
+        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (entity: EntityInfo) => {
+            if (entity.id === this.localPlayer?.id) {
+                this.localPlayer?.updateFromInfo(entity as PlayerInfo);
             } else 
-            this.gameState.updateEntity(player);
+            this.gameState.updateEntity(entity);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {

@@ -77,6 +77,10 @@ export class Renderer {
             this._scoreBoard.update(player);
         });
 
+        this._eventBus.on(EventBusMessage.ENTITY_SYNC, (entity: EntityInfo) => {
+            this._entityRenderer.syncEntities([entity]);
+        });
+
         this._eventBus.on(EventBusMessage.ENTITY_POSITION_UPDATED, (player:PlayerInfo)=>{
             this._entityRenderer.syncPosition([player])
         })

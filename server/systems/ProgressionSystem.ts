@@ -11,10 +11,11 @@ export class ProgressionSystem {
     private registerListeners() {
         this.eventBus.on(EventBusMessage.ENTITY_DIED, ({ entityInfo, killerId }) => {
             if (!killerId) return;
-            const killer = this.serverState.getPlayer(killerId);
+            const killer = this.serverState.getEntity(killerId) as Player;
             if (!killer) return;
             killer.hp = Math.min(killer.hp + 10, killer.maxHp);
-            
+            killer.killCounter += 1;
+            killer.killStreak += 1;
             this.gainXp(killer, killer.currentLvl <= entityInfo.currentLvl ? this.getXpByKilledLevel(entityInfo.currentLvl)/2 : 100);
 
             this.checkLevelUp(killer);
@@ -43,7 +44,7 @@ export class ProgressionSystem {
             player.lvlXp = this.getNextLvlXp(player.currentLvl);
             
             // upgrade stats
-            player.attackSpeed *= 1.1; // ex: -10% cooldown
+            player.attackSpeed *= 1.05; // ex: -10% cooldown
             player.hp = player.maxHp += 20; // ex: +20 HP max
         }
     }

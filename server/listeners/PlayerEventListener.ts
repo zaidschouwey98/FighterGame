@@ -56,7 +56,7 @@ export class HumanEventListener {
             console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
         });
         this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, (name: string) => {
-            const player = this.serverState.getPlayer(this.socket.id);
+            const player = this.serverState.getEntity(this.socket.id);
             if (!player) return;
 
             player.hp = 100;

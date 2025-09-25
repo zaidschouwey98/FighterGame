@@ -10,7 +10,7 @@ export class DamageSystem {
     ) {}
 
     applyDamage(targetId: string, damage: number, killerId?: string, knockback?: {dx:number,dy:number}, knockbackTimer: number = 20) {
-        const target = this.serverState.getPlayer(targetId);
+        const target = this.serverState.getEntity(targetId);
         if (!target) return;
 
         target.hp -= damage;

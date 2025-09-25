@@ -8,10 +8,10 @@ export class DirectionSystem {
     constructor(private eventBus: EventBus, private serverState: ServerState) { }
 
     handleDirectionUpdate(playerInfo: PlayerInfo, socket?: Socket) {
-        const player = this.serverState.getPlayer(playerInfo.id);
+        const player = this.serverState.getEntity(playerInfo.id);
         if (!player) return;
 
         this.serverState.updatePlayer(playerInfo);
-        this.eventBus.emit(EventBusMessage.ENTITY_DIRECTION_UPDATED, { playerInfo: this.serverState.getPlayer(playerInfo.id).toInfo(), socket: socket })
+        this.eventBus.emit(EventBusMessage.ENTITY_DIRECTION_UPDATED, { playerInfo: this.serverState.getEntity(playerInfo.id).toInfo(), socket: socket })
     }
 }

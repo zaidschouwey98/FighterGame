@@ -78,9 +78,9 @@ export class ServerState {
     //         .filter((e): e is Projectile => e.entityType === EntityType.PROJECTILE);
     // }
 
-    getPlayer(id: string): Player {
+    getEntity(id: string): Entity {
         if (!this.entities.has(id)) throw new Error("Trying to get unset player.");
-        return this.entities.get(id) as Player;
+        return this.entities.get(id) as Entity;
     }
 
     updatePlayers(delta: number) {

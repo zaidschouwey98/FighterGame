@@ -1,15 +1,14 @@
 import { Socket } from "socket.io";
 import { AttackDataBase, MeleeAttackData, ProjectileAttackData } from "../../shared/AttackData";
-import { AttackResult } from "../../shared/AttackResult";
 import PlayerInfo from "../../shared/PlayerInfo";
-import { EntityState } from "../../shared/PlayerState";
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
+import { EventBus } from "../../shared/services/EventBus";
 import { HitboxValidationService } from "../HitboxValidationService";
 import { ServerState } from "../ServerState";
 import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
 import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
 import { PhysicsService } from "../../shared/services/PhysicsService";
 import { DamageSystem } from "./DamageSystem";
+import { Player } from "../../shared/player/Player";
 
 export interface AttackHandler {
     handle(data: AttackDataBase, socket?: Socket): void;
@@ -23,7 +22,7 @@ export class MeleeAttackHandler implements AttackHandler {
     ) { }
 
     handle(data: MeleeAttackData, socket?: Socket): void {
-        const attacker = this.serverState.getPlayer(data.playerId);
+        const attacker = this.serverState.getEntity(data.playerId);
         if (!attacker) return;
 
         attacker.position = data.position;
@@ -39,7 +38,7 @@ export class MeleeAttackHandler implements AttackHandler {
         let killNumber = 0;
 
         for (const targetId of hitPlayerIds) {
-            const target = this.serverState.getPlayer(targetId);
+            const target = this.serverState.getEntity(targetId) as Player;
             if (!target) continue;
             attackResults.push(target.toInfo());
 

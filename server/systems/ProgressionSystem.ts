@@ -9,7 +9,7 @@ export class ProgressionSystem {
     }
 
     private registerListeners() {
-        this.eventBus.on(EventBusMessage.PLAYER_DIED, ({ playerInfo, socket, killerId }) => {
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, ({ playerInfo, socket, killerId }) => {
             if (!killerId) return;
             const killer = this.serverState.getPlayer(killerId);
             if (!killer) return;
@@ -18,7 +18,7 @@ export class ProgressionSystem {
             this.gainXp(killer, killer.currentLvl <= playerInfo.currentLvl ? this.getXpByKilledLevel(playerInfo.currentLvl)/2 : 100);
 
             this.checkLevelUp(killer);
-            this.eventBus.emit(EventBusMessage.PLAYER_SYNC, killer.toInfo());
+            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, killer.toInfo());
         });
     }
 

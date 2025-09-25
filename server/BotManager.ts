@@ -68,7 +68,7 @@ export class BotManager {
         this.botInputHandler.delete(botId);
         this.serverState.removeBot(botId);
         let bot = this.spawnBot();
-        this.io.emit(ServerToSocketMsg.NEW_PLAYER, bot.toInfo());
+        this.io.emit(ServerToSocketMsg.NEW_ENTITY, bot.toInfo());
     }
 
     getBots(): Player[] {

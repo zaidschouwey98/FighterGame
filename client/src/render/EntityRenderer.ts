@@ -4,96 +4,101 @@ import type { EntityInfo } from "../../../shared/EntityInfo";
 import type { EntitySprite } from "./EntitySprite";
 import PlayerSprite from "./Player/PlayerSprite";
 import { EntityType } from "../../../shared/EntityType";
+import { WeaponFactory } from "./Player/weapon/WeaponFactory";
+import type PlayerInfo from "../../../shared/PlayerInfo";
+import type { ProjectileInfo } from "../../../shared/player/weapons/projectiles/ProjectileInfo";
+import { ProjectileSprite } from "./ProjectileSprite";
 
 export default class EntityRenderer {
-    private playerContainers: Map<string, Container>;
+    private entityContainers: Map<string, Container>;
     private spriteSheets: Spritesheet[];
     private entitySprites: Map<string, EntitySprite>;
     private entities: Map<string, EntityInfo>;
-    private playerContainer: Container;
+    private entityContainer: Container;
     private staticEffectContainer: Container;
 
     constructor(playerContainer: Container, spriteSheets: Spritesheet[], private _terrainContainer: Container, staticEffectContainer: Container) {
         this.spriteSheets = spriteSheets;
         this.staticEffectContainer = staticEffectContainer
-        this.playerContainers = new Map();
+        this.entityContainers = new Map();
         this.entitySprites = new Map();
         this.entities = new Map();
-        this.playerContainer = playerContainer;
+        this.entityContainer = playerContainer;
     }
 
     public addEntity(entityInfo: EntityInfo) {
         const container = new Container();
         container.label = entityInfo.id;
 
-        let sprite: any;
+        let sprite: EntitySprite;
         switch (entityInfo.entityType) {
             case EntityType.PLAYER:
-                sprite = new PlayerSprite(entityInfo.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", new WeaponFactory(player.weapon!));
+                const player = entityInfo as PlayerInfo;
+                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", new WeaponFactory(player.weapon!));
                 break;
             // case EntityType.MOB:
             //     sprite = new MobSprite(entityInfo.id, container, this.spriteSheets);
             //     break;
-            // case EntityType.PROJECTILE:
-            //     sprite = new ArrowSprite(entityInfo.id, container, this.spriteSheets);
-            //     break;
+            case EntityType.PROJECTILE:
+                const projectile = entityInfo as ProjectileInfo;
+                sprite = new ProjectileSprite(this._terrainContainer,this.spriteSheets);
+
+                break;
             // case EntityType.OBJECT:
             //     // par  décor statique
             //     // sprite = new ObjectSprite(...)
             //     break;
+            default:
+                throw new Error("Unknown entity type : " + entityInfo.entityType);
         }
 
-        if (sprite) {
-            this.entities.set(entityInfo.id, { container, sprite });
-            this.rootContainer.addChild(container);
-        }
+        this.entityContainers.set(entityInfo.id, container);
+        this.entitySprites.set(entityInfo.id, sprite!);
+        this.entities.set(entityInfo.id, entityInfo);
+
+        this.entityContainer.addChild(container);
     }
 
-    public removePlayer(playerId: string) {
-        const container = this.playerContainers.get(playerId);
-        const sprite = this.playerSprites.get(playerId);
-
-        if (sprite) {
-            sprite.destroy();
-        }
+    public removeEntity(entityId: string) {
+        const container = this.entityContainers.get(entityId);
 
         if (container) {
-            this.playerContainer.removeChild(container);
+            this.entityContainer.removeChild(container);
             container.destroy({ children: true,texture:true });
         }
 
-        this.playerContainers.delete(playerId);
-        this.playerSprites.delete(playerId);
-        this.players.delete(playerId);
+        this.entityContainers.delete(entityId);
+        this.entitySprites.delete(entityId);
+        this.entities.delete(entityId);
     }
 
-    public syncPosition(players: PlayerInfo[]){
-        for (const player of players) {
-            let playerContainer = this.playerContainers.get(player.id);
+    public syncPosition(entities: EntityInfo[]){
+        for (const entity of entities) {
+            let playerContainer = this.entityContainers.get(entity.id);
             if (!playerContainer) continue;
-            playerContainer.x = player.position.x;
-            playerContainer.y = player.position.y;
+            playerContainer.x = entity.position.x;
+            playerContainer.y = entity.position.y;
         }
     }
 
-    public playerDied(player:PlayerInfo){
-        let playerSprite = this.playerSprites.get(player.id);
-        if (!playerSprite) throw new Error("Dead player shouldn't be already deleted.");
-        playerSprite.syncPlayer(player, ()=>this.removePlayer(player.id));
+    public entityDied(entity:EntityInfo){
+        let entitySprite = this.entitySprites.get(entity.id);
+        if (!entitySprite) throw new Error("Dead player shouldn't be already deleted.");
+        entitySprite.syncPlayer(entity, ()=>this.removeEntity(entity.id));
     }
 
-    public syncPlayers(players: PlayerInfo[]) {
-        for (const player of players) {
-            let playerSprite = this.playerSprites.get(player.id);
+    public syncEntities(entities: EntityInfo[]) {
+        for (const entity of entities) {
+            let playerSprite = this.entitySprites.get(entity.id);
             if (!playerSprite) continue;
             // Mise à jour de la position
-            this.syncPosition([player]);
-            playerSprite.syncPlayer(player);
+            this.syncPosition([entity]);
+            playerSprite.syncPlayer(entity);
         }
     }
 
     public update(delta: number) {
-        for (const sprite of this.playerSprites.values()) {
+        for (const sprite of this.entitySprites.values()) {
             sprite.update(delta);
         }
     }

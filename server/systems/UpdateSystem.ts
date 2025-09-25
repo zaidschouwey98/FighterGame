@@ -12,6 +12,6 @@ export class UpdateSystem {
         if (!player) return;
 
         this.serverState.updatePlayer(playerInfo);
-        this.eventBus.emit(EventBusMessage.PLAYER_UPDATED,{playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket});
+        this.eventBus.emit(EventBusMessage.ENTITY_UPDATED,{playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket});
     }
 }

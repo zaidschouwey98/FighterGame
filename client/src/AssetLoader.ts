@@ -92,6 +92,16 @@ const atlasConfig = [
     },
 
     {
+        file: "/assets/ranged/projectiles/fireball.png",
+        spriteAmount: { w: 4, h: 1 },
+        assetDimensions: { w: 16, h: 16 },
+        textures: ["1", "2","3","4"] as const,
+        animations: {
+            fireball:["1", "2","3","4"]
+        }
+    },
+
+    {
         file: "/assets/swords/sword_1/sword.png",
         spriteAmount: { w: 1, h: 1 },
         assetDimensions: { w: 64, h: 32 },

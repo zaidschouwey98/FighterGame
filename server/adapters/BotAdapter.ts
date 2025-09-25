@@ -49,7 +49,7 @@ export class BotAdapter {
         );
 
         eventBus.on(
-            EventBusMessage.PLAYER_SYNC,
+            EventBusMessage.ENTITY_SYNC,
             (player: PlayerInfo) => {
                 for (const bot of this.botManager.getBots()) {
                     if(player.id == bot.id){

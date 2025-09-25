@@ -12,6 +12,6 @@ export class MovementSystem {
         if (!player) return;
 
         this.serverState.updatePlayer(playerInfo);
-        this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, {playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(),socket:socket})
+        this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, {playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(),socket:socket})
     }
 }

@@ -68,7 +68,7 @@ export class MeleeAttackHandler implements AttackHandler {
             if (!player) return;
             player.isDead = true;
             player.state = PlayerState.DEAD;
-            this.eventBus.emit(EventBusMessage.PLAYER_DIED, { playerInfo:this.serverState.getPlayer(player.id).toInfo(), socket:socket, killerId:attacker.id });
+            this.eventBus.emit(EventBusMessage.ENTITY_DIED, { playerInfo:this.serverState.getPlayer(player.id).toInfo(), socket:socket, killerId:attacker.id });
         }
         
     }
@@ -78,6 +78,7 @@ export class ProjectileAttackHandler implements AttackHandler {
     handle(data: ProjectileAttackData, serverState: ServerState, socket?:Socket): void {
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
-        serverState.addEntity(new Projectile(data.position, {dx:dx, dy:dy}, data.playerId, 20, 20, new ServerProjectileCollisionHandler()));
+        let proj = new Projectile(data.position, {dx:dx, dy:dy}, data.playerId, 20, 20, new ServerProjectileCollisionHandler())
+        serverState.addEntity(proj, socket);
     }
 }

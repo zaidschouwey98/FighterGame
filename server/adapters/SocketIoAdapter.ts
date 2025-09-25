@@ -3,6 +3,7 @@ import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { AttackResult } from "../../shared/AttackResult";
 import PlayerInfo from "../../shared/PlayerInfo";
+import { EntityInfo } from "../../shared/EntityInfo";
 
 export class SocketIoAdapter {
     constructor(private eventBus: EventBus, private serverSocket:Server) {
@@ -23,41 +24,49 @@ export class SocketIoAdapter {
             res.socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo,socket:Socket, killerId:string})=>{
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{playerInfo:PlayerInfo,socket:Socket, killerId:string})=>{
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo);
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo);
                 return;
             }
-            res.socket.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo)
-            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIED, res.playerInfo);
+            res.socket.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo)
+            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo);
         })
 
-        this.eventBus.on(EventBusMessage.PLAYER_DIRECTION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
+        this.eventBus.on(EventBusMessage.ENTITY_ADDED, (res:{entityInfo:EntityInfo,socket:Socket})=>{
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, res.playerInfo);
+                this.serverSocket.emit(ServerToSocketMsg.NEW_ENTITY, res.entityInfo);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, res.playerInfo);
+            res.socket.broadcast.emit(ServerToSocketMsg.NEW_ENTITY, res.entityInfo);
         })
 
-        this.eventBus.on(EventBusMessage.PLAYER_POSITION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
+        this.eventBus.on(EventBusMessage.ENTITY_DIRECTION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.PLAYER_POS_UPDATE, res.playerInfo);
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res.playerInfo);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_POS_UPDATE, res.playerInfo);
+            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res.playerInfo);
         })
 
-        this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
+        this.eventBus.on(EventBusMessage.ENTITY_POSITION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.PLAYER_UPDATE, res.playerInfo);
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res.playerInfo);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, res.playerInfo);
+            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res.playerInfo);
         })
 
-        this.eventBus.on(EventBusMessage.PLAYER_SYNC, (playerInfo:PlayerInfo)=>{
-            this.serverSocket.emit(ServerToSocketMsg.PLAYER_SYNC, playerInfo);
+        this.eventBus.on(EventBusMessage.ENTITY_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
+            if(!res.socket){
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_UPDATE, res.playerInfo);
+                return;
+            }
+            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_UPDATE, res.playerInfo);
+        })
+
+        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (playerInfo:PlayerInfo)=>{
+            this.serverSocket.emit(ServerToSocketMsg.ENTITY_SYNC, playerInfo);
         })
     }
 }

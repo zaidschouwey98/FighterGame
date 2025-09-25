@@ -1,5 +1,4 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import PlayersRenderer from "./Player/PlayersRenderer";
 import { WorldRenderer } from "./WorldRenderer";
 import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
@@ -9,6 +8,7 @@ import type PlayerInfo from "../../../shared/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type { Player } from "../../../shared/player/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
+import EntityRenderer from "./EntityRenderer";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -24,7 +24,7 @@ export class Renderer {
     private _overlayContainer: Container;
     private _uiContainer: Container;
 
-    private _playersRenderer: PlayersRenderer;
+    private _entityRenderer: EntityRenderer;
     private _worldRenderer: WorldRenderer;
 
     private _camera: CameraService;
@@ -56,48 +56,48 @@ export class Renderer {
         rootContainer.addChild(this._uiContainer); // follows the camera
         this._scoreBoard = new ScoreBoard(this._uiContainer)
         this._minimap = new Minimap(this._uiContainer, 200);
-        this._playersRenderer = new PlayersRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
+        this._entityRenderer = new EntityRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
 
         this.registerListeners();
     }
 
     private registerListeners() {
-        this._eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
+        this._eventBus.on(EventBusMessage.ENTITIES_INIT, (players: PlayerInfo[]) => {
             for (const player of players) {
-                this._playersRenderer.addNewPlayer(player);
+                this._entityRenderer.addEntity(player);
             }
-            this._playersRenderer.syncPlayers(players);
+            this._entityRenderer.syncEntities(players);
         })
 
         // Quand un joueur est mis à jour
-        this._eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
-            this._playersRenderer.syncPlayers([player]);
+        this._eventBus.on(EventBusMessage.ENTITY_UPDATED, (player: PlayerInfo) => {
+            this._entityRenderer.syncEntities([player]);
             this._scoreBoard.update(player);
         });
 
-        this._eventBus.on(EventBusMessage.PLAYER_POSITION_UPDATED, (player:PlayerInfo)=>{
-            this._playersRenderer.syncPosition([player])
+        this._eventBus.on(EventBusMessage.ENTITY_POSITION_UPDATED, (player:PlayerInfo)=>{
+            this._entityRenderer.syncPosition([player])
         })
 
         // Nouvel arrivant
-        this._eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
-            this._playersRenderer.addNewPlayer(player);
-            this._playersRenderer.syncPlayers([player]);
+        this._eventBus.on(EventBusMessage.ENTITY_ADDED, (player: PlayerInfo) => {
+            this._entityRenderer.addEntity(player);
+            this._entityRenderer.syncEntities([player]);
         });
 
         // Joueur parti
         this._eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
-            this._playersRenderer.removePlayer(playerId);
+            this._entityRenderer.removeEntity(playerId);
         });
 
-        this._eventBus.on(EventBusMessage.PLAYER_DIED, (playerInfo:PlayerInfo) => {
-            this._playersRenderer.playerDied(playerInfo);
+        this._eventBus.on(EventBusMessage.ENTITY_DIED, (playerInfo:PlayerInfo) => {
+            this._entityRenderer.entityDied(playerInfo);
         });
     }
 
     updateMinimap(localPlayer: Player) {
-        const playersArray = Array.from(GameState.instance.players.values()).map(p => ({
+        const playersArray = Array.from(GameState.instance.entities.values()).map(p => ({
             id: p.id,
             x: p.position.x,
             y: p.position.y,
@@ -113,7 +113,7 @@ export class Renderer {
     }
 
     update(delta:number){
-        this._playersRenderer.update(delta);
+        this._entityRenderer.update(delta);
     }
 
     updateCamera(position: Position) {
@@ -126,8 +126,8 @@ export class Renderer {
         return this._camera;
     }
 
-    public get playersRenderer(): PlayersRenderer {
-        return this._playersRenderer;
+    public get playersRenderer(): EntityRenderer {
+        return this._entityRenderer;
     }
 
 

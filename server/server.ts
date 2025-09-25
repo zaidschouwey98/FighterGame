@@ -39,9 +39,11 @@ const io = new Server(server, {
 });
 const PORT = process.env.PORT || 3000;
 
-const serverState = new ServerState();
+
 
 const eventBus = new EventBus();
+
+const serverState = new ServerState(eventBus);
 // systèmes
 const socketIoAdapter = new SocketIoAdapter(eventBus, io);
 
@@ -74,7 +76,7 @@ io.on("connection", (socket: Socket) => {
       gameLoop.stop();
     }
     serverState.removePlayer(socket.id);
-    io.emit(ServerToSocketMsg.DISCONNECT, { id: socket.id });
+    io.emit(ServerToSocketMsg.DISCONNECT, socket.id);
   });
 });
 

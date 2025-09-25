@@ -1,8 +1,8 @@
-import type PlayerInfo from "../../../shared/PlayerInfo";
+import type { EntityInfo } from "../../../shared/EntityInfo";
 
 export class GameState{
     private static _instance: GameState;
-    public players: Map<string, PlayerInfo> = new Map();
+    public entities: Map<string, EntityInfo> = new Map();
 
 
     public static get instance(): GameState {
@@ -10,33 +10,37 @@ export class GameState{
         return GameState._instance;
     }
 
-    addPlayer(info: PlayerInfo) {
-        this.players.set(info.id, info);
+    addEntity(info: EntityInfo) {
+        console.log(info)
+        this.entities.set(info.id, info);
     }
 
-    updatePlayer(info: PlayerInfo) {
-        let player = this.players.get(info.id);
-        if (!player) {
-            console.warn(`Player ${info.id} not found`);
+    updateEntity(info: EntityInfo) {
+        let entity = this.entities.get(info.id);
+        if (!entity) {
+            console.warn(`Entity ${info.id} not found`);
             // this.addPlayer(info);
             return;
         }
         
-        this.players.set(info.id,info);
+        this.entities.set(info.id,info);
     }
 
-    restorePlayers(infos: PlayerInfo[]) {
-        this.players.clear();
+    restoreEntities(infos: EntityInfo[]) {
+        this.entities.clear();
         for (const info of infos) {
-            this.addPlayer(info);
+            this.addEntity(info);
         }
     }
 
-    removePlayer(id: string) {
-        this.players.delete(id);
+    removeEntity(id: string) {
+        console.log(id)
+        if(this.entities.get(id) == undefined)
+            throw new Error("Trying to remove undefined entity.");
+        this.entities.delete(id);
     }
 
-    getPlayer(id: string): PlayerInfo | undefined {
-        return this.players.get(id);
+    getEntity(id: string): EntityInfo | undefined {
+        return this.entities.get(id);
     }
 }

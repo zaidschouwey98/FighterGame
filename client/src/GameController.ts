@@ -10,6 +10,7 @@ import { Renderer } from "./render/Renderer";
 import type PlayerInfo from "../../shared/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
 import { ClientPlayer } from "../../shared/player/ClientPlayer";
+import type { EntityInfo } from "../../shared/EntityInfo";
 
 export class GameController {
     private gameState: GameState;
@@ -58,64 +59,64 @@ export class GameController {
         });
 
         // Snapshot complet au spawn
-        this.eventBus.on(EventBusMessage.PLAYERS_INIT, (players: PlayerInfo[]) => {
-            this.gameState.restorePlayers(players);
+        this.eventBus.on(EventBusMessage.ENTITIES_INIT, (players: EntityInfo[]) => {
+            this.gameState.restoreEntities(players);
         });
 
         // MAJ unique pour tout changement de joueur
-        this.eventBus.on(EventBusMessage.PLAYER_UPDATED, (player: PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.ENTITY_UPDATED, (player: EntityInfo) => {
             if (player.id !== this.localPlayerId)
-                this.gameState.updatePlayer(player);
+                this.gameState.updateEntity(player);
         });
 
         // Nouveau joueur
-        this.eventBus.on(EventBusMessage.PLAYER_JOINED, (player: PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.ENTITY_ADDED, (player: EntityInfo) => {
             if (player.id === this.localPlayerId) {
                 this.localPlayer = new ClientPlayer(
                     this.localPlayerId,
-                    player.name,
+                    (player as PlayerInfo).name,
                     player.position,
                     player.hp,
                     player.speed,
                     this.eventBus,
                     this.inputHandler,
                 );
-                this.localPlayer.updateFromInfo(player);
+                this.localPlayer.updateFromInfo(player as PlayerInfo);
                 return;
             }
-            this.gameState.addPlayer(player);
+            this.gameState.addEntity(player);
         });
 
         // Joueur parti
         this.eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
-            this.gameState.removePlayer(playerId);
+            this.gameState.removeEntity(playerId);
         });
 
         // Résultat attaque
         this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.localPlayer?.handleAttackReceived(attackResult, (id) => this.gameState.players.get(id)!.position);
+            this.localPlayer?.handleAttackReceived(attackResult, (id) => this.gameState.entities.get(id)!.position);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_DIED, (player) => {
-            if (player.id === this.localPlayer?.id) {
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, (entity) => {
+            if (entity.id === this.localPlayer?.id) {
                 this.localPlayer!.die();
                 this.onDeath?.()
             } else 
-            this.gameState.removePlayer(player.id);
+            this.gameState.removeEntity(entity.id);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_SYNC, (player:PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (player:PlayerInfo) => {
             if (player.id === this.localPlayer?.id) {
                 this.localPlayer?.updateFromInfo(player);
             } else 
-            this.gameState.updatePlayer(player);
+            this.gameState.updateEntity(player);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
             if (player.id === this.localPlayer?.id) {
                 this.onRespawn?.();
             } 
-            this.eventBus.emit(EventBusMessage.PLAYER_JOINED,player)
+            this.eventBus.emit(EventBusMessage.ENTITY_ADDED,player);
         });
     }
 
@@ -128,11 +129,11 @@ export class GameController {
     }
 
     public update(delta: number) {
-        for(const value of GameState.instance.players.values()){
+        for(const value of GameState.instance.entities.values()){
             if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
             {
                 MovementService.moveEntity(value,value.movingVector!.dx, value.movingVector!.dy, delta, value.speed);
-                this.renderer.playersRenderer.syncPlayers([value]);
+                this.renderer.playersRenderer.syncEntities([value]);
             }
         }
         this.renderer.update(delta);

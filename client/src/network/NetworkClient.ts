@@ -14,24 +14,24 @@ export class NetworkClient {
             console.log("Connecté au serveur", this.socket.id);
             this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
         });
-        this.socket.on(ServerToSocketMsg.CURRENT_PLAYERS, (players: PlayerInfo[]) => {
-            this.eventBus.emit(EventBusMessage.PLAYERS_INIT, Object.values(players));
+        this.socket.on(ServerToSocketMsg.CURRENT_ENTITIES, (players: PlayerInfo[]) => {
+            this.eventBus.emit(EventBusMessage.ENTITIES_INIT, Object.values(players));
         });
 
-        this.socket.on(ServerToSocketMsg.NEW_PLAYER, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_JOINED, player);
+        this.socket.on(ServerToSocketMsg.NEW_ENTITY, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_UPDATE, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_DIRECTION_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_POS_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_POS_UPDATE, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, player);
         });
 
         this.socket.on(ServerToSocketMsg.DISCONNECT, (playerId: string) => {
@@ -42,15 +42,15 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
         })
 
-        this.socket.on(ServerToSocketMsg.PLAYER_DIED, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_DIED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_DIED, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_DIED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_SYNC, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_SYNC, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_SYNC, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_RESPAWNED, (player: PlayerInfo) => {
+        this.socket.on(ServerToSocketMsg.ENTITY_RESPAWNED, (player: PlayerInfo) => {
             this.eventBus.emit(EventBusMessage.PLAYER_RESPAWNED, player);
         });
 
@@ -62,11 +62,11 @@ export class NetworkClient {
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_UPDATED, (playerInfo) => {
             // TODO SHOULD SEPARATE EVENTS
             this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
+            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, playerInfo);
         });
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_MOVING, (playerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_UPDATED, playerInfo);
+            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, playerInfo);
         });
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, (playerInfo:PlayerInfo) => {
@@ -75,7 +75,7 @@ export class NetworkClient {
 
         this.eventBus.on(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, (playerInfo)=>{
             this.socket.emit(ClientToSocketMsg.PLAYER_POS_UPDATE, playerInfo);
-            this.eventBus.emit(EventBusMessage.PLAYER_POSITION_UPDATED, playerInfo);
+            this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, playerInfo);
         })
     }
 

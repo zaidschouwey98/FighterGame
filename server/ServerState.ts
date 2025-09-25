@@ -1,17 +1,24 @@
+import { Socket } from "socket.io";
 import { EntityInfo } from "../shared/EntityInfo";
 import { EntityType } from "../shared/EntityType";
 import { Entity } from "../shared/player/Entity";
 import { Player } from "../shared/player/Player";
 import PlayerInfo from "../shared/PlayerInfo";
 import { CollisionService } from "../shared/services/CollisionService";
+import { EventBus, EventBusMessage } from "../shared/services/EventBus";
 import { MovementService } from "../shared/services/MovementService";
 
 export class ServerState {
     private entities: Map<string, Entity> = new Map;
     private bots: Set<string> = new Set();
 
-    addEntity(entity: Entity) {
+    constructor(
+        private eventBus: EventBus
+    ){}
+
+    addEntity(entity: Entity, socket?:Socket) {
         this.entities.set(entity.id, entity);
+        this.eventBus.emit(EventBusMessage.ENTITY_ADDED, { entityInfo: entity.toInfo(), socket:socket});
     }
 
     addBot(bot: Player) {

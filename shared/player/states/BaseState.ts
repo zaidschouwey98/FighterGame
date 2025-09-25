@@ -1,10 +1,10 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { ClientPlayer } from "../ClientPlayer";
 
 export abstract class BaseState {
   constructor(protected player: ClientPlayer) {}
 
-  abstract readonly name: PlayerState;
+  abstract readonly name: EntityState;
 
   canEnter(): boolean {return true}; 
   enter(): void {}    // appelé quand on entre dans l'état

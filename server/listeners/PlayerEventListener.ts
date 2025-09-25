@@ -6,7 +6,7 @@ import { ClientToSocketMsg } from "../../shared/ClientToSocketMsg";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { ServerState } from "../ServerState";
-import { PlayerState } from "../../shared/PlayerState";
+import { EntityState } from "../../shared/PlayerState";
 import { Direction } from "../../shared/Direction";
 import { WeaponType } from "../../shared/WeaponType";
 import { UpdateSystem } from "../systems/UpdateSystem";
@@ -52,17 +52,17 @@ export class HumanEventListener {
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
             const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10, new ServerPlayerCollisionHandler());
-            this.serverState.addEntity(player);
+            this.serverState.addPlayer(player,this.socket);
             console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
         });
-        this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, () => {
+        this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, (name: string) => {
             const player = this.serverState.getPlayer(this.socket.id);
             if (!player) return;
 
             player.hp = 100;
             player.isDead = false;
             player.position = { x: 0, y: 0 };
-            player.state = PlayerState.IDLE;
+            player.state = EntityState.IDLE;
             this.socket.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
             this.socket.broadcast.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
         });

@@ -34,7 +34,6 @@ export class GameState{
     }
 
     removeEntity(id: string) {
-        console.log(id)
         if(this.entities.get(id) == undefined)
             throw new Error("Trying to remove undefined entity.");
         this.entities.delete(id);

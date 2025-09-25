@@ -1,4 +1,4 @@
-import { PlayerState } from "../PlayerState";
+import { EntityState } from "../PlayerState";
 import Position from "../Position";
 import { BaseState } from "./states/BaseState";
 import { IdleState } from "./states/IdleState";
@@ -19,8 +19,6 @@ import type { AttackResult } from "../AttackResult";
 import { PhysicsService } from "../services/PhysicsService";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import { Player } from "./Player";
-import PlayerInfo from "../PlayerInfo";
-import { EntityType } from "../EntityType";
 import { ClientPlayerCollisionHandler } from "./ClientPlayerCollisionHandler";
 
 export class ClientPlayer extends Player {
@@ -65,7 +63,7 @@ export class ClientPlayer extends Player {
         this.teleportState = new TeleportState(this, this.teleportService, eventBus);
     }
 
-    public update(delta: number): void{
+    public update(delta: number): void {
         this.currentState.update(delta);
         this.blockService.update(delta);
         this.attackService.update(delta, this);
@@ -73,50 +71,22 @@ export class ClientPlayer extends Player {
         this.inputHandler.update();
     }
 
-    public handleAttackReceived(attackResult: AttackResult, getPlayerPosition: (id: string) => Position) {
-        const hitPlayers = attackResult.hitPlayers;
-
-        if (attackResult.attackerId === this.id && attackResult.killNumber > 0) {
-            this.killCounter += attackResult.killNumber;
-        }
-
-        if (attackResult.attackerId === this.id && attackResult.blockedBy) {
-            this.knockbackReceivedVector = PhysicsService.computeKnockback(
-                getPlayerPosition(attackResult.blockedBy.id),
-                this.position,
-                attackResult.knockbackStrength
-            );
-            this.changeState(
-                new KnockBackState(
-                    this,
-                    this.eventBus,
-                    this.inputHandler,
-                    this.knockbackReceivedVector,
-                    attackResult.knockbackTimer
-                )
-            );
-        }
-
-        for (const hit of hitPlayers) {
-            if (hit.id === this.id && attackResult.blockedBy?.id !== this.id) {
-                this.knockbackReceivedVector = PhysicsService.computeKnockback(
-                    getPlayerPosition(attackResult.attackerId),
-                    this.position,
-                    attackResult.knockbackStrength
-                );
-                this.takeDamage(hit.hp, this.knockbackReceivedVector, attackResult.knockbackTimer);
-            }
-        }
-    }
-
-    public takeDamage(newHp: number, knockbackVector: { x: number; y: number }, knockbackStrength: number) {
-        this.hp = newHp;
-        if (this.currentState.name === PlayerState.DEAD) return;
-        this.changeState(new HitState(this, this.eventBus, this.inputHandler, knockbackVector, knockbackStrength));
+    public handleAttackReceived(attackResult: AttackResult) {
+        this.hp = attackResult.newHp;
+        this.knockbackReceivedVector = {x: attackResult.knockBackVector.dx, y: attackResult.knockBackVector.dy};
+        this.changeState(
+            new HitState(
+                this,
+                this.eventBus,
+                this.inputHandler,
+                attackResult.knockBackVector,
+                attackResult.knockbackTimer,
+            )
+        );
     }
 
     public die() {
-        this.changeState(this.dieState);
+        this.currentState = this.dieState;
     }
 
     public respawn(position: Position) {

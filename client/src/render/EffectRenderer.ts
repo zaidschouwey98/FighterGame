@@ -1,10 +1,10 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { PlayerState } from "../../../shared/PlayerState";
+import { EntityState } from "../../../shared/PlayerState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
 
 export class EffectRenderer {
-    private animations: Partial<Record<PlayerState, AnimatedSprite>> = {};
+    private animations: Partial<Record<EntityState, AnimatedSprite>> = {};
     private attackEffectContainer: Container;
     private staticEffectsContainer: Container;
     private spriteSheets: Spritesheet[];

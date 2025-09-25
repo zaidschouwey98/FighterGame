@@ -1,19 +1,19 @@
 import type { Direction } from "../../../../../../shared/Direction";
 import type PlayerInfo from "../../../../../../shared/PlayerInfo";
-import { PlayerState } from "../../../../../../shared/PlayerState";
+import { EntityState } from "../../../../../../shared/PlayerState";
 import type { IWeaponAnim } from "./IWeaponAnim";
 
 export class WeaponAnimController {
   private current?: IWeaponAnim;
-  private currentState: PlayerState = PlayerState.IDLE;
+  private currentState: EntityState = EntityState.IDLE;
 
   constructor(
-    private animations: Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>>
+    private animations: Partial<Record<EntityState, IWeaponAnim | IWeaponAnim[]>>
   ) { }
 
   setState(playerInfo:PlayerInfo) {
     const needTransition =
-      playerInfo.state !== this.currentState || playerInfo.state === PlayerState.ATTACK;
+      playerInfo.state !== this.currentState || playerInfo.state === EntityState.ATTACK;
 
     if (!needTransition) return;
 
@@ -27,7 +27,7 @@ export class WeaponAnimController {
     }
   }
 
-  private resolveAnim(state: PlayerState, comboIndex: number): IWeaponAnim | undefined {
+  private resolveAnim(state: EntityState, comboIndex: number): IWeaponAnim | undefined {
     const anim = this.animations[state];
     if (Array.isArray(anim)) {
       return anim[comboIndex % anim.length];

@@ -1,4 +1,4 @@
-import { PlayerState } from "./PlayerState";
+import { EntityState } from "./PlayerState";
 import { Direction } from "./Direction";
 import Position from "./Position";
 import { WeaponType } from "./WeaponType";
@@ -8,7 +8,7 @@ import { EntityType } from "./EntityType";
 export default interface PlayerInfo extends EntityInfo{
     mouseDirection: { x: number; y: number; };
     name?:string;
-    state:PlayerState;
+    state:EntityState;
     movingDirection:Direction;
     weapon:WeaponType;
     currentXp:number;

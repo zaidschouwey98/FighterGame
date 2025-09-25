@@ -2,24 +2,25 @@ import { Socket } from "socket.io";
 import { AttackDataBase, MeleeAttackData, ProjectileAttackData } from "../../shared/AttackData";
 import { AttackResult } from "../../shared/AttackResult";
 import PlayerInfo from "../../shared/PlayerInfo";
-import { PlayerState } from "../../shared/PlayerState";
+import { EntityState } from "../../shared/PlayerState";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { HitboxValidationService } from "../HitboxValidationService";
 import { ServerState } from "../ServerState";
 import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
 import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
+import { PhysicsService } from "../../shared/services/PhysicsService";
 
 export interface AttackHandler {
-    handle(data: AttackDataBase, serverState: ServerState, socket?: Socket): void;
+    handle(data: AttackDataBase, socket?: Socket): void;
 }
 
 export class MeleeAttackHandler implements AttackHandler {
     constructor(
-        private serverState:ServerState,
+        private serverState: ServerState,
         private eventBus: EventBus
-    ){}
+    ) { }
 
-    handle(data: MeleeAttackData, serverState: ServerState, socket?:Socket): void {
+    handle(data: MeleeAttackData, socket?: Socket): void {
         const attacker = this.serverState.getPlayer(data.playerId);
         if (!attacker) return;
 
@@ -42,7 +43,7 @@ export class MeleeAttackHandler implements AttackHandler {
             if (!target) continue;
 
             const damage = 20; // TODO balance
-            if (target.state !== PlayerState.BLOCKING) {
+            if (target.state !== EntityState.BLOCKING) {
                 target.hp -= damage;
             } else {
                 blockedBy = target.toInfo();
@@ -54,31 +55,28 @@ export class MeleeAttackHandler implements AttackHandler {
                 killNumber++;
                 killedPlayers.push(target.toInfo());
             }
+            if(target.hp < 0)
+                continue;
+            this.eventBus.emit(EventBusMessage.ATTACK_RECEIVED, {
+                attackResult: {
+                    newHp: target.hp,
+                    knockBackVector: PhysicsService.computeKnockback(attacker.position,target.position, data.knockbackStrength),
+                    knockbackTimer: 40,
+                } as AttackResult, socket: this.serverState.getPlayerSocket(target.id)
+            })
         }
-        this.eventBus.emit(EventBusMessage.ATTACK_RESULT,{attackResult:{
-            attackerId: data.playerId,
-            hitPlayers: attackResults,
-            knockbackStrength: data.knockbackStrength,
-            blockedBy,
-            killNumber,
-            knockbackTimer: 40,
-        } as AttackResult, socket:socket})
-
-        for (const player of killedPlayers) {
-            if (!player) return;
-            player.isDead = true;
-            player.state = PlayerState.DEAD;
-            this.eventBus.emit(EventBusMessage.ENTITY_DIED, { playerInfo:this.serverState.getPlayer(player.id).toInfo(), socket:socket, killerId:attacker.id });
-        }
-        
     }
 }
 
 export class ProjectileAttackHandler implements AttackHandler {
-    handle(data: ProjectileAttackData, serverState: ServerState, socket?:Socket): void {
+    constructor(
+        private serverState: ServerState,
+        private eventBus: EventBus
+    ) { }
+    handle(data: ProjectileAttackData, socket?: Socket): void {
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
-        let proj = new Projectile(data.position, 40, {dx:dx, dy:dy}, data.playerId, 20, 20, new ServerProjectileCollisionHandler())
-        serverState.addEntity(proj, socket);
+        let proj = new Projectile(data.position, 40, { dx: dx, dy: dy }, data.playerId, 20, 20, new ServerProjectileCollisionHandler(this.eventBus, this.serverState))
+        this.serverState.addEntity(proj, socket);
     }
 }

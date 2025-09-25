@@ -1,5 +1,5 @@
 import { Direction } from "../../Direction";
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
@@ -8,7 +8,7 @@ import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class MovingState extends BaseState {
-  readonly name = PlayerState.MOVING;
+  readonly name = EntityState.MOVING;
   private lastDx:number;
   private lastDy:number;
   constructor(

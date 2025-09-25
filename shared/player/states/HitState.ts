@@ -1,16 +1,16 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class HitState extends BaseState {
-    readonly name = PlayerState.HIT;
+    readonly name = EntityState.HIT;
     constructor(
         player: ClientPlayer,
         private eventBus: EventBus,
         private inputHandler: IInputHandler,
-        private knockbackVector: { x: number; y: number },
+        private knockbackVector: { dx: number; dy: number },
         private knockbackTimer: number
     ) {
         super(player);
@@ -26,13 +26,13 @@ export class HitState extends BaseState {
         }
 
         if (this.knockbackTimer > 0) {
-            this.player.position.x += this.knockbackVector.x * delta;
-            this.player.position.y += this.knockbackVector.y * delta;
+            this.player.position.x += this.knockbackVector.dx * delta;
+            this.player.position.y += this.knockbackVector.dy * delta;
 
             const decayPerSecond = 0.85;
             const decay = Math.pow(decayPerSecond, delta);
-            this.knockbackVector.x *= decay;
-            this.knockbackVector.y *= decay;
+            this.knockbackVector.dx *= decay;
+            this.knockbackVector.dy *= decay;
 
             this.knockbackTimer -= delta;
             if (this.knockbackTimer <= 0) {

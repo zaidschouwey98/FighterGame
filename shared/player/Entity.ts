@@ -1,9 +1,11 @@
 import { EntityInfo } from "../EntityInfo";
 import { EntityType } from "../EntityType";
+import { EntityState } from "../PlayerState";
 import Position from "../Position";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 
 export abstract class Entity {
+    public state: EntityState = EntityState.IDLE;
     constructor(
         public id: string,
         public position: Position,

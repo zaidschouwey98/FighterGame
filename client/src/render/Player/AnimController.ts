@@ -1,10 +1,10 @@
 // anim/AnimController.ts
 import type PlayerInfo from "../../../../shared/PlayerInfo";
-import { PlayerState } from "../../../../shared/PlayerState";
+import { EntityState } from "../../../../shared/PlayerState";
 import type { IAnimState } from "./IAnimState";
 
 export class AnimController {
-  private currentLogical?: PlayerState;
+  private currentLogical?: EntityState;
   private currentAnim?: IAnimState;
 
   /**
@@ -12,8 +12,8 @@ export class AnimController {
    * @param fallback  état de secours si non enregistré (par défaut: IDLE)
    */
   constructor(
-    private registry: Partial<Record<PlayerState, IAnimState | IAnimState[]>>,
-    private fallback: PlayerState = PlayerState.IDLE
+    private registry: Partial<Record<EntityState, IAnimState | IAnimState[]>>,
+    private fallback: EntityState = EntityState.IDLE
   ) { }
 
   public update(player: PlayerInfo, onDeath?: () => void) {
@@ -21,7 +21,7 @@ export class AnimController {
 
     const needTransition =
       logical !== this.currentLogical ||
-      logical === PlayerState.ATTACK;
+      logical === EntityState.ATTACK;
 
     if (needTransition) {
       if (this.currentAnim) this.currentAnim.stop();
@@ -33,7 +33,7 @@ export class AnimController {
       this.currentLogical = logical;
 
       // Si c’est une anim de mort → on passe le callback
-      if (logical === PlayerState.DEAD) {
+      if (logical === EntityState.DEAD) {
         this.currentAnim?.play(player, () => {
           onDeath?.();
         });
@@ -44,14 +44,14 @@ export class AnimController {
     }
 
     // tick normal
-    if (logical !== PlayerState.DEAD) {
+    if (logical !== EntityState.DEAD) {
       this.currentAnim?.play(player);
     }
   }
 
 
   /** Choisit la bonne anim (supporte tableau pour combos) */
-  private resolveAnim(state: PlayerState, comboIndex: number): IAnimState | undefined {
+  private resolveAnim(state: EntityState, comboIndex: number): IAnimState | undefined {
     const anim = this.registry[state];
     if (Array.isArray(anim)) {
       return anim[comboIndex % anim.length];
@@ -60,7 +60,7 @@ export class AnimController {
   }
 
   /** Permet d’enregistrer/écraser dynamiquement un état */
-  public register(state: PlayerState, anim: IAnimState | IAnimState[]) {
+  public register(state: EntityState, anim: IAnimState | IAnimState[]) {
     this.registry[state] = anim;
   }
 

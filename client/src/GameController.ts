@@ -22,6 +22,7 @@ export class GameController {
     private currentChunkY?: number;
     private localPlayer: ClientPlayer | undefined;
     private networkClient: NetworkClient;
+    private playerName?: string;
 
     // Services
     private coordinateService: CoordinateService;
@@ -93,11 +94,11 @@ export class GameController {
         });
 
         // Résultat attaque
-        this.eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.localPlayer?.handleAttackReceived(attackResult, (id) => this.gameState.entities.get(id)!.position);
+        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (attackResult: AttackResult) => {
+            this.localPlayer?.handleAttackReceived(attackResult);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, (entity) => {
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, (entity: EntityInfo) => {
             if (entity.id === this.localPlayer?.id) {
                 this.localPlayer!.die();
                 this.onDeath?.()
@@ -113,19 +114,22 @@ export class GameController {
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
+            // A ENLEVER NE SERT PLUS
             if (player.id === this.localPlayer?.id) {
-                this.onRespawn?.();
+                
             } 
             this.eventBus.emit(EventBusMessage.ENTITY_ADDED,player);
         });
     }
 
     public spawnLocalPlayer(name: string) {
+        this.playerName = name;
         this.networkClient.spawnPlayer(name);
     }
 
     public requestRespawn() {
-        this.networkClient.respawnPlayer();
+        this.onRespawn?.();
+        this.networkClient.spawnPlayer(this.playerName!);
     }
 
     public update(delta: number) {

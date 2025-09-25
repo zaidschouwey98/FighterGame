@@ -1,4 +1,4 @@
-export enum PlayerState {
+export enum EntityState {
     IDLE = "IDLE",
     MOVING = "MOVING",
     ATTACK = "ATTACK", 

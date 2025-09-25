@@ -1,11 +1,11 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { TeleportService } from "../../services/TeleportService";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class TeleportState extends BaseState {
-    readonly name = PlayerState.TELEPORTING;
+    readonly name = EntityState.TELEPORTING;
     private timer = 1;
 
     constructor(player: ClientPlayer, private teleportService: TeleportService, private eventBus: EventBus) {

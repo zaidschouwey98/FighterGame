@@ -1,4 +1,4 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import type Position from "../../Position";
 import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
@@ -20,7 +20,7 @@ export class HeavySword extends Weapon {
             position: playerPos,
             rotation: attackDir,
             knockbackStrength: this._knockbackStrength,
-            playerAction: PlayerState.ATTACK,
+            playerAction: EntityState.ATTACK,
             attackIndex:this._attackCurrentCombo,
         };
         this._attackCurrentCombo = ((this._attackCurrentCombo + 1)% this._attackMaxCombo)

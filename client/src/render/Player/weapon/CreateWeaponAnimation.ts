@@ -1,7 +1,7 @@
 
 import type { Container, Sprite, Spritesheet } from "pixi.js";
 import { WeaponType } from "../../../../../shared/WeaponType";
-import { PlayerState } from "../../../../../shared/PlayerState";
+import { EntityState } from "../../../../../shared/PlayerState";
 import type { IWeaponAnim } from "./weapon_anim/IWeaponAnim";
 import { IdleWeaponAnim } from "./weapon_anim/heavy_sword/IdleWeaponAnim";
 import { HiddenWeaponAnim } from "./weapon_anim/HiddenWeaponAnim";
@@ -10,34 +10,34 @@ import { HeavySwordAttack1 } from "./weapon_anim/heavy_sword/HeavySwordAttack1";
 import { HeavySwordAttack2 } from "./weapon_anim/heavy_sword/HeavySwordAttack2";
 import { HeavySwordAttack3 } from "./weapon_anim/heavy_sword/HeavySwordAttack3";
 
-export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerContainer:Container, spriteSheets:Spritesheet[]): Partial<Record<PlayerState, IWeaponAnim | IWeaponAnim[]>> {
+export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerContainer:Container, spriteSheets:Spritesheet[]): Partial<Record<EntityState, IWeaponAnim | IWeaponAnim[]>> {
   switch (type) {
     case WeaponType.HEAVY_SWORD:
       return {
-        [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
-        [PlayerState.MOVING]: new IdleWeaponAnim(sprite),
-        [PlayerState.ATTACK]: [
+        [EntityState.IDLE]: new IdleWeaponAnim(sprite),
+        [EntityState.MOVING]: new IdleWeaponAnim(sprite),
+        [EntityState.ATTACK]: [
           new HeavySwordAttack1(sprite,playerContainer,spriteSheets),
           new HeavySwordAttack2(sprite,playerContainer,spriteSheets),
           new HeavySwordAttack3(sprite,playerContainer,spriteSheets),
         ],
-        [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),
-        [PlayerState.BLOCKING]: new HiddenWeaponAnim(sprite),
-        [PlayerState.DEAD]: new HiddenWeaponAnim(sprite),
+        [EntityState.ATTACK_DASH]: new DashWeaponAnim(sprite),
+        [EntityState.BLOCKING]: new HiddenWeaponAnim(sprite),
+        [EntityState.DEAD]: new HiddenWeaponAnim(sprite),
       };
 
     case WeaponType.GUN:
       return {
-        [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
-        [PlayerState.MOVING]: new IdleWeaponAnim(sprite),
-        [PlayerState.ATTACK]: [
+        [EntityState.IDLE]: new IdleWeaponAnim(sprite),
+        [EntityState.MOVING]: new IdleWeaponAnim(sprite),
+        [EntityState.ATTACK]: [
           new HeavySwordAttack1(sprite,playerContainer,spriteSheets),
           new HeavySwordAttack2(sprite,playerContainer,spriteSheets),
           new HeavySwordAttack3(sprite,playerContainer,spriteSheets),
         ],
-        [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),
-        [PlayerState.BLOCKING]: new HiddenWeaponAnim(sprite),
-        [PlayerState.DEAD]: new HiddenWeaponAnim(sprite),
+        [EntityState.ATTACK_DASH]: new DashWeaponAnim(sprite),
+        [EntityState.BLOCKING]: new HiddenWeaponAnim(sprite),
+        [EntityState.DEAD]: new HiddenWeaponAnim(sprite),
       };
 
     // case WeaponType.BOW:

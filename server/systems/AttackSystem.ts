@@ -10,12 +10,12 @@ export class AttackSystem {
 
     constructor(private serverState: ServerState, private eventBus:EventBus) { 
         this.handlers.set(AttackType.MELEE, new MeleeAttackHandler(serverState, eventBus));
-        this.handlers.set(AttackType.PROJECTILE, new ProjectileAttackHandler());
+        this.handlers.set(AttackType.PROJECTILE, new ProjectileAttackHandler(serverState, eventBus));
     }
 
     handleAttack(data: AttackDataBase, socket?:Socket) {
         const handler = this.handlers.get(data.attackType);
-        handler?.handle(data, this.serverState, socket);
+        handler?.handle(data, socket);
     }
 
     public handleStartAttack(playerInfo:PlayerInfo, socket?:Socket) {
@@ -23,9 +23,5 @@ export class AttackSystem {
             this.serverState.updatePlayer(playerInfo);
             this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getPlayer(playerInfo.id).toInfo(), socket:socket})
         }
-    }
-
-    private handlePlayerDeath( playerInfo:PlayerInfo, killerId:string, socket?:Socket) {
-        
     }
 }

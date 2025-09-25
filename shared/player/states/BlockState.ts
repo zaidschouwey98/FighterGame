@@ -1,4 +1,4 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { BLOCK_DURATION } from "../../constantes";
@@ -7,7 +7,7 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class BlockState extends BaseState {
-    readonly name = PlayerState.BLOCKING;
+    readonly name = EntityState.BLOCKING;
     private blockDuration = BLOCK_DURATION;
     constructor(
         player: ClientPlayer,

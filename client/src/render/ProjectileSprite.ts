@@ -18,7 +18,8 @@ export class ProjectileSprite implements EntitySprite {
     }
 
     public syncPlayer(entity: ProjectileInfo, onDeath?: () => void) {
-       
+       if(onDeath)
+        onDeath();
     }
 
     public update(delta: number) {

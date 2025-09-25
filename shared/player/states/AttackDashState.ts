@@ -1,4 +1,4 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import type {Player} from "../Player";
 import type { AttackService } from "../../services/AttackService";
 import { BaseState } from "./BaseState";
@@ -7,7 +7,7 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class AttackDashState extends BaseState {
-    readonly name = PlayerState.ATTACK_DASH;
+    readonly name = EntityState.ATTACK_DASH;
 
     constructor(player: ClientPlayer, private attackService: AttackService, private eventBus: EventBus, private inputHandler: IInputHandler) {
         super(player);

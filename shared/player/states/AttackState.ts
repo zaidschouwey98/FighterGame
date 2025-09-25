@@ -1,4 +1,4 @@
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import { BaseState } from "./BaseState";
 import type { AttackService } from "../../services/AttackService";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
@@ -6,7 +6,7 @@ import { MovementService } from "../../services/MovementService";
 import { ClientPlayer } from "../ClientPlayer";
 
 export class AttackState extends BaseState {
-  readonly name = PlayerState.ATTACK;
+  readonly name = EntityState.ATTACK;
 
   private attackDashDone: boolean = false;
   private attackDone: boolean = false
@@ -36,9 +36,9 @@ export class AttackState extends BaseState {
 
   update(delta: number) {
     let v = this.movementService.getMovementDelta();
-    v.dx = v.dx / 2;
-    v.dy = v.dy / 2;
-    MovementService.moveEntity(this.player, delta, this.player.speed / 3)
+    this.player.movingVector = v;
+    
+    MovementService.moveEntity(this.player, delta, this.player.speed / 3);
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.player.toInfo());
 
     this.timer -= delta;

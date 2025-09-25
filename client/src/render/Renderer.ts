@@ -9,6 +9,7 @@ import { EventBusMessage, type EventBus } from "../../../shared/services/EventBu
 import type { Player } from "../../../shared/player/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";
+import type { EntityInfo } from "../../../shared/EntityInfo";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -91,8 +92,8 @@ export class Renderer {
             this._entityRenderer.removeEntity(playerId);
         });
 
-        this._eventBus.on(EventBusMessage.ENTITY_DIED, (playerInfo:PlayerInfo) => {
-            this._entityRenderer.entityDied(playerInfo);
+        this._eventBus.on(EventBusMessage.ENTITY_DIED, (entityInfo:EntityInfo) => {
+            this._entityRenderer.entityDied(entityInfo);
         });
     }
 

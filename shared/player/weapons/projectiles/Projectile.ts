@@ -15,7 +15,7 @@ export class Projectile extends Entity {
         movingVector: { dx: number, dy: number },
         readonly ownerId: string,
         public damage: number,
-        private knockbackStrength: number,
+        readonly knockbackStrength: number,
         projectileCollisionHandler: IEntityCollisionHandler
     ) {
         super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);

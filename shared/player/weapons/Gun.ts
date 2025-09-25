@@ -1,6 +1,6 @@
 import { AttackType, ProjectileAttackData } from "../../AttackData";
 import { GUN_ATTACK_BASE_DURATION } from "../../constantes";
-import { PlayerState } from "../../PlayerState";
+import { EntityState } from "../../PlayerState";
 import Position from "../../Position";
 import { WeaponType } from "../../WeaponType";
 import { Weapon } from "./Weapon";
@@ -25,7 +25,7 @@ export class Gun extends Weapon {
             position: playerPos,
             rotation: attackDir,
             knockbackStrength: 20,
-            playerAction: PlayerState.IDLE,
+            playerAction: EntityState.IDLE,
             attackIndex: 0
         };
         return proj

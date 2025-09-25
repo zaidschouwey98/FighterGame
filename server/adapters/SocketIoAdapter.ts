@@ -7,13 +7,13 @@ import { EntityInfo } from "../../shared/EntityInfo";
 
 export class SocketIoAdapter {
     constructor(private eventBus: EventBus, private serverSocket:Server) {
-        this.eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult,socket:Socket}) => {
+        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackResult: AttackResult,socket:Socket}) => {
             if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.ATTACK_RESULT, res.attackResult);
+                throw new Error("Should'nt be undefined")
+                this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
                 return;
             }
-            res.socket.emit(ServerToSocketMsg.ATTACK_RESULT, res.attackResult);
-            res.socket.broadcast.emit(ServerToSocketMsg.ATTACK_RESULT, res.attackResult);
+            res.socket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
         });
         
         this.eventBus.on(EventBusMessage.START_ATTACK, (res:{playerInfo:PlayerInfo, socket:Socket})=>{
@@ -24,13 +24,8 @@ export class SocketIoAdapter {
             res.socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{playerInfo:PlayerInfo,socket:Socket, killerId:string})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo);
-                return;
-            }
-            res.socket.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo)
-            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_DIED, res.playerInfo);
+        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{entityInfo:EntityInfo})=>{
+            this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res.entityInfo);
         })
 
         this.eventBus.on(EventBusMessage.ENTITY_ADDED, (res:{entityInfo:EntityInfo,socket:Socket})=>{

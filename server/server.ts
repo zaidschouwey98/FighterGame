@@ -1,18 +1,9 @@
 import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
-import { PlayerState } from "../shared/PlayerState";
-import { HitboxValidationService } from "./HitboxValidationService";
-import { AttackResult } from "../shared/AttackResult";
-import PlayerInfo from "../shared/PlayerInfo"
 import path from "path";
-import { Direction } from "../shared/Direction";
-import { ClientToSocketMsg } from "../shared/ClientToSocketMsg";
 import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
-import { WeaponType } from "../shared/WeaponType";
 import { EventBus } from "../shared/services/EventBus";
-import { BotInputHandler } from "./bots/BotInputHandler";
-import { Player } from "../shared/player/Player";
 import { ServerState } from "./ServerState";
 import { GameLoop } from "./GameLoop";
 import { AttackSystem } from "./systems/AttackSystem";
@@ -75,7 +66,7 @@ io.on("connection", (socket: Socket) => {
     if(--playerNb <= 0){
       gameLoop.stop();
     }
-    serverState.removePlayer(socket.id);
+    serverState.removeEntity(socket.id);
     io.emit(ServerToSocketMsg.DISCONNECT, socket.id);
   });
 });

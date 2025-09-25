@@ -4,10 +4,11 @@ import { Direction } from "../Direction";
 import type PlayerInfo from "../PlayerInfo";
 import type { Weapon } from "./weapons/Weapon";
 import { Entity } from "./Entity";
-import { PlayerState } from "../PlayerState";
+import { EntityState } from "../PlayerState";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 import { Gun } from "./weapons/Gun";
 import { MovementService } from "../services/MovementService";
+import { HeavySword } from "./weapons/HeavySword";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -20,7 +21,6 @@ export class Player extends Entity {
     public weapon: Weapon = new Gun();
     public killCounter = 0;
     public killStreak = 0;
-    public state: PlayerState = PlayerState.IDLE;
     
     public attackIndex = 0;
     public attackSpeed = 1;

@@ -3,7 +3,7 @@ import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
 import { AttackDashAnim } from "./anim/AttackDashAnim";
-import { PlayerState } from "../../../../shared/PlayerState";
+import { EntityState } from "../../../../shared/PlayerState";
 import { EffectRenderer } from "../EffectRenderer";
 import type PlayerInfo from "../../../../shared/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
@@ -37,15 +37,15 @@ export default class PlayerSprite implements EntitySprite{
 
 
         this.controller = new AnimController({
-            [PlayerState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
-            [PlayerState.MOVING]: new MovingAnim(spriteSheets, this.playerContainer),
-            [PlayerState.ATTACK_DASH]: new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer),
-            [PlayerState.BLOCKING]: new BlockAnim(spriteSheets, playerContainer),
-            [PlayerState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
-            [PlayerState.HIT]: new HitAnim(spriteSheets, playerContainer),
-            [PlayerState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
-            [PlayerState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
-        }, PlayerState.IDLE);
+            [EntityState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
+            [EntityState.MOVING]: new MovingAnim(spriteSheets, this.playerContainer),
+            [EntityState.ATTACK_DASH]: new AttackDashAnim(spriteSheets, this.playerContainer, effectRenderer),
+            [EntityState.BLOCKING]: new BlockAnim(spriteSheets, playerContainer),
+            [EntityState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
+            [EntityState.HIT]: new HitAnim(spriteSheets, playerContainer),
+            [EntityState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
+            [EntityState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
+        }, EntityState.IDLE);
 
         this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
     }

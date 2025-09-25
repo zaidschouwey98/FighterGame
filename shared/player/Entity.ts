@@ -1,6 +1,7 @@
 import { EntityInfo } from "../EntityInfo";
 import { EntityType } from "../EntityType";
 import Position from "../Position";
+import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 
 export abstract class Entity {
     constructor(
@@ -13,11 +14,14 @@ export abstract class Entity {
         public speed: number,
         public isDead: boolean,
         public entityType: EntityType,
+        private entityCollisionHandler: IEntityCollisionHandler,
     ) {}
 
     public abstract updateFromInfo(info: EntityInfo):void;
 
-    public abstract onCollideWith(entity: EntityInfo):void;
+    public onCollideWith(entity: EntityInfo): void {
+        this.entityCollisionHandler.handleCollision(this,entity);
+    }
 
     public abstract toInfo(): EntityInfo;
 }

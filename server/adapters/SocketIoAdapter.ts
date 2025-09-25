@@ -56,8 +56,8 @@ export class SocketIoAdapter {
             res.socket.broadcast.emit(ServerToSocketMsg.PLAYER_UPDATE, res.playerInfo);
         })
 
-        this.eventBus.on(EventBusMessage.PLAYER_PROGRESSED, (playerInfo:PlayerInfo)=>{
-            this.serverSocket.emit(ServerToSocketMsg.PLAYER_PROGRESSED, playerInfo);
+        this.eventBus.on(EventBusMessage.PLAYER_SYNC, (playerInfo:PlayerInfo)=>{
+            this.serverSocket.emit(ServerToSocketMsg.PLAYER_SYNC, playerInfo);
         })
     }
 }

@@ -1,10 +1,10 @@
-import type { AttackData } from "../../AttackData";
 import { PlayerState } from "../../PlayerState";
 import type Position from "../../Position";
 import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
 import { WeaponType } from "../../WeaponType";
 import { HEAVY_SWORD_ATTACK_1_BASE_DURATION, HEAVY_SWORD_ATTACK_3_BASE_DURATION, HEAVY_SWORD_CD } from "../../constantes";
+import { AttackDataBase, AttackType, MeleeAttackData } from "../../AttackData";
 
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;
@@ -12,8 +12,9 @@ export class HeavySword extends Weapon {
         super(20, HEAVY_SWORD_CD, 3, 10)
     }
 
-    public useWeapon(playerPos: Position, attackDir: number): AttackData {
-        let res: AttackData = {
+    public useWeapon(playerPos: Position, attackDir: number): AttackDataBase {
+        let res: MeleeAttackData = {
+            attackType: AttackType.MELEE,
             hitbox: AttackHitboxService.createHitbox(playerPos, attackDir, 70),
             playerId: "",
             position: playerPos,

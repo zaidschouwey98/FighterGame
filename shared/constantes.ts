@@ -17,3 +17,6 @@ export const HEAVY_SWORD_ATTACK_1_BASE_DURATION = 40;
 export const HEAVY_SWORD_ATTACK_2_BASE_DURATION = 40;
 export const HEAVY_SWORD_ATTACK_3_BASE_DURATION = 10;
 export const HEAVY_SWORD_CD = 20;
+
+// gun
+export const GUN_ATTACK_BASE_DURATION = 20;

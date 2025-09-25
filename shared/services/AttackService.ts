@@ -1,10 +1,10 @@
 import { Player } from "../player/Player";
 import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
-import type { AttackData } from "../AttackData";
 import DirectionHelper from "../DirectionHelper";
 import { Direction } from "../Direction";
 import type Position from "../Position";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
+import { AttackDataBase } from "../AttackData";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;
@@ -49,7 +49,7 @@ export class AttackService {
     }
 
     /** Crée une hitbox d'attaque */
-    public performAttack(player: Player, attackDirection: {x:number, y:number}): AttackData | undefined {
+    public performAttack(player: Player, attackDirection: {x:number, y:number}): AttackDataBase | undefined {
         this.attackResetTimer = ATTACK_RESET;
         const dir = Math.atan2(attackDirection.y, attackDirection.x);
         let res = player.weapon.useWeapon(player.position, dir);

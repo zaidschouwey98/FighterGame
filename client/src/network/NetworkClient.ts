@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import type { AttackResult } from "../../../shared/AttackResult";
-import type { AttackData } from "../../../shared/AttackData";
+import type { AttackDataBase } from "../../../shared/AttackData";
 import { ServerToSocketMsg } from "../../../shared/ServerToSocketMsg";
 import { ClientToSocketMsg } from "../../../shared/ClientToSocketMsg";
 
@@ -46,8 +46,8 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_DIED, player);
         });
 
-        this.socket.on(ServerToSocketMsg.PLAYER_PROGRESSED, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_PROGRESSED, player);
+        this.socket.on(ServerToSocketMsg.PLAYER_SYNC, (player: PlayerInfo) => {
+            this.eventBus.emit(EventBusMessage.PLAYER_SYNC, player);
         });
 
         this.socket.on(ServerToSocketMsg.PLAYER_RESPAWNED, (player: PlayerInfo) => {
@@ -55,7 +55,7 @@ export class NetworkClient {
         });
 
         // SENDING TO SOCKET    
-        this.eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attackData: AttackData) => {
+        this.eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attackData: AttackDataBase) => {
             this.socket.emit(ClientToSocketMsg.ATTACK, attackData);
         });
 

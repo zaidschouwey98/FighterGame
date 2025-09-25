@@ -1,4 +1,4 @@
-import type { AttackData } from "../../AttackData";
+import { AttackDataBase } from "../../AttackData";
 import type Position from "../../Position";
 import type { WeaponType } from "../../WeaponType";
 
@@ -39,5 +39,5 @@ export abstract class Weapon {
 
     public abstract getAttackDuration(attackSpeed:number):number;
 
-    public abstract useWeapon(playerPos:Position, attackDir:number):AttackData;
+    public abstract useWeapon(playerPos:Position, attackDir:number):AttackDataBase;
 }

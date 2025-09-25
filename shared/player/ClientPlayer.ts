@@ -21,6 +21,7 @@ import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import { Player } from "./Player";
 import PlayerInfo from "../PlayerInfo";
 import { EntityType } from "../EntityType";
+import { ClientPlayerCollisionHandler } from "./ClientPlayerCollisionHandler";
 
 export class ClientPlayer extends Player {
     public currentState: BaseState;
@@ -46,7 +47,7 @@ export class ClientPlayer extends Player {
         private eventBus: EventBus,
         private inputHandler: IInputHandler,
     ) {
-        super(id, playerName, position, hp, speed);
+        super(id, playerName, position, hp, speed, new ClientPlayerCollisionHandler());
 
         this.idleState = new IdleState(this, inputHandler, eventBus);
         this.currentState = this.idleState;

@@ -14,8 +14,9 @@ import { WeaponSprite } from "./weapon/WeaponSprite";
 import { BlockAnim } from "./anim/BlockAnim";
 import type { WeaponFactory } from "./weapon/WeaponFactory";
 import { PlayerPlate } from "../UI/PlayerPlate";
+import type { EntitySprite } from "../EntitySprite";
 
-export default class PlayerSprite {
+export default class PlayerSprite implements EntitySprite{
     private controller: AnimController;
     private playerPlate: PlayerPlate;
     private weapon: WeaponSprite;
@@ -49,11 +50,11 @@ export default class PlayerSprite {
         this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
     }
 
-    public syncPlayer(player: PlayerInfo, onDeath?: () => void) {
-        this.playerPlate.update(player.hp, player.maxHp, player.currentXp, player.lvlXp, player.currentLvl);
-        this.controller.update(player, onDeath);
-        this.weapon.setState(player);
-        this.weapon.setDirection(player.movingDirection);
+    public syncPlayer(entity: PlayerInfo, onDeath?: () => void) {
+        this.playerPlate.update(entity.hp, entity.maxHp, entity.currentXp, entity.lvlXp, entity.currentLvl);
+        this.controller.update(entity, onDeath);
+        this.weapon.setState(entity);
+        this.weapon.setDirection(entity.movingDirection);
     }
 
     public update(delta: number) {

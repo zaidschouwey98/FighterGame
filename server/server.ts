@@ -2,7 +2,6 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import { PlayerState } from "../shared/PlayerState";
-import { AttackData } from "../shared/AttackData";
 import { HitboxValidationService } from "./HitboxValidationService";
 import { AttackResult } from "../shared/AttackResult";
 import PlayerInfo from "../shared/PlayerInfo"

@@ -18,7 +18,7 @@ export class ProgressionSystem {
             this.gainXp(killer, killer.currentLvl <= playerInfo.currentLvl ? this.getXpByKilledLevel(playerInfo.currentLvl)/2 : 100);
 
             this.checkLevelUp(killer);
-            this.eventBus.emit(EventBusMessage.PLAYER_PROGRESSED, killer.toInfo());
+            this.eventBus.emit(EventBusMessage.PLAYER_SYNC, killer.toInfo());
         });
     }
 

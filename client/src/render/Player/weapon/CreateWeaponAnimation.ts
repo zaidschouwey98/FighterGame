@@ -26,6 +26,20 @@ export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerC
         [PlayerState.DEAD]: new HiddenWeaponAnim(sprite),
       };
 
+    case WeaponType.GUN:
+      return {
+        [PlayerState.IDLE]: new IdleWeaponAnim(sprite),
+        [PlayerState.MOVING]: new IdleWeaponAnim(sprite),
+        [PlayerState.ATTACK]: [
+          new HeavySwordAttack1(sprite,playerContainer,spriteSheets),
+          new HeavySwordAttack2(sprite,playerContainer,spriteSheets),
+          new HeavySwordAttack3(sprite,playerContainer,spriteSheets),
+        ],
+        [PlayerState.ATTACK_DASH]: new DashWeaponAnim(sprite),
+        [PlayerState.BLOCKING]: new HiddenWeaponAnim(sprite),
+        [PlayerState.DEAD]: new HiddenWeaponAnim(sprite),
+      };
+
     // case WeaponType.BOW:
     //   return {
     //     [PlayerState.IDLE]: new IdleWeaponAnim(sprite),

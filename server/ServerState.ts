@@ -3,7 +3,6 @@ import { EntityType } from "../shared/EntityType";
 import { Entity } from "../shared/player/Entity";
 import { Player } from "../shared/player/Player";
 import PlayerInfo from "../shared/PlayerInfo";
-import { Projectile } from "../shared/Projectile";
 import { CollisionService } from "../shared/services/CollisionService";
 import { MovementService } from "../shared/services/MovementService";
 
@@ -11,8 +10,8 @@ export class ServerState {
     private entities: Map<string, Entity> = new Map;
     private bots: Set<string> = new Set();
 
-    addPlayer(player: Player) {
-        this.entities.set(player.id, player);
+    addEntity(entity: Entity) {
+        this.entities.set(entity.id, entity);
     }
 
     addBot(bot: Player) {
@@ -62,7 +61,9 @@ export class ServerState {
         for (const p of this.entities.values()) {
             if (this.bots.has(p.id))
                 continue;
-            let t = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));
+            let ovEnts = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));
+            for(const ovEnt of ovEnts)
+                p.onCollideWith(ovEnt);
             MovementService.moveEntity(p, p.movingVector.dx, p.movingVector.dy, delta);
         }
     }

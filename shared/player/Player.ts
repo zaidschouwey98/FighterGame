@@ -7,6 +7,8 @@ import { HeavySword } from "./weapons/HeavySword";
 import { Entity } from "./Entity";
 import { PlayerState } from "../PlayerState";
 import { EntityInfo } from "../EntityInfo";
+import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
+import { Gun } from "./weapons/Gun";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -16,7 +18,7 @@ export class Player extends Entity {
     public lvlXp = 100;
     public currentLvl = 1;
 
-    public weapon: Weapon = new HeavySword();
+    public weapon: Weapon = new Gun();
     public killCounter = 0;
     public killStreak = 0;
     public state: PlayerState = PlayerState.IDLE;
@@ -37,8 +39,9 @@ export class Player extends Entity {
         position: Position,
         hp: number = 100,
         speed: number = 10,
+        playerCollisionHandler: IEntityCollisionHandler
     ) {
-        super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, speed, false, EntityType.PLAYER);
+        super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, speed, false, EntityType.PLAYER, playerCollisionHandler);
         this.playerName = playerName;
     }
 
@@ -100,9 +103,5 @@ export class Player extends Entity {
         };
     }
 
-    public onCollideWith(entity: EntityInfo): void {
-        if(entity.entityType == EntityType.PROJECTILE){
-            
-        }
-    }
+    
 }

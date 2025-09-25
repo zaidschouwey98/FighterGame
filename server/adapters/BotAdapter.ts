@@ -1,4 +1,4 @@
-import { AttackData } from "../../shared/AttackData";
+import { AttackDataBase } from "../../shared/AttackData";
 import { AttackResult } from "../../shared/AttackResult";
 import { Player } from "../../shared/player/Player";
 import PlayerInfo from "../../shared/PlayerInfo";
@@ -22,7 +22,7 @@ export class BotAdapter {
         private updateSystem: UpdateSystem
     ) {
 
-        eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attack: AttackData) =>
+        eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attack: AttackDataBase) =>
             this.attackSystem.handleAttack(attack)
         );
 
@@ -49,7 +49,7 @@ export class BotAdapter {
         );
 
         eventBus.on(
-            EventBusMessage.PLAYER_PROGRESSED,
+            EventBusMessage.PLAYER_SYNC,
             (player: PlayerInfo) => {
                 for (const bot of this.botManager.getBots()) {
                     if(player.id == bot.id){

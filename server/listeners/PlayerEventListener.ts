@@ -3,7 +3,6 @@ import { AttackSystem } from "../systems/AttackSystem";
 import { MovementSystem } from "../systems/MovementSystem";
 import { DirectionSystem } from "../systems/DirectionSystem";
 import { ClientToSocketMsg } from "../../shared/ClientToSocketMsg";
-import { AttackData } from "../../shared/AttackData";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { ServerState } from "../ServerState";
@@ -13,6 +12,8 @@ import { WeaponType } from "../../shared/WeaponType";
 import { UpdateSystem } from "../systems/UpdateSystem";
 import { EntityType } from "../../shared/EntityType";
 import { Player } from "../../shared/player/Player";
+import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisionHandler";
+import { AttackDataBase } from "../../shared/AttackData";
 
 export class HumanEventListener {
     constructor(
@@ -28,7 +29,7 @@ export class HumanEventListener {
     }
 
     register() {
-        this.socket.on(ClientToSocketMsg.ATTACK, (data: AttackData) =>
+        this.socket.on(ClientToSocketMsg.ATTACK, (data: AttackDataBase) =>
             this.attackSystem.handleAttack(data,this.socket)
         );
 
@@ -50,8 +51,8 @@ export class HumanEventListener {
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
-            const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10);
-            this.serverState.addPlayer(player);
+            const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10, new ServerPlayerCollisionHandler());
+            this.serverState.addEntity(player);
             console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
             this.socket.emit(ServerToSocketMsg.NEW_PLAYER, player.toInfo());
             this.socket.broadcast.emit(ServerToSocketMsg.NEW_PLAYER, player.toInfo());

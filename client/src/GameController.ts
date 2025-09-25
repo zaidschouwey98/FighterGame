@@ -104,7 +104,7 @@ export class GameController {
             this.gameState.removePlayer(player.id);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_PROGRESSED, (player:PlayerInfo) => {
+        this.eventBus.on(EventBusMessage.PLAYER_SYNC, (player:PlayerInfo) => {
             if (player.id === this.localPlayer?.id) {
                 this.localPlayer?.updateFromInfo(player);
             } else 

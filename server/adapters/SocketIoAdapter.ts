@@ -1,19 +1,33 @@
 import { Server, Socket } from "socket.io";
 import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
-import { AttackResult } from "../../shared/AttackResult";
+import { AttackResult, KnockbackData } from "../../shared/AttackResult";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { EntityInfo } from "../../shared/EntityInfo";
+import { ServerState } from "../ServerState";
 
 export class SocketIoAdapter {
-    constructor(private eventBus: EventBus, private serverSocket:Server) {
-        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackResult: AttackResult,socket:Socket}) => {
-            if(!res.socket){
-                throw new Error("Should'nt be undefined")
-                this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
+    constructor(private eventBus: EventBus, private serverSocket:Server, private serverState: ServerState) {
+        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackResult: AttackResult,entityId:string}) => {
+            const playerSocket = this.serverState.getPlayerSocket(res.entityId);
+            if(!playerSocket){
+                // throw new Error("Should'nt be undefined")
+                // this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
+                // return;
                 return;
             }
-            res.socket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
+            playerSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
+        });
+
+        this.eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (res:{knockbackData: KnockbackData,entityId:string}) => {
+            const playerSocket = this.serverState.getPlayerSocket(res.entityId);
+            if(!playerSocket){
+                // throw new Error("Should'nt be undefined")
+                // this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
+                // return;
+                return;
+            }
+            playerSocket.emit(ServerToSocketMsg.KNOCKBACK_RECEIVED, res.knockbackData);
         });
         
         this.eventBus.on(EventBusMessage.START_ATTACK, (res:{playerInfo:PlayerInfo, socket:Socket})=>{

@@ -1,5 +1,4 @@
 import { Server } from "socket.io";
-import { Player } from "../shared/player/Player";
 import { EventBus } from "../shared/services/EventBus";
 import { BotInputHandler } from "./bots/BotInputHandler";
 import { ServerState } from "./ServerState";
@@ -71,7 +70,7 @@ export class BotManager {
         this.io.emit(ServerToSocketMsg.NEW_ENTITY, bot.toInfo());
     }
 
-    getBots(): Player[] {
+    getBots(): ClientPlayer[] {
         return Array.from(this.bots.values());
     }
 }

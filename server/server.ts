@@ -36,7 +36,7 @@ const eventBus = new EventBus();
 
 const serverState = new ServerState(eventBus);
 // systèmes
-const socketIoAdapter = new SocketIoAdapter(eventBus, io);
+const socketIoAdapter = new SocketIoAdapter(eventBus, io, serverState);
 
 let playerNb = 0;
 
@@ -49,7 +49,7 @@ const progressSystem = new ProgressionSystem(serverState,eventBus);
 
 
 const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem, progressSystem);
-// botManager.spawnBot("bibitee");
+botManager.spawnBot("bibitee");
 // botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);

@@ -1,5 +1,6 @@
 import { AttackDataBase } from "../../shared/AttackData";
-import { AttackResult } from "../../shared/AttackResult";
+import { AttackResult, KnockbackData } from "../../shared/AttackResult";
+import { EntityInfo } from "../../shared/EntityInfo";
 import { Player } from "../../shared/player/Player";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
@@ -48,33 +49,38 @@ export class BotAdapter {
             }
         );
 
-        eventBus.on(
-            EventBusMessage.ENTITY_SYNC,
-            (player: PlayerInfo) => {
+        eventBus.on(EventBusMessage.ENTITY_SYNC, (entityInfo:EntityInfo)=>{
                 for (const bot of this.botManager.getBots()) {
-                    if(player.id == bot.id){
-                        bot.updateFromInfo(player)
+                    if(entityInfo.id == bot.id){
+                        bot.updateFromInfo(entityInfo as PlayerInfo);
                     }
                         
                 }
             }
         );
 
-        // eventBus.on(EventBusMessage.PLAYER_DIED, (res:{playerInfo:PlayerInfo, socket:any, killerId:any}) => {
-        //     for (const bot of this.botManager.getBots()) {
-        //         if(res.playerInfo.id == bot.id){
-        //             bot.die();
-        //             this.botManager.deleteBot(bot.id);
-        //         }
+        eventBus.on(EventBusMessage.ENTITY_DIED, (res:{entityInfo:EntityInfo, killerId:string})=>{
+            for (const bot of this.botManager.getBots()) {
+                if(res.entityInfo.id == bot.id){
+                    bot.die();
+                    this.botManager.deleteBot(bot.id);
+                }
                     
-        //     }
-        // });
+            }
+        });
 
-        // eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult, socket:any}) => {
-        //     for (const bot of this.botManager.getBots()) {
-        //         bot.handleAttackReceived(res.attackResult, (id)=>this.serverState.getPlayer(id).position);
-        //     }
-            
-        // })
+        eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackResult: AttackResult, entityId: string}) => {
+            for (const bot of this.botManager.getBots()) {
+                if(bot.id === res.entityId)
+                    bot.handleAttackReceived(res.attackResult);
+            }  
+        })
+
+        eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (res:{knockbackData: KnockbackData, entityId: string}) => {
+            for (const bot of this.botManager.getBots()) {
+                if(bot.id === res.entityId)
+                    bot.handleKnockbackReceived(res.knockbackData);
+            }  
+        })
     }
 }

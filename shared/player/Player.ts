@@ -2,7 +2,7 @@ import { EntityType } from "../EntityType";
 import Position from "../Position";
 import { Direction } from "../Direction";
 import type PlayerInfo from "../PlayerInfo";
-import type { Weapon } from "./weapons/Weapon";
+import { Weapon } from "./weapons/Weapon";
 import { Entity } from "./Entity";
 import { EntityState } from "../PlayerState";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
@@ -18,7 +18,7 @@ export class Player extends Entity {
     public lvlXp = 100;
     public currentLvl = 1;
 
-    public weapon: Weapon = new Gun();
+    public weapon: Weapon = new HeavySword();
     public killCounter = 0;
     public killStreak = 0;
     

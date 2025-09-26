@@ -15,7 +15,7 @@ import { BlockService } from "../services/BlockService";
 import { KnockBackState } from "./states/KnockBackState";
 import { TeleportState } from "./states/TeleportState";
 import { TeleportService } from "../services/TeleportService";
-import type { AttackResult } from "../AttackResult";
+import type { AttackResult, KnockbackData } from "../AttackResult";
 import { PhysicsService } from "../services/PhysicsService";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import { Player } from "./Player";
@@ -72,16 +72,25 @@ export class ClientPlayer extends Player {
     }
 
     public handleAttackReceived(attackResult: AttackResult) {
+        this.movingVector = {dx:0, dy:0};
         this.hp = attackResult.newHp;
-        this.knockbackReceivedVector = {x: attackResult.knockBackVector.dx, y: attackResult.knockBackVector.dy};
+        this.knockbackReceivedVector = {x: attackResult.knockbackData.knockbackVector.dx, y: attackResult.knockbackData.knockbackVector.dy};
         this.changeState(
             new HitState(
                 this,
                 this.eventBus,
                 this.inputHandler,
-                attackResult.knockBackVector,
-                attackResult.knockbackTimer,
+                attackResult.knockbackData.knockbackVector,
+                attackResult.knockbackData.knockbackTimer,
             )
+        );
+    }
+
+    public handleKnockbackReceived(knockbackData: KnockbackData){
+        this.movingVector = {dx:0, dy:0};
+        this.knockbackReceivedVector = {x: knockbackData.knockbackVector.dx, y: knockbackData.knockbackVector.dy};
+        this.changeState(
+            new KnockBackState(this,this.eventBus, this.inputHandler, knockbackData.knockbackVector, knockbackData.knockbackTimer)
         );
     }
 

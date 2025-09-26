@@ -39,8 +39,6 @@ export class ServerState {
     }
 
     getPlayerSocket(id:string):Socket{
-        if(!this.playerSockets.has(id))
-            throw new Error("Unable to get player socket.");
         return this.playerSockets.get(id)!;
     }
 
@@ -79,7 +77,8 @@ export class ServerState {
     // }
 
     getEntity(id: string): Entity {
-        if (!this.entities.has(id)) throw new Error("Trying to get unset player.");
+        if (!this.entities.has(id)) 
+            console.debug("trying to get unknown entity");
         return this.entities.get(id) as Entity;
     }
 

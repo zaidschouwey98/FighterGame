@@ -31,7 +31,7 @@ export class Renderer {
     private _camera: CameraService;
     private _scoreBoard: ScoreBoard;
 
-    constructor(app: Application, rootContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed") {
+    constructor(app: Application, rootContainer: Container, spriteSheets: Spritesheet[], eventBus: EventBus, seed: string = "seed", private onDeathAnimationFinished:(entityId:string)=>void) {
         this._eventBus = eventBus;
         this._camera = new CameraService();
 
@@ -97,7 +97,7 @@ export class Renderer {
         });
 
         this._eventBus.on(EventBusMessage.ENTITY_DIED, (entityInfo:EntityInfo) => {
-            this._entityRenderer.entityDied(entityInfo);
+            this._entityRenderer.entityDied(entityInfo, this.onDeathAnimationFinished);
         });
     }
 

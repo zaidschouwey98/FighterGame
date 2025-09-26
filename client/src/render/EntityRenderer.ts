@@ -82,10 +82,13 @@ export default class EntityRenderer {
         }
     }
 
-    public entityDied(entity:EntityInfo){
+    public entityDied(entity:EntityInfo, onLocalPlayerDeath: (entityId:string)=>void){
         let entitySprite = this.entitySprites.get(entity.id);
         if (!entitySprite) throw new Error("Dead player shouldn't be already deleted.");
-        entitySprite.syncPlayer(entity, ()=>this.removeEntity(entity.id));
+        entitySprite.syncPlayer(entity, ()=>{
+                this.removeEntity(entity.id);
+                onLocalPlayerDeath(entity.id);
+            });
     }
 
     public syncEntities(entities: EntityInfo[]) {

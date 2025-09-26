@@ -19,7 +19,6 @@ export class GameState{
         let entity = this.entities.get(info.id);
         if (!entity) {
             console.warn(`Entity ${info.id} not found`);
-            // this.addPlayer(info);
             return;
         }
         

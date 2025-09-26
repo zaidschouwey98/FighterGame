@@ -27,29 +27,33 @@ export class GameController {
     // Services
     private coordinateService: CoordinateService;
 
-    private onDeath?: () => void;
-    private onRespawn?: () => void;
+    private onDeath: () => void;
+    private onRespawn: () => void;
     constructor(
         globalContainer: Container,
         serverUrl: string,
         app: Application,
         spriteSheets: Spritesheet[],
-        opts?: {
-            onDeath?: () => void;
-            onRespawn?: () => void;
+        opts: {
+            onDeath: () => void;
+            onRespawn: () => void;
         }
     ) {
-        this.onDeath = opts?.onDeath;
-        this.onRespawn = opts?.onRespawn;
-    
+        this.onDeath = opts.onDeath;
+        this.onRespawn = opts.onRespawn;
+
         this.setupEventListeners();
         this.networkClient = new NetworkClient(serverUrl, this.eventBus);
         this.gameState = GameState.instance;
-        this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus);
+        this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus, "seed", (entityId: string) => {
+            if (entityId === this.localPlayerId) {
+                this.onDeath();
+            }
+        });
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.inputHandler = new InputHandler(this.coordinateService);
         this.renderer.worldRenderer.update(0, 0);
-        
+
     }
 
     private setupEventListeners() {
@@ -105,24 +109,23 @@ export class GameController {
         this.eventBus.on(EventBusMessage.ENTITY_DIED, (entity: EntityInfo) => {
             if (entity.id === this.localPlayer?.id) {
                 this.localPlayer!.die();
-                this.onDeath?.()
-            } else 
-            this.gameState.removeEntity(entity.id);
+            } else
+                this.gameState.removeEntity(entity.id);
         });
 
         this.eventBus.on(EventBusMessage.ENTITY_SYNC, (entity: EntityInfo) => {
             if (entity.id === this.localPlayer?.id) {
                 this.localPlayer?.updateFromInfo(entity as PlayerInfo);
-            } else 
-            this.gameState.updateEntity(entity);
+            } else
+                this.gameState.updateEntity(entity);
         });
 
         this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
             // A ENLEVER NE SERT PLUS
             if (player.id === this.localPlayer?.id) {
-                
-            } 
-            this.eventBus.emit(EventBusMessage.ENTITY_ADDED,player);
+
+            }
+            this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
         });
     }
 
@@ -137,9 +140,8 @@ export class GameController {
     }
 
     public update(delta: number) {
-        for(const value of GameState.instance.entities.values()){
-            if(!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0)
-            {
+        for (const value of GameState.instance.entities.values()) {
+            if (!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0) {
                 MovementService.moveEntity(value, delta);
                 this.renderer.playersRenderer.syncEntities([value]);
             }
@@ -152,7 +154,7 @@ export class GameController {
         // Handle attack dash if ongoing
         this.localPlayer.update(delta);
 
-        
+
         // render world
         const tileX = Math.floor(this.localPlayer.position.x / TILE_SIZE);
         const tileY = Math.floor(this.localPlayer.position.y / TILE_SIZE);
@@ -166,6 +168,6 @@ export class GameController {
 
         this.renderer.updateCamera(this.localPlayer.position)
         this.renderer.updateMinimap(this.localPlayer);
-        
+
     }
 }

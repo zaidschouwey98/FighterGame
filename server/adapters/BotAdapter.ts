@@ -1,5 +1,5 @@
 import { AttackDataBase } from "../../shared/AttackData";
-import { AttackResult, KnockbackData } from "../../shared/AttackResult";
+import { AttackReceivedData, KnockbackData } from "../../shared/AttackResult";
 import { EntityInfo } from "../../shared/EntityInfo";
 import { Player } from "../../shared/player/Player";
 import PlayerInfo from "../../shared/PlayerInfo";
@@ -69,10 +69,10 @@ export class BotAdapter {
             }
         });
 
-        eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackResult: AttackResult, entityId: string}) => {
+        eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackReceivedData: AttackReceivedData, entityId: string}) => {
             for (const bot of this.botManager.getBots()) {
                 if(bot.id === res.entityId)
-                    bot.handleAttackReceived(res.attackResult);
+                    bot.handleAttackReceived(res.attackReceivedData);
             }  
         })
 

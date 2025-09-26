@@ -9,6 +9,7 @@ export interface EntityInfo {
     hp:number;
     maxHp:number;
     speed:number;
+    critChance:number;
     isDead:boolean;
     entityType: EntityType;
 }

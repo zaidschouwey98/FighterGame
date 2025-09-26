@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type PlayerInfo from "../../../shared/PlayerInfo";
-import type { AttackResult, KnockbackData } from "../../../shared/AttackResult";
+import type { AttackReceivedData, AttackResult, KnockbackData } from "../../../shared/AttackResult";
 import type { AttackDataBase } from "../../../shared/AttackData";
 import { ServerToSocketMsg } from "../../../shared/ServerToSocketMsg";
 import { ClientToSocketMsg } from "../../../shared/ClientToSocketMsg";
@@ -39,8 +39,12 @@ export class NetworkClient {
             this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
         });
 
-        this.socket.on(ServerToSocketMsg.ATTACK_RECEIVED, (attackResult: AttackResult) => {
-            this.eventBus.emit(EventBusMessage.ATTACK_RECEIVED, attackResult);
+        this.socket.on(ServerToSocketMsg.ATTACK_RECEIVED, (attackReceivedData: AttackReceivedData) => {
+            this.eventBus.emit(EventBusMessage.ATTACK_RECEIVED, attackReceivedData);
+        })
+
+        this.socket.on(ServerToSocketMsg.ATTACK_RESULT, (attackResult: AttackResult) => {
+            this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
         })
 
         this.socket.on(ServerToSocketMsg.KNOCKBACK_RECEIVED, (knockbackData: KnockbackData) => {

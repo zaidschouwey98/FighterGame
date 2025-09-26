@@ -7,6 +7,9 @@ import { EntityType } from "../../../shared/EntityType";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import type { ProjectileInfo } from "../../../shared/player/weapons/projectiles/ProjectileInfo";
 import { ProjectileSprite } from "./ProjectileSprite";
+import type { AttackResult } from "../../../shared/AttackResult";
+import { DamagePopup } from "./DamagePopup";
+import { GameState } from "../core/GameState";
 
 export default class EntityRenderer {
     private entityContainers: Map<string, Container>;
@@ -99,6 +102,14 @@ export default class EntityRenderer {
             this.syncPosition([entity]);
             playerSprite.syncPlayer(entity);
         }
+    }
+
+    public showDmgPopup(attackResult: AttackResult){
+        const entity = GameState.instance.getEntity(attackResult.targetId);
+        if (!entity) return;
+
+        const popup = new DamagePopup(attackResult.dmg, attackResult.isCrit);
+        popup.showAt(entity.position.x, entity.position.y - 40, this.staticEffectContainer);
     }
 
     public update(delta: number) {

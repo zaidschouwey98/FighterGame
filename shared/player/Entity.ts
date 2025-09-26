@@ -13,6 +13,7 @@ export abstract class Entity {
         public radius: number,
         public hp: number,
         public maxHp: number,
+        public critChance:number,
         public speed: number,
         public isDead: boolean,
         public entityType: EntityType,

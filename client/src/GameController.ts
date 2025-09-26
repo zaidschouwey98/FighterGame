@@ -1,5 +1,5 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import type { AttackResult, KnockbackData } from "../../shared/AttackResult";
+import type { AttackReceivedData, KnockbackData } from "../../shared/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { GameState } from "./core/GameState";
@@ -98,8 +98,8 @@ export class GameController {
         });
 
         // Résultat attaque
-        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (attackResult: AttackResult) => {
-            this.localPlayer?.handleAttackReceived(attackResult);
+        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (attackReceivedData: AttackReceivedData) => {
+            this.localPlayer?.handleAttackReceived(attackReceivedData);
         });
 
         this.eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (knockbackData: KnockbackData) => {

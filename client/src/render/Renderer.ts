@@ -10,6 +10,7 @@ import type { Player } from "../../../shared/player/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";
 import type { EntityInfo } from "../../../shared/EntityInfo";
+import type { AttackResult } from "../../../shared/AttackResult";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -98,6 +99,10 @@ export class Renderer {
 
         this._eventBus.on(EventBusMessage.ENTITY_DIED, (entityInfo:EntityInfo) => {
             this._entityRenderer.entityDied(entityInfo, this.onDeathAnimationFinished);
+        });
+
+        this._eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult)=>{
+            this._entityRenderer.showDmgPopup(attackResult);
         });
     }
 

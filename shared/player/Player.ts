@@ -4,11 +4,11 @@ import { Direction } from "../Direction";
 import type PlayerInfo from "../PlayerInfo";
 import { Weapon } from "./weapons/Weapon";
 import { Entity } from "./Entity";
-import { EntityState } from "../PlayerState";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 import { Gun } from "./weapons/Gun";
 import { MovementService } from "../services/MovementService";
 import { HeavySword } from "./weapons/HeavySword";
+import { ENTITY_BASE_CRIT_CHANCE } from "../constantes";
 
 export class Player extends Entity {
     public playerName?: string;
@@ -40,7 +40,7 @@ export class Player extends Entity {
         speed: number = 10,
         playerCollisionHandler: IEntityCollisionHandler
     ) {
-        super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, speed, false, EntityType.PLAYER, playerCollisionHandler);
+        super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, ENTITY_BASE_CRIT_CHANCE, speed, false, EntityType.PLAYER, playerCollisionHandler);
         this.playerName = playerName;
     }
 
@@ -67,6 +67,7 @@ export class Player extends Entity {
         this.state = info.state;
         this.killCounter = info.killCounter;
         this.killStreak = info.killStreak;
+        this.critChance = info.critChance;
         // this.weapon = info.weapon;
         this.movingVector = info.movingVector;
         this.attackSpeed = info.attackSpeed;
@@ -82,6 +83,7 @@ export class Player extends Entity {
             position: this.position,
             maxHp: this.maxHp,
             hp: this.hp,
+            critChance: this.critChance,
             speed: this.speed,
             attackDashDuration: this.attackDashDuration,
             attackDashMaxSpeed: this.attackDashMaxSpeed,

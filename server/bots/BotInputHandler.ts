@@ -51,28 +51,28 @@ export class BotInputHandler implements IInputHandler {
 
         // attaque si assez proche
         if (dist < attackDist) {
-            this.attack = true;
+            // this.attack = true;
         }
 
         // blocage défensif
-        if (dist < dangerDist && target.hp > 0) {
-            if (Math.random() < 0.3) {
-                this.rightClick = true;
-            }
-        }
+        // if (dist < dangerDist && target.hp > 0) {
+        //     if (Math.random() < 0.3) {
+        //         this.rightClick = true;
+        //     }
+        // }
 
-        // dash
-        if (self.hp < 30 && dist < 150 && Math.random() < 0.5) {
-            // dash défensif → souris à l'opposé du joueur
-            const dx = self.position.x - target.position.x;
-            const dy = self.position.y - target.position.y;
-            this.mouse = { x: self.position.x + dx, y: self.position.y + dy };
-            this.space = true;
-        } else if (dist < 120 && dist > 80 && Math.random() < 0.05) {
-            // dash offensif → souris sur la cible
-            this.mouse = { x: target.position.x, y: target.position.y };
-            this.space = true;
-        }
+        // // dash
+        // if (self.hp < 30 && dist < 150 && Math.random() < 0.5) {
+        //     // dash défensif → souris à l'opposé du joueur
+        //     const dx = self.position.x - target.position.x;
+        //     const dy = self.position.y - target.position.y;
+        //     this.mouse = { x: self.position.x + dx, y: self.position.y + dy };
+        //     this.space = true;
+        // } else if (dist < 120 && dist > 80 && Math.random() < 0.05) {
+        //     // dash offensif → souris sur la cible
+        //     this.mouse = { x: target.position.x, y: target.position.y };
+        //     this.space = true;
+        // }
     }
 
     getKeys() { return this.keys; }

@@ -1,4 +1,4 @@
-import { AttackResult, KnockbackData } from "../../shared/AttackResult";
+import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/AttackResult";
 import { EntityState } from "../../shared/PlayerState";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { ServerState } from "../ServerState";
@@ -9,8 +9,9 @@ export class DamageSystem {
         private eventBus: EventBus
     ) { }
 
-    applyDamage(targetId: string, damage: number, killerId?: string, knockback?: { dx: number, dy: number }, knockbackTimer: number = 20) {
+    applyDamage(targetId: string, damage: number, attackerId: string, knockback?: { dx: number, dy: number }, knockbackTimer: number = 20) {
         const target = this.serverState.getEntity(targetId);
+        const attacker = this.serverState.getEntity(attackerId);
         if (!target) return;
 
         if (target.state === EntityState.BLOCKING) {
@@ -19,30 +20,41 @@ export class DamageSystem {
                     knockbackVector: {dx: knockback!.dx * -1,dy:knockback!.dy * -1},
                     knockbackTimer: knockbackTimer
                 } as KnockbackData,
-                entityId: killerId
+                entityId: attackerId
             })
             return;
         }
-        target.hp -= damage;
+        const isCrit = Math.random() < attacker.critChance;
+        const finalDmg = isCrit ? damage * 2 : damage;
+        target.hp -= finalDmg;
 
         if (target.hp <= 0 && !target.isDead) {
             target.isDead = true;
             target.state = EntityState.DEAD;
             this.eventBus.emit(EventBusMessage.ENTITY_DIED, {
                 entityInfo: target.toInfo(),
-                killerId: killerId
+                killerId: attackerId
             });
             this.serverState.removeEntity(targetId);
         } else {
             this.eventBus.emit(EventBusMessage.ATTACK_RECEIVED, {
-                attackResult: {
+                attackReceivedData: {
                     newHp: target.hp,
                     knockbackData: {
                         knockbackVector: knockback,
                         knockbackTimer: knockbackTimer
                     }
-                } as AttackResult,
+                } as AttackReceivedData,
                 entityId: target.id
+            });
+            this.eventBus.emit(EventBusMessage.ATTACK_RESULT, {
+                attackResult: {
+                    targetId: targetId,
+                    dmg: finalDmg, 
+                    isCrit: isCrit
+
+                } as AttackResult,
+                entityId: attackerId
             });
         }
     }

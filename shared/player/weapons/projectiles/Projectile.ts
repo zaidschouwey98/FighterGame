@@ -1,4 +1,4 @@
-import { FIREBALL_SPEED as PROJECTILE_SPEED } from "../../../constantes";
+import { ENTITY_BASE_CRIT_CHANCE, FIREBALL_SPEED as PROJECTILE_SPEED } from "../../../constantes";
 import { EntityInfo } from "../../../EntityInfo";
 import { EntityType } from "../../../EntityType";
 import Position from "../../../Position";
@@ -19,7 +19,7 @@ export class Projectile extends Entity {
         projectileCollisionHandler: IEntityCollisionHandler,
         private onTimeOut: ()=>void
     ) {
-        super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);
+        super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, ENTITY_BASE_CRIT_CHANCE, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);
     }
 
     public updateFromInfo(info: EntityInfo): void {
@@ -28,6 +28,7 @@ export class Projectile extends Entity {
 
     public toInfo(): ProjectileInfo {
         return {
+            critChance: this.critChance,
             entityType: EntityType.PROJECTILE,
             ownerId: this.ownerId,
             damage: this.damage,

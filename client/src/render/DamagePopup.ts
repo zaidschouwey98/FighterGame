@@ -17,13 +17,13 @@ export class DamagePopup extends Text {
 
             fontWeight: isCrit ? "bold" : "normal",
             fontStyle: "italic"
-            
+
         });
 
-        super({     
+        super({
             text: dmg.toString(),
             style,
-            resolution:5
+            resolution: 5
         });
 
         this.anchor.set(0.5);
@@ -36,13 +36,25 @@ export class DamagePopup extends Text {
         this.startY = y;
         container.addChild(this);
 
+        // départ petit
+        this.scale.set(0.5);
+
         const ticker = Ticker.shared;
         const onTick = () => {
             this.elapsed += ticker.deltaMS;
+            const t = this.elapsed / this.lifetime;
 
-            // animation simple
-            this.y = this.startY - (this.elapsed / this.lifetime) * 40; // monte
-            this.alpha = 1 - this.elapsed / this.lifetime; // fade out
+            this.y = this.startY - t * 20;
+            
+            // Fade out
+            this.alpha = 1 - t;
+
+            if (t < 0.3) {
+                const progress = t / 0.3;
+                const overshoot = 1.2;
+                const scale = 0.5 + (overshoot - 0.5) * Math.sin(progress * Math.PI);
+                this.scale.set(scale);
+            }
 
             if (this.elapsed >= this.lifetime) {
                 ticker.remove(onTick);
@@ -53,4 +65,5 @@ export class DamagePopup extends Text {
 
         ticker.add(onTick);
     }
+
 }

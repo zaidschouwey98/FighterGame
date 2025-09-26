@@ -12,25 +12,29 @@ import { TeleportingAnim } from "./anim/TeleportAnim";
 import { KnockBackAnim } from "./anim/KnockBackAnim";
 import { WeaponSprite } from "./weapon/WeaponSprite";
 import { BlockAnim } from "./anim/BlockAnim";
-import type { WeaponFactory } from "./weapon/WeaponFactory";
+import { WeaponFactory } from "./weapon/WeaponFactory";
 import { PlayerPlate } from "../UI/PlayerPlate";
 import type { EntitySprite } from "../EntitySprite";
+import { WeaponType } from "../../../../shared/WeaponType";
 
-export default class PlayerSprite implements EntitySprite{
+export default class PlayerSprite implements EntitySprite {
     private controller: AnimController;
     private playerPlate: PlayerPlate;
     private weapon: WeaponSprite;
+    private currentWeaponType: WeaponType;
+    private weaponFactory: WeaponFactory;
     constructor(
         public id: string,
         private playerContainer: Container,
-        spriteSheets: Spritesheet[],
+        private spriteSheets: Spritesheet[],
         _terrainContainer: Container,
-        staticEffectsContainer: Container,
+        private staticEffectsContainer: Container,
         playerName: string,
-        weaponFactory: WeaponFactory
+        weaponType: WeaponType,
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
 
+        this.weaponFactory = new WeaponFactory();
         // Label au-dessus du joueur
 
         this.playerPlate = new PlayerPlate(this.playerContainer, playerName);
@@ -47,10 +51,21 @@ export default class PlayerSprite implements EntitySprite{
             [EntityState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, EntityState.IDLE);
 
-        this.weapon = weaponFactory.createWeaponSprite(spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
+        this.weapon = this.weaponFactory.createWeaponSprite(weaponType,spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
+        this.currentWeaponType = weaponType;
+    }
+
+    public setWeapon(weaponType:WeaponType) {
+        this.currentWeaponType = weaponType;
+        this.weapon.destroy();
+        this.weapon = this.weaponFactory.createWeaponSprite(weaponType,this.spriteSheets, this.playerContainer, this.controller, this.staticEffectsContainer)
     }
 
     public syncPlayer(entity: PlayerInfo, onDeath?: () => void) {
+        if(entity.weapon != this.currentWeaponType){
+            this.setWeapon(entity.weapon);
+        }
+
         this.playerPlate.update(entity.hp, entity.maxHp, entity.currentXp, entity.lvlXp, entity.currentLvl);
         this.controller.update(entity, onDeath);
         this.weapon.setState(entity);

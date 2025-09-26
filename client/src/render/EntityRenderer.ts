@@ -4,7 +4,6 @@ import type { EntityInfo } from "../../../shared/EntityInfo";
 import type { EntitySprite } from "./EntitySprite";
 import PlayerSprite from "./Player/PlayerSprite";
 import { EntityType } from "../../../shared/EntityType";
-import { WeaponFactory } from "./Player/weapon/WeaponFactory";
 import type PlayerInfo from "../../../shared/PlayerInfo";
 import type { ProjectileInfo } from "../../../shared/player/weapons/projectiles/ProjectileInfo";
 import { ProjectileSprite } from "./ProjectileSprite";
@@ -35,7 +34,7 @@ export default class EntityRenderer {
             case EntityType.PLAYER:
                 const player = entityInfo as PlayerInfo;
                 container.label = "PlayerContainer"
-                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", new WeaponFactory(player.weapon!));
+                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", player.weapon);
                 break;
             // case EntityType.MOB:
             //     sprite = new MobSprite(entityInfo.id, container, this.spriteSheets);

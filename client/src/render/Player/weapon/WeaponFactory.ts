@@ -7,22 +7,24 @@ import { HeavySwordBodyAttack1 } from "./weapon_anim/heavy_sword/HeavySwordBodyA
 import { HeavySwordBodyAttack2 } from "./weapon_anim/heavy_sword/HeavySwordBodyAttack2";
 
 export class WeaponFactory {
-  constructor(private type: WeaponType, private skin = "default") {}
+  constructor() {}
 
   createWeaponSprite(
+    type: WeaponType, 
     spriteSheets: Spritesheet[],
     parent: Container,
     playerController: AnimController,
-    staticEffectContainer:Container
+    staticEffectContainer:Container,
+    skin = "default",
   ): WeaponSprite {
-    switch (this.type) {
+    switch (type) {
       case WeaponType.HEAVY_SWORD:
         playerController.register(EntityState.ATTACK, [new HeavySwordBodyAttack1(spriteSheets, parent), new HeavySwordBodyAttack2(spriteSheets, parent),new HeavySwordBodyAttack1(spriteSheets, parent)]);
-        return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, this.skin, {x:0.92, y:0.5},0,3);
+        return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, skin, {x:0.92, y:0.5},0,3);
       
       case WeaponType.GUN:
-        playerController.register(EntityState.ATTACK, [new HeavySwordBodyAttack1(spriteSheets, parent), new HeavySwordBodyAttack2(spriteSheets, parent),new HeavySwordBodyAttack1(spriteSheets, parent)]);
-        return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, this.skin, {x:0.92, y:0.5},0,3);
+        playerController.register(EntityState.ATTACK, [new HeavySwordBodyAttack1(spriteSheets, parent)]);
+        return new WeaponSprite(spriteSheets,staticEffectContainer, parent, WeaponType.HEAVY_SWORD, skin, {x:0.92, y:0.5},0,3);
     //   case WeaponType.FIST:
     //     playerController.register(PlayerState.ATTACK, new FistAttackAnim(effectRenderer, spriteSheets, parent));
     //     return new WeaponSprite(spriteSheets, parent, WeaponType.FIST, this.skin);

@@ -19,6 +19,8 @@ export class HeavySwordAttack1 implements IWeaponAnim {
     private duration: number = 0;
     private progress = 0; // entre 0 et 1
 
+    private baseScaleX:number = 1;
+
     private flipX: boolean = false;
 
     constructor(sprite: Sprite, playerContainer: Container, spriteSheets: Spritesheet[]) {
@@ -33,14 +35,18 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.duration = HEAVY_SWORD_ATTACK_1_BASE_DURATION / playerInfo.attackSpeed;
         this.baseX = this.sprite.x;
         this.baseY = this.sprite.y;
+        this.baseScaleX = this.sprite.scale.x;
         this.sprite.anchor.copyTo(this.baseAnchor)
         this.progress = 0;
-        this.spriteBaseRot = this.sprite.rotation;
+        
 
         let rotation = Math.atan2(playerInfo.mouseDirection.y, playerInfo.mouseDirection.x);
         this.baseRotation = rotation;
         this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
         this.sprite.scale.x = this.flipX ? 1 : -1;
+        if(this.baseScaleX != this.sprite.scale.x)
+            this.sprite.rotation += Math.PI;
+        this.spriteBaseRot = this.sprite.rotation;
         this.sprite.anchor.set(1, 0.25)
         this.effectPlaying = false;
 

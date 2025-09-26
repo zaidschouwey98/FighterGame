@@ -19,6 +19,7 @@ export enum EventBusMessage{
     LOCAL_PLAYER_DIRECTION_UPDATED,
     LOCAL_PLAYER_MOVING,
     ATTACK_RESULT,
+    TELEPORT_DESTINATION_HELPER,
 }
 export class EventBus {
     private listeners: Map<EventBusMessage, EventHandler[]> = new Map();

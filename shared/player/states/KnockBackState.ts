@@ -22,7 +22,7 @@ export class KnockBackState extends BaseState {
     }
 
     update(delta: number) {
-        if (this.inputHandler.consumeSpaceClick()) {
+        if (this.inputHandler.isSpaceDown()) {
             this.player.changeState(this.player.teleportState);
         }
 

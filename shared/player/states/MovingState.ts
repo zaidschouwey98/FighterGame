@@ -43,7 +43,7 @@ export class MovingState extends BaseState {
       return;
     }
 
-    if (this.inputHandler.consumeSpaceClick()) {
+    if (this.inputHandler.isSpaceDown()) {
       this.player.changeState(this.player.teleportState);
       return;
     }

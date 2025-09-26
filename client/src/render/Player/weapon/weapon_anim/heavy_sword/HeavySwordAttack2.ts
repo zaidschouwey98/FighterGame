@@ -3,7 +3,7 @@ import type { Direction } from "../../../../../../../shared/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
 import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
-import { HEAVY_SWORD_ATTACK_2_BASE_DURATION } from "../../../../../../../shared/constantes";
+import { HEAVY_SWORD_ATTACK_1_BASE_DURATION } from "../../../../../../../shared/constantes";
 
 export class HeavySwordAttack2 implements IWeaponAnim {
     private sprite: Sprite;
@@ -29,7 +29,7 @@ export class HeavySwordAttack2 implements IWeaponAnim {
         playerContainer.addChild(this.effect);
     }
     play(playerInfo:PlayerInfo): void {
-        this.duration = HEAVY_SWORD_ATTACK_2_BASE_DURATION / playerInfo.attackSpeed;
+        this.duration = HEAVY_SWORD_ATTACK_1_BASE_DURATION / playerInfo.attackSpeed;
         this.sprite.scale.y = -1;
         this.progress = 0;
         this.baseX = this.sprite.x;

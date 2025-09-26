@@ -58,7 +58,7 @@ export class ClientPlayer extends Player {
         this.attackState = new AttackState(this, this.attackService, this.movementService, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this, eventBus, this.blockService, inputHandler);
-        this.teleportState = new TeleportState(this, this.teleportService, eventBus);
+        this.teleportState = new TeleportState(this, this.teleportService, eventBus, inputHandler);
     }
 
     public update(delta: number): void {

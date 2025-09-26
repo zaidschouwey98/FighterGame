@@ -6,7 +6,7 @@ export class InputHandler implements IInputHandler{
     private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
     private attackPressed: boolean = false;
     private stopAttackPressed: boolean = false;
-    private spacePressed: boolean = false;
+    private spaceDown: boolean = false;
     private coordinateService: CoordinateService;
 
     constructor(coordinateService:CoordinateService) {
@@ -25,7 +25,7 @@ export class InputHandler implements IInputHandler{
 
             // Détecter "space"
             if (key === " ") { // e.key renvoie " " pour espace
-                this.spacePressed = true;
+                this.spaceDown = true;
             }
         });
 
@@ -33,6 +33,10 @@ export class InputHandler implements IInputHandler{
 
         window.addEventListener("keyup", (e) => {
             this.keysPressed.delete(e.key.toLowerCase());
+
+            if (e.key === " ") {
+                this.spaceDown = false;
+            }
         });
 
         document.addEventListener("mousemove", (e) => {
@@ -50,10 +54,15 @@ export class InputHandler implements IInputHandler{
         });
     }
 
-    public consumeSpaceClick() {
-        const wasPressed = this.spacePressed;
-        this.spacePressed = false;
-        return wasPressed;
+    // public consumeSpaceClick() {
+    //     throw new Error("A decommissionner")
+    //     const wasPressed = this.spaceDown;
+    //     this.spaceDown = false;
+    //     return wasPressed;
+    // }
+
+    public isSpaceDown(): boolean {
+        return this.spaceDown;
     }
 
     public getKeys(): Set<string> {

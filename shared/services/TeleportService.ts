@@ -16,25 +16,16 @@ export class TeleportService {
     }
   }
 
-  public getTeleportCooldown():number{
+  public getTeleportCooldown(): number {
     return this.teleportCooldown;
   }
 
-  public resetTeleportCooldown(){
+  public resetTeleportCooldown() {
     this.teleportCooldown = TP_COOLDOWN;
   }
 
-  public teleportPlayer(player: Player) {
-    const worldMousePos = this.inputHandler.getMousePosition();
-
-    const dx = worldMousePos.x - player.position.x;
-    const dy = worldMousePos.y - player.position.y;
-    const len = Math.sqrt(dx * dx + dy * dy);
-
-    const newX = player.position.x + (dx / len) * this.teleportDistance;
-    const newY = player.position.y + (dy / len) * this.teleportDistance;
-
-    player.position.x = newX;
-    player.position.y = newY;
+  teleportPlayer(player: Player, destX: number, destY: number) {
+    player.position.x = destX;
+    player.position.y = destY;
   }
 }

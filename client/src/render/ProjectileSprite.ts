@@ -6,7 +6,7 @@ import { findAnimation } from "../AssetLoader";
 export class ProjectileSprite implements EntitySprite {
     constructor(
         projectileDir:number,
-        private projectileContainer: Container,
+        projectileContainer: Container,
         spriteSheets: Spritesheet[],
     ) {
         const fireball = new AnimatedSprite(findAnimation(spriteSheets, "fireball")!);
@@ -17,11 +17,11 @@ export class ProjectileSprite implements EntitySprite {
         projectileContainer.addChild(fireball);
     }
 
-    public syncPlayer(entity: ProjectileInfo, onDeath?: () => void) {
+    public syncPlayer(_entity: ProjectileInfo, onDeath?: () => void) {
        onDeath && onDeath();
     }
 
-    public update(delta: number) {
+    public update(_delta: number) {
         
     }
 }

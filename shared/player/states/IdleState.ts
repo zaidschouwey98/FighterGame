@@ -35,7 +35,7 @@ export class IdleState extends BaseState {
         }
 
         // Si espace → dash
-        if (this.inputHandler.consumeSpaceClick()) {
+        if (this.inputHandler.isSpaceDown()) {
             this.player.changeState(this.player.teleportState);
         }
     }

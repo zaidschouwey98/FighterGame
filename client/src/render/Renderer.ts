@@ -11,6 +11,7 @@ import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";
 import type { EntityInfo } from "../../../shared/EntityInfo";
 import type { AttackResult } from "../../../shared/AttackResult";
+import { EffectRenderer } from "./EffectRenderer";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -28,6 +29,7 @@ export class Renderer {
 
     private _entityRenderer: EntityRenderer;
     private _worldRenderer: WorldRenderer;
+    private _effectRenderer:EffectRenderer;
 
     private _camera: CameraService;
     private _scoreBoard: ScoreBoard;
@@ -60,7 +62,7 @@ export class Renderer {
         this._minimap = new Minimap(this._uiContainer, 200);
         this._entityRenderer = new EntityRenderer(this._objectContainer, spriteSheets, this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
-
+        this._effectRenderer = new EffectRenderer(spriteSheets,this._objectContainer, this._overlayContainer);
         this.registerListeners();
     }
 
@@ -104,6 +106,10 @@ export class Renderer {
         this._eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult)=>{
             this._entityRenderer.showDmgPopup(attackResult);
         });
+
+        this._eventBus.on(EventBusMessage.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
+            this._effectRenderer.renderTpDestination(position)
+        })
     }
 
     updateMinimap(localPlayer: Player) {

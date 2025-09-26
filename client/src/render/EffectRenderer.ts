@@ -1,4 +1,4 @@
-import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
+import { AnimatedSprite, Container, Graphics, Spritesheet } from "pixi.js";
 import { EntityState } from "../../../shared/PlayerState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
@@ -8,6 +8,7 @@ export class EffectRenderer {
     private attackEffectContainer: Container;
     private staticEffectsContainer: Container;
     private spriteSheets: Spritesheet[];
+    private tpDestinationCircle?: Graphics;
     constructor(spriteSheets: Spritesheet[], playerContainer: Container, staticEffectsContainer: Container) {
         this.staticEffectsContainer = staticEffectsContainer;
         this.spriteSheets = spriteSheets;
@@ -39,5 +40,25 @@ export class EffectRenderer {
             newDashCloud.destroy() 
         }
         this.staticEffectsContainer.addChild(newDashCloud)
+    }
+
+    renderTpDestination(position?:Position){
+        console.log(position)
+        if(!position){
+            this.tpDestinationCircle && this.staticEffectsContainer.removeChild(this.tpDestinationCircle);
+            this.tpDestinationCircle?.destroy();
+            this.tpDestinationCircle = undefined;
+            return;
+        }
+        if(!this.tpDestinationCircle){
+            this.tpDestinationCircle = new Graphics().circle(0,0, 3).stroke({ width:2,color: 0xff0000 });
+            this.staticEffectsContainer.addChild(this.tpDestinationCircle);
+        }
+        this.tpDestinationCircle.x = position.x;
+        this.tpDestinationCircle.y = position.y;
+        
+    }
+    clearTpDestionation(){
+
     }
 }

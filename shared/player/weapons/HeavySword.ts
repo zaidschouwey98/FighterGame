@@ -9,7 +9,7 @@ import { AttackDataBase, AttackType, MeleeAttackData } from "../../AttackData";
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;
     constructor() {
-        super(20, HEAVY_SWORD_CD, 3, 10)
+        super(20, HEAVY_SWORD_CD, 2, 10)
     }
 
     public useWeapon(playerPos: Position, attackDir: number): AttackDataBase {

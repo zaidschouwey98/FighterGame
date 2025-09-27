@@ -16,8 +16,8 @@ import { TeleportState } from "./states/TeleportState";
 import { TeleportService } from "../services/TeleportService";
 import type { AttackReceivedData, KnockbackData } from "../AttackResult";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
-import { Player } from "./Player";
 import { ClientPlayerCollisionHandler } from "./ClientPlayerCollisionHandler";
+import { Player } from "./LivingEntity";
 
 export class ClientPlayer extends Player {
     public currentState: BaseState;
@@ -54,7 +54,7 @@ export class ClientPlayer extends Player {
         this.teleportService = new TeleportService(inputHandler);
 
         this.movingState = new MovingState(this, inputHandler, this.movementService, eventBus);
-        this.attackDashState = new AttackDashState(this, this.attackService, eventBus, inputHandler);
+        this.attackDashState = new AttackDashState(this, eventBus, inputHandler);
         this.attackState = new AttackState(this, this.attackService, this.movementService, eventBus);
         this.dieState = new DieState(this, eventBus);
         this.blockState = new BlockState(this, eventBus, this.blockService, inputHandler);

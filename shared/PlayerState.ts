@@ -8,5 +8,6 @@ export enum EntityState {
     DEAD = "DEAD",
     TELEPORTING = "TELEPORTING",
     HIT = "HIT",
-    ANY = "ANY"
+    ANY = "ANY",
+    TELEPORTED = "TELEPORTED"
 }

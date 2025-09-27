@@ -8,7 +8,7 @@ import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
 import { ServerState } from "../ServerState";
 import { EntityState } from "../../shared/PlayerState";
 import { UpdateSystem } from "../systems/UpdateSystem";
-import { Player } from "../../shared/player/Player";
+import { Player } from "../../shared/player/LivingEntity";
 import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisionHandler";
 import { AttackDataBase } from "../../shared/AttackData";
 

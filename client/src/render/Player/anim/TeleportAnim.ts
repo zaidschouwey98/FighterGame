@@ -8,6 +8,7 @@ export class TeleportingAnim implements IAnimState {
     private sprites = new Map<Direction, AnimatedSprite>();
     private current?: AnimatedSprite;
     private lastDir?: Direction;
+    private player?: PlayerInfo;
 
     constructor(private spriteSheets: Spritesheet[], playerContainer: Container, private staticEffectsContainer: Container) {
         const teleport = new AnimatedSprite(findAnimation(spriteSheets, "after_tp_idle")!);
@@ -20,17 +21,7 @@ export class TeleportingAnim implements IAnimState {
     }
 
     public enter(player: PlayerInfo): void {
-        const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
-        tp_effect.anchor.set(0.5)
-        tp_effect.x = player.position.x;
-        tp_effect.y = player.position.y;
-        tp_effect.visible = true;
-        tp_effect.loop = false;
-        tp_effect.animationSpeed = 0.2;
-        tp_effect.currentFrame = 0;
-        tp_effect.play();
-        tp_effect.onComplete = () => { tp_effect.destroy() }
-        this.staticEffectsContainer.addChild(tp_effect)
+        this.player = player;
     }
 
     public play(_player: PlayerInfo) {
@@ -49,6 +40,22 @@ export class TeleportingAnim implements IAnimState {
     }
 
     public stop() {
+        const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
+        tp_effect.anchor.set(0.5)
+        tp_effect.x = this.player!.position.x;
+        tp_effect.y = this.player!.position.y;
+        tp_effect.visible = true;
+        tp_effect.loop = false;
+        tp_effect.animationSpeed = 0.2;
+        tp_effect.currentFrame = 0;
+        tp_effect.play();
+        tp_effect.onComplete = () => { 
+            this.staticEffectsContainer.removeChild(tp_effect);
+            tp_effect.destroy() 
+        }
+
+        this.staticEffectsContainer.addChild(tp_effect)
+
         if (!this.current) return;
         this.current.stop();
         this.current.visible = false;

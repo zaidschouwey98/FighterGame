@@ -19,7 +19,7 @@ export default class EntityRenderer {
     private entityContainer: Container;
     private staticEffectContainer: Container;
 
-    constructor(playerContainer: Container, spriteSheets: Spritesheet[], private _terrainContainer: Container, staticEffectContainer: Container) {
+    constructor(playerContainer: Container, spriteSheets: Spritesheet[], private _tileContainer: Container, private _terrainContainer: Container, staticEffectContainer: Container) {
         this.spriteSheets = spriteSheets;
         this.staticEffectContainer = staticEffectContainer
         this.entityContainers = new Map();
@@ -37,7 +37,7 @@ export default class EntityRenderer {
             case EntityType.PLAYER:
                 const player = entityInfo as PlayerInfo;
                 container.label = "PlayerContainer"
-                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this.staticEffectContainer, player.name || "unknown-client-side", player.weapon);
+                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this._tileContainer, this.staticEffectContainer, player.name || "unknown-client-side", player.weapon);
                 break;
             // case EntityType.MOB:
             //     sprite = new MobSprite(entityInfo.id, container, this.spriteSheets);

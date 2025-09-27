@@ -3,6 +3,9 @@ import { EntityInfo } from "../../shared/EntityInfo";
 import type PlayerInfo from "../../shared/PlayerInfo";
 
 export class BotInputHandler implements IInputHandler {
+    consumeShift(): boolean {
+        throw new Error("Method not implemented.");
+    }
     
     private keys = new Set<string>();
     private mouse = { x: 0, y: 0 };

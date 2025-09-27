@@ -1,4 +1,4 @@
-import { Container, Spritesheet } from "pixi.js";
+import { Container, Spritesheet, Ticker } from "pixi.js";
 import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
@@ -16,6 +16,7 @@ import { WeaponFactory } from "./weapon/WeaponFactory";
 import { PlayerPlate } from "../UI/PlayerPlate";
 import type { EntitySprite } from "../EntitySprite";
 import { WeaponType } from "../../../../shared/WeaponType";
+import { TeleportedAnim } from "./anim/TeleportedAnim";
 
 export default class PlayerSprite implements EntitySprite {
     private controller: AnimController;
@@ -28,6 +29,7 @@ export default class PlayerSprite implements EntitySprite {
         private playerContainer: Container,
         private spriteSheets: Spritesheet[],
         _terrainContainer: Container,
+        tileContainer: Container,
         private staticEffectsContainer: Container,
         playerName: string,
         weaponType: WeaponType,
@@ -39,7 +41,6 @@ export default class PlayerSprite implements EntitySprite {
 
         this.playerPlate = new PlayerPlate(this.playerContainer, playerName);
 
-
         this.controller = new AnimController({
             [EntityState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
             [EntityState.MOVING]: new MovingAnim(spriteSheets, this.playerContainer),
@@ -48,21 +49,22 @@ export default class PlayerSprite implements EntitySprite {
             [EntityState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
             [EntityState.HIT]: new HitAnim(spriteSheets, playerContainer),
             [EntityState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
+            [EntityState.TELEPORTED]: new TeleportedAnim(spriteSheets, playerContainer, tileContainer),
             [EntityState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
         }, EntityState.IDLE);
 
-        this.weapon = this.weaponFactory.createWeaponSprite(weaponType,spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
+        this.weapon = this.weaponFactory.createWeaponSprite(weaponType, spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);
         this.currentWeaponType = weaponType;
     }
 
-    public setWeapon(weaponType:WeaponType) {
+    public setWeapon(weaponType: WeaponType) {
         this.currentWeaponType = weaponType;
         this.weapon.destroy();
-        this.weapon = this.weaponFactory.createWeaponSprite(weaponType,this.spriteSheets, this.playerContainer, this.controller, this.staticEffectsContainer)
+        this.weapon = this.weaponFactory.createWeaponSprite(weaponType, this.spriteSheets, this.playerContainer, this.controller, this.staticEffectsContainer)
     }
 
     public syncPlayer(entity: PlayerInfo, onDeath?: () => void) {
-        if(entity.weapon != this.currentWeaponType){
+        if (entity.weapon != this.currentWeaponType) {
             this.setWeapon(entity.weapon);
         }
 

@@ -12,6 +12,7 @@ export const DASH_ATTACK_DURATION = 30;
 export const BLOCK_DURATION = 30;
 export const BLOCK_COOLDOWN = 30;
 export const ENTITY_BASE_CRIT_CHANCE = 0.1; // 10%
+export const ATTACK_DASH_COOLDOWN = 60;
 
 // Heavy sword
 export const HEAVY_SWORD_ATTACK_1_BASE_DURATION = 40;

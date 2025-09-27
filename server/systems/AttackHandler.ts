@@ -8,7 +8,7 @@ import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
 import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
 import { PhysicsService } from "../../shared/services/PhysicsService";
 import { DamageSystem } from "./DamageSystem";
-import { Player } from "../../shared/player/Player";
+import { Player } from "../../shared/player/LivingEntity";
 
 export interface AttackHandler {
     handle(data: AttackDataBase, socket?: Socket): void;

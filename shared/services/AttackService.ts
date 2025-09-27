@@ -1,4 +1,4 @@
-import { Player } from "../player/Player";
+import { Player } from "../player/LivingEntity";
 import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
 import DirectionHelper from "../DirectionHelper";
 import { Direction } from "../Direction";
@@ -33,16 +33,7 @@ export class AttackService {
 
     /** Prépare une attaque (dash) */
     public initiateAttack(player: Player) {
-        const world = this.input.getMousePosition();
-        const dx = world.x - player.position.x;
-        const dy = world.y - player.position.y;
-        const len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-        // Vecteur du dash
-        player.mouseDirection = { x: dx / len, y: dy / len };
-        player.attackDashDuration = DASH_ATTACK_DURATION;
-        player.attackDashTimer = DASH_ATTACK_DURATION;
-        player.movingDirection = DirectionHelper.getDirectionByVector(player.mouseDirection, [Direction.BOTTOM,Direction.TOP, Direction.LEFT, Direction.RIGHT]);
+        
         this.attackCooldownTimer = player.weapon.attackCoolDown(player.attackSpeed);
         this.attackResetTimer = ATTACK_RESET;
         // Notifier les autres systèmes

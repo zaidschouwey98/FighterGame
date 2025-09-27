@@ -1,15 +1,17 @@
 import type { CoordinateService } from "./CoordinateService";
 import type { IInputHandler } from "./IInputHandler";
 
-export class InputHandler implements IInputHandler{
+export class InputHandler implements IInputHandler {
     private keysPressed: Set<string> = new Set();
     private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
     private attackPressed: boolean = false;
     private stopAttackPressed: boolean = false;
     private spaceDown: boolean = false;
+    private shiftPressed: boolean = false;
+
     private coordinateService: CoordinateService;
 
-    constructor(coordinateService:CoordinateService) {
+    constructor(coordinateService: CoordinateService) {
         this.coordinateService = coordinateService;
         this.setupEventListeners();
     }
@@ -27,6 +29,9 @@ export class InputHandler implements IInputHandler{
             if (key === " ") { // e.key renvoie " " pour espace
                 this.spaceDown = true;
             }
+            if (key === "shift") {
+                this.shiftPressed = true;
+            }
         });
 
 
@@ -36,6 +41,10 @@ export class InputHandler implements IInputHandler{
 
             if (e.key === " ") {
                 this.spaceDown = false;
+            }
+
+            if (e.key === "shift") {
+                this.shiftPressed = false;
             }
         });
 
@@ -54,12 +63,11 @@ export class InputHandler implements IInputHandler{
         });
     }
 
-    // public consumeSpaceClick() {
-    //     throw new Error("A decommissionner")
-    //     const wasPressed = this.spaceDown;
-    //     this.spaceDown = false;
-    //     return wasPressed;
-    // }
+    public consumeShift(): boolean {
+        const wasPressed = this.shiftPressed;
+        this.shiftPressed = false;
+        return wasPressed;
+    }
 
     public isSpaceDown(): boolean {
         return this.spaceDown;
@@ -71,7 +79,7 @@ export class InputHandler implements IInputHandler{
 
     public getMousePosition(): { x: number; y: number } {
         const mousePos = this.mousePosition;
-        return {...this.coordinateService.screenToWorld(mousePos.x, mousePos.y)};
+        return { ...this.coordinateService.screenToWorld(mousePos.x, mousePos.y) };
     }
 
     public consumeAttack(): boolean {

@@ -27,7 +27,7 @@ export class Player extends Entity {
 
     public attackDashTimer?: number;
     public attackDashDuration?: number;
-    public attackDashMaxSpeed = 3;
+    public attackDashMaxSpeed = 4.5;
 
     public knockbackReceivedVector?: { x: number; y: number };
     public knockbackTimer?: number;

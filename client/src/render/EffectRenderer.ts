@@ -43,7 +43,6 @@ export class EffectRenderer {
     }
 
     renderTpDestination(position?:Position){
-        console.log(position)
         if(!position){
             this.tpDestinationCircle && this.staticEffectsContainer.removeChild(this.tpDestinationCircle);
             this.tpDestinationCircle?.destroy();

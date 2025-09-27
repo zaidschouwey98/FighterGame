@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { EntityInfo } from "../shared/EntityInfo";
 import { EntityType } from "../shared/EntityType";
 import { Entity } from "../shared/player/Entity";
-import { Player } from "../shared/player/Player";
+import { Player } from "../shared/player/LivingEntity";
 import PlayerInfo from "../shared/PlayerInfo";
 import { CollisionService } from "../shared/services/CollisionService";
 import { EventBus, EventBusMessage } from "../shared/services/EventBus";

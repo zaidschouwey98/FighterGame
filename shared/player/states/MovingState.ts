@@ -3,7 +3,7 @@ import { EntityState } from "../../PlayerState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
-import type { Player } from "../Player";
+import type { Player } from "../LivingEntity";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../ClientPlayer";
 
@@ -43,10 +43,16 @@ export class MovingState extends BaseState {
       return;
     }
 
-    if (this.inputHandler.isSpaceDown()) {
+    if (this.inputHandler.isSpaceDown() && this.player.teleportState.canEnter()) {
       this.player.changeState(this.player.teleportState);
       return;
     }
+
+    if(this.inputHandler.consumeShift()){
+      this.player.changeState(this.player.attackDashState);
+      return;
+    }
+
     // Déplacement
     MovementService.moveEntity(this.player, delta);
 

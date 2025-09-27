@@ -6,6 +6,7 @@ export interface IInputHandler {
     isSpaceDown(): boolean;
     consumeAttack(): boolean;
     consumeRightClick(): boolean;
+    consumeShift(): boolean;
 
     update(): void;
 }

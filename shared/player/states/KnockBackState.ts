@@ -1,7 +1,7 @@
 import { EntityState } from "../../PlayerState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import type { Player } from "../Player";
+import type { Player } from "../LivingEntity";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../ClientPlayer";
 

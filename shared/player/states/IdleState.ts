@@ -7,7 +7,7 @@ import { ClientPlayer } from "../ClientPlayer";
 
 export class IdleState extends BaseState {
     readonly name = EntityState.IDLE;
-    constructor(player: ClientPlayer, private inputHandler: IInputHandler, private eventBus:EventBus) {
+    constructor(player: ClientPlayer, private inputHandler: IInputHandler, private eventBus: EventBus) {
         super(player)
     }
     enter() {
@@ -37,6 +37,11 @@ export class IdleState extends BaseState {
         // Si espace → dash
         if (this.inputHandler.isSpaceDown()) {
             this.player.changeState(this.player.teleportState);
+        }
+
+        if (this.inputHandler.consumeShift()) {
+            this.player.changeState(this.player.attackDashState);
+            return;
         }
     }
 }

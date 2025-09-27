@@ -1,4 +1,4 @@
-import type { Player } from "../player/Player";
+import type { Player } from "../player/LivingEntity";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import { EntityInfo } from "../EntityInfo";
 import Position from "../Position";

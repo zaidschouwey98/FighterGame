@@ -24,6 +24,8 @@ export function createWeaponAnimations(sprite: Sprite, type: WeaponType, playerC
         [EntityState.ATTACK_DASH]: new DashWeaponAnim(sprite),
         [EntityState.BLOCKING]: new HiddenWeaponAnim(sprite),
         [EntityState.DEAD]: new HiddenWeaponAnim(sprite),
+        [EntityState.TELEPORTED]: new HiddenWeaponAnim(sprite),
+        [EntityState.TELEPORTING]: new HiddenWeaponAnim(sprite),
       };
 
     case WeaponType.GUN:

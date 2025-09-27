@@ -5,19 +5,19 @@ import { EventBus, EventBusMessage } from "../../services/EventBus";
 import { TeleportService } from "../../services/TeleportService";
 import { ClientPlayer } from "../ClientPlayer";
 import { BaseState } from "./BaseState";
+import { TeleportedState } from "./TeleportedState";
 
 export class TeleportState extends BaseState {
     readonly name = EntityState.TELEPORTING;
     private timer = 150;
     private distance = 0;
-    private readonly MAX_DISTANCE = 500; // par ex, pour limiter
-    private tpDir: { dx: number, dy: number } = { dx: 0, dy: 0 };
+    private readonly MAX_DISTANCE = 300;
 
     constructor(
         player: ClientPlayer,
         private teleportService: TeleportService,
         private eventBus: EventBus,
-        private inputHandler: IInputHandler // ⚡ injecté
+        private inputHandler: IInputHandler
     ) {
         super(player);
     }
@@ -66,6 +66,7 @@ export class TeleportState extends BaseState {
 
 
     private doTeleport(tpVector: { x: number; y: number }) {
+        this.player.changeState(new TeleportedState(this.player,this.eventBus));
         const destX = this.player.position.x + tpVector.x * this.distance;
         const destY = this.player.position.y + tpVector.y * this.distance;
 
@@ -73,7 +74,7 @@ export class TeleportState extends BaseState {
         this.teleportService.resetTeleportCooldown();
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
         this.eventBus.emit(EventBusMessage.TELEPORT_DESTINATION_HELPER); // Clear helper
-        this.player.changeState(this.player.idleState);
+        
     }
 
 

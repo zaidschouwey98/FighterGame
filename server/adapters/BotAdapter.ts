@@ -1,7 +1,7 @@
 import { AttackDataBase } from "../../shared/AttackData";
 import { AttackReceivedData, KnockbackData } from "../../shared/AttackResult";
 import { EntityInfo } from "../../shared/EntityInfo";
-import { Player } from "../../shared/player/Player";
+import { Player } from "../../shared/player/LivingEntity";
 import PlayerInfo from "../../shared/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { BotManager } from "../BotManager";

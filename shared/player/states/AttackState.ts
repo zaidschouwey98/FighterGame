@@ -1,9 +1,9 @@
-import { EntityState } from "../../PlayerState";
+import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
 import type { AttackService } from "../../services/AttackService";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { MovementService } from "../../services/MovementService";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export class AttackState extends BaseState {
   readonly name = EntityState.ATTACK;

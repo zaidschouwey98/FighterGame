@@ -1,7 +1,7 @@
-import type { Player } from "../player/LivingEntity";
+import type { Player } from "../entities/Player";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
-import { EntityInfo } from "../EntityInfo";
 import Position from "../Position";
+import { EntityInfo } from "../messages/EntityInfo";
 
 export class MovementService {
   constructor(private inputHandler: IInputHandler) { }

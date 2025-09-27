@@ -1,7 +1,7 @@
 
 import type { Container, Sprite, Spritesheet } from "pixi.js";
-import { WeaponType } from "../../../../../shared/WeaponType";
-import { EntityState } from "../../../../../shared/PlayerState";
+import { WeaponType } from "../../../../../shared/enums/WeaponType";
+import { EntityState } from "../../../../../shared/messages/EntityState";
 import type { IWeaponAnim } from "./weapon_anim/IWeaponAnim";
 import { IdleWeaponAnim } from "./weapon_anim/heavy_sword/IdleWeaponAnim";
 import { HiddenWeaponAnim } from "./weapon_anim/HiddenWeaponAnim";

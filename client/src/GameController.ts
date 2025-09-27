@@ -1,5 +1,5 @@
 import { Application, Container, Spritesheet } from "pixi.js";
-import type { AttackReceivedData, KnockbackData } from "../../shared/AttackResult";
+import type { AttackReceivedData, KnockbackData } from "../../shared/types/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { GameState } from "./core/GameState";
@@ -7,10 +7,10 @@ import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "../../shared/services/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
 import { Renderer } from "./render/Renderer";
-import type PlayerInfo from "../../shared/PlayerInfo";
+import type PlayerInfo from "../../shared/messages/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
-import { ClientPlayer } from "../../shared/player/ClientPlayer";
-import type { EntityInfo } from "../../shared/EntityInfo";
+import { ClientPlayer } from "../../shared/entities/ClientPlayer";
+import type { EntityInfo } from "../../shared/messages/EntityInfo";
 
 export class GameController {
     private gameState: GameState;
@@ -78,7 +78,7 @@ export class GameController {
         this.eventBus.on(EventBusMessage.ENTITY_ADDED, (player: EntityInfo) => {
             if (player.id === this.localPlayerId) {
                 this.localPlayer = new ClientPlayer(
-                    this.localPlayerId,
+                    this.localPlayerId!,
                     (player as PlayerInfo).name,
                     player.position,
                     player.hp,

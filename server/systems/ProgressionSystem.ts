@@ -1,7 +1,7 @@
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
-import PlayerInfo from "../../shared/PlayerInfo";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
-import { Player } from "../../shared/player/LivingEntity";
+import { Player } from "../../shared/entities/Player";
 
 export class ProgressionSystem {
     constructor(private serverState: ServerState, private eventBus: EventBus) {

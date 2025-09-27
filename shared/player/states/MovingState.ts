@@ -1,11 +1,11 @@
-import { Direction } from "../../Direction";
-import { EntityState } from "../../PlayerState";
+import { Direction } from "../../enums/Direction";
+import { EntityState } from "../../messages/EntityState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
-import type { Player } from "../LivingEntity";
+import type { Player } from "../../entities/Player";
 import { BaseState } from "./BaseState";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export class MovingState extends BaseState {
   readonly name = EntityState.MOVING;

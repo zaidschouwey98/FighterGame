@@ -1,10 +1,10 @@
 import { Container, Spritesheet, Sprite } from "pixi.js";
 import { WeaponAnimController } from "./weapon_anim/WeaponAnimController";
 import { findTexture } from "../../../AssetLoader";
-import { Direction } from "../../../../../shared/Direction";
-import type { WeaponType } from "../../../../../shared/WeaponType";
+import { Direction } from "../../../../../shared/enums/Direction";
+import type { WeaponType } from "../../../../../shared/enums/WeaponType";
 import { createWeaponAnimations } from "./CreateWeaponAnimation";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 
 
 

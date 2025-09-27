@@ -1,6 +1,6 @@
 import { IInputHandler } from "../../client/src/core/IInputHandler";
-import { EntityInfo } from "../../shared/EntityInfo";
-import type PlayerInfo from "../../shared/PlayerInfo";
+import { EntityInfo } from "../../shared/messages/EntityInfo";
+import type PlayerInfo from "../../shared/messages/PlayerInfo";
 
 export class BotInputHandler implements IInputHandler {
     consumeShift(): boolean {

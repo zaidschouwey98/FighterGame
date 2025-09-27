@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { ServerState } from "../ServerState";
-import PlayerInfo from "../../shared/PlayerInfo";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 
 export class UpdateSystem {

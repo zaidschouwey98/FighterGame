@@ -1,8 +1,6 @@
-import { EntityInfo } from "../../shared/EntityInfo";
-import { EntityType } from "../../shared/EntityType";
-import { Entity } from "../../shared/player/Entity";
+import { Entity } from "../../shared/entities/Entity";
 import { IEntityCollisionHandler } from "../../shared/player/IEntityCollisionHandler";
-import { ProjectileInfo } from "../../shared/player/weapons/projectiles/ProjectileInfo";
+import { EntityInfo } from "../../shared/messages/EntityInfo";
 
 export class ServerPlayerCollisionHandler implements IEntityCollisionHandler{
     handleCollision(source: Entity, target: EntityInfo): void {

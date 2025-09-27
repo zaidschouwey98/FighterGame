@@ -1,4 +1,4 @@
-import { EntityInfo } from "../EntityInfo";
+import { EntityInfo } from "../messages/EntityInfo";
 
 export class CollisionService {
     private static doesOverlapWithEntity(entity1: EntityInfo, entity2: EntityInfo): boolean {

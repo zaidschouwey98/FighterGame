@@ -1,10 +1,8 @@
-import { Player } from "../player/LivingEntity";
-import {  ATTACK_RESET, DASH_ATTACK_DURATION } from "../constantes";
-import DirectionHelper from "../DirectionHelper";
-import { Direction } from "../Direction";
+import { Player } from "../entities/Player";
+import {  ATTACK_RESET } from "../constantes";
 import type Position from "../Position";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
-import { AttackDataBase } from "../AttackData";
+import { AttackDataBase } from "../types/AttackData";
 
 export class AttackService {
     private attackResetTimer = ATTACK_RESET;

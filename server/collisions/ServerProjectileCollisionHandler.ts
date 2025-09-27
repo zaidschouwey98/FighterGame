@@ -1,5 +1,5 @@
-import { EntityType } from "../../shared/EntityType";
-import { Entity } from "../../shared/player/Entity";
+import { EntityType } from "../../shared/enums/EntityType";
+import { Entity } from "../../shared/entities/Entity";
 import { IEntityCollisionHandler } from "../../shared/player/IEntityCollisionHandler";
 import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
 import { PhysicsService } from "../../shared/services/PhysicsService";

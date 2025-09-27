@@ -1,7 +1,7 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
+import { Direction } from "../../../../../shared/enums/Direction";
 import { findAnimation } from "../../../AssetLoader";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 import type { IAnimState } from "../IAnimState";
 
 export class IdleAnim implements IAnimState{

@@ -2,15 +2,15 @@ import { Socket } from "socket.io";
 import { AttackSystem } from "../systems/AttackSystem";
 import { MovementSystem } from "../systems/MovementSystem";
 import { DirectionSystem } from "../systems/DirectionSystem";
-import { ClientToSocketMsg } from "../../shared/ClientToSocketMsg";
-import PlayerInfo from "../../shared/PlayerInfo";
-import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
+import { ClientToSocketMsg } from "../../shared/enums/ClientToSocketMsg";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
+import { ServerToSocketMsg } from "../../shared/enums/ServerToSocketMsg";
 import { ServerState } from "../ServerState";
-import { EntityState } from "../../shared/PlayerState";
+import { EntityState } from "../../shared/messages/EntityState";
 import { UpdateSystem } from "../systems/UpdateSystem";
-import { Player } from "../../shared/player/LivingEntity";
+import { Player } from "../../shared/entities/Player";
 import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisionHandler";
-import { AttackDataBase } from "../../shared/AttackData";
+import { AttackDataBase } from "../../shared/types/AttackData";
 
 export class HumanEventListener {
     constructor(

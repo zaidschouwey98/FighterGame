@@ -1,9 +1,9 @@
-import { EntityState } from "./PlayerState";
-import { Direction } from "./Direction";
-import Position from "./Position";
-import { WeaponType } from "./WeaponType";
+import { EntityState } from "./EntityState";
+import { Direction } from "../enums/Direction";
+import Position from "../Position";
+import { WeaponType } from "../enums/WeaponType";
 import { EntityInfo } from "./EntityInfo";
-import { EntityType } from "./EntityType";
+import { EntityType } from "../enums/EntityType";
 
 export default interface PlayerInfo extends EntityInfo{
     mouseDirection: { x: number; y: number; };

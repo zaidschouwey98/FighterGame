@@ -1,6 +1,6 @@
 import { AnimatedSprite, type Container, type Spritesheet } from "pixi.js";
 import type { EntitySprite } from "./EntitySprite";
-import type { ProjectileInfo } from "../../../shared/player/weapons/projectiles/ProjectileInfo";
+import type { ProjectileInfo } from "../../../shared/messages/ProjectileInfo";
 import { findAnimation } from "../AssetLoader";
 
 export class ProjectileSprite implements EntitySprite {

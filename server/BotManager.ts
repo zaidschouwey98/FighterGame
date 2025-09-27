@@ -7,9 +7,9 @@ import { DirectionSystem } from "./systems/DirectionSystem";
 import { MovementSystem } from "./systems/MovementSystem";
 import { UpdateSystem } from "./systems/UpdateSystem";
 import { BotAdapter } from "./adapters/BotAdapter";
-import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+import { ServerToSocketMsg } from "../shared/enums/ServerToSocketMsg";
 import { ProgressionSystem } from "./systems/ProgressionSystem";
-import { ClientPlayer } from "../shared/player/ClientPlayer";
+import { ClientPlayer } from "../shared/entities/ClientPlayer";
 
 export class BotManager {
     static botCounter: number = 0;

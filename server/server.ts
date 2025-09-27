@@ -2,7 +2,7 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import path from "path";
-import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+import { ServerToSocketMsg } from "../shared/enums/ServerToSocketMsg";
 import { EventBus } from "../shared/services/EventBus";
 import { ServerState } from "./ServerState";
 import { GameLoop } from "./GameLoop";

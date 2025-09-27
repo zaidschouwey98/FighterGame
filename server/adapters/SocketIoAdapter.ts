@@ -1,10 +1,10 @@
 import { Server, Socket } from "socket.io";
-import { ServerToSocketMsg } from "../../shared/ServerToSocketMsg";
+import { ServerToSocketMsg } from "../../shared/enums/ServerToSocketMsg";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
-import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/AttackResult";
-import PlayerInfo from "../../shared/PlayerInfo";
-import { EntityInfo } from "../../shared/EntityInfo";
+import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/types/AttackResult";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
+import { EntityInfo } from "../../shared/messages/EntityInfo";
 
 export class SocketIoAdapter {
     constructor(private eventBus: EventBus, private serverSocket:Server, private serverState: ServerState) {

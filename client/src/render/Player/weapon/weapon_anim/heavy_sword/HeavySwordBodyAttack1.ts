@@ -1,7 +1,7 @@
-import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../../../shared/messages/PlayerInfo";
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
 import { findAnimation } from "../../../../../AssetLoader";
-import { Direction } from "../../../../../../../shared/Direction";
+import { Direction } from "../../../../../../../shared/enums/Direction";
 import DirectionHelper from "../../../../../../../shared/DirectionHelper";
 import type { IAnimState } from "../../../IAnimState";
 import { HEAVY_SWORD_ATTACK_1_BASE_DURATION } from "../../../../../../../shared/constantes";

@@ -1,10 +1,10 @@
-import { EntityState } from "../../PlayerState";
+import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { BLOCK_DURATION } from "../../constantes";
 import type { BlockService } from "../../services/BlockService";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export class BlockState extends BaseState {
     readonly name = EntityState.BLOCKING;

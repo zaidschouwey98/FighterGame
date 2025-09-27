@@ -1,5 +1,5 @@
 import { AnimatedSprite, Container, Graphics, Spritesheet } from "pixi.js";
-import { EntityState } from "../../../shared/PlayerState";
+import { EntityState } from "../../../shared/messages/EntityState";
 import { findAnimation } from "../AssetLoader";
 import type Position from "../../../shared/Position";
 

@@ -1,8 +1,5 @@
-import { AttackDataBase } from "../../shared/AttackData";
-import { AttackReceivedData, KnockbackData } from "../../shared/AttackResult";
-import { EntityInfo } from "../../shared/EntityInfo";
-import { Player } from "../../shared/player/LivingEntity";
-import PlayerInfo from "../../shared/PlayerInfo";
+import { AttackReceivedData, KnockbackData } from "../../shared/types/AttackResult";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { BotManager } from "../BotManager";
 import { ServerState } from "../ServerState";
@@ -10,6 +7,8 @@ import { AttackSystem } from "../systems/AttackSystem";
 import { DirectionSystem } from "../systems/DirectionSystem";
 import { MovementSystem } from "../systems/MovementSystem";
 import { UpdateSystem } from "../systems/UpdateSystem";
+import { AttackDataBase } from "../../shared/types/AttackData";
+import { EntityInfo } from "../../shared/messages/EntityInfo";
 
 
 export class BotAdapter {

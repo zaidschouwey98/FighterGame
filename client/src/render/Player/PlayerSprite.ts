@@ -3,9 +3,9 @@ import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
 import { AttackDashAnim } from "./anim/AttackDashAnim";
-import { EntityState } from "../../../../shared/PlayerState";
+import { EntityState } from "../../../../shared/messages/EntityState";
 import { EffectRenderer } from "../EffectRenderer";
-import type PlayerInfo from "../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../shared/messages/PlayerInfo";
 import { HitAnim } from "./anim/HitAnim";
 import { DieAnim } from "./anim/DieAnim";
 import { TeleportingAnim } from "./anim/TeleportAnim";
@@ -15,7 +15,7 @@ import { BlockAnim } from "./anim/BlockAnim";
 import { WeaponFactory } from "./weapon/WeaponFactory";
 import { PlayerPlate } from "../UI/PlayerPlate";
 import type { EntitySprite } from "../EntitySprite";
-import { WeaponType } from "../../../../shared/WeaponType";
+import { WeaponType } from "../../../../shared/enums/WeaponType";
 import { TeleportedAnim } from "./anim/TeleportedAnim";
 
 export default class PlayerSprite implements EntitySprite {

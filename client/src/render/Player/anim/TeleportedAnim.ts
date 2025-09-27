@@ -1,6 +1,6 @@
 import { AnimatedSprite, ColorMatrixFilter, Container, Spritesheet, Ticker } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import { Direction } from "../../../../../shared/enums/Direction";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 import type { IAnimState } from "../IAnimState";
 import { BulgePinchFilter, ShockwaveFilter } from "pixi-filters";
 

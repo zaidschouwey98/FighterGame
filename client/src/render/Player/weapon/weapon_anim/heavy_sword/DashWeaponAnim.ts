@@ -1,8 +1,8 @@
 import { Sprite } from "pixi.js";
 import type { IWeaponAnim } from "../IWeaponAnim";
-import { Direction } from "../../../../../../../shared/Direction";
+import { Direction } from "../../../../../../../shared/enums/Direction";
 import DirectionHelper from "../../../../../../../shared/DirectionHelper";
-import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../../../shared/messages/PlayerInfo";
 
 export class DashWeaponAnim implements IWeaponAnim {
     private progress = 0;

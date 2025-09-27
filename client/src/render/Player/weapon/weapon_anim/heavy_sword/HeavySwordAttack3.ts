@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Point, Sprite, Spritesheet, type PointLike } from "pixi.js";
-import type { Direction } from "../../../../../../../shared/Direction";
+import type { Direction } from "../../../../../../../shared/enums/Direction";
 import type { IWeaponAnim } from "../IWeaponAnim";
 import { findAnimation } from "../../../../../AssetLoader";
-import type PlayerInfo from "../../../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../../../shared/messages/PlayerInfo";
 import { HEAVY_SWORD_ATTACK_3_BASE_DURATION } from "../../../../../../../shared/constantes";
 
 export class HeavySwordAttack3 implements IWeaponAnim {

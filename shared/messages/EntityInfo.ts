@@ -1,5 +1,5 @@
-import { EntityType } from "./EntityType";
-import Position from "./Position";
+import Position from "../Position";
+import { EntityType } from "../enums/EntityType";
 
 export interface EntityInfo {
     id:string;

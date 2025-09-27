@@ -1,6 +1,6 @@
 // anim/AnimController.ts
-import type PlayerInfo from "../../../../shared/PlayerInfo";
-import { EntityState } from "../../../../shared/PlayerState";
+import type PlayerInfo from "../../../../shared/messages/PlayerInfo";
+import { EntityState } from "../../../../shared/messages/EntityState";
 import type { IAnimState } from "./IAnimState";
 
 export class AnimController {

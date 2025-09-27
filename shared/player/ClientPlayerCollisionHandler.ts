@@ -1,5 +1,5 @@
-import { EntityInfo } from "../EntityInfo";
-import { Entity } from "./Entity";
+import { EntityInfo } from "../messages/EntityInfo";
+import { Entity } from "../entities/Entity";
 import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
 
 export class ClientPlayerCollisionHandler implements IEntityCollisionHandler{

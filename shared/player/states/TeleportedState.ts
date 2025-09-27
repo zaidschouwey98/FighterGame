@@ -1,9 +1,9 @@
 import { IInputHandler } from "../../../client/src/core/IInputHandler";
-import { EntityState } from "../../PlayerState";
+import { EntityState } from "../../messages/EntityState";
 import Position from "../../Position";
 import { EventBus, EventBusMessage } from "../../services/EventBus";
 import { TeleportService } from "../../services/TeleportService";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 import { BaseState } from "./BaseState";
 
 export class TeleportedState extends BaseState {

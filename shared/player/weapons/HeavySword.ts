@@ -1,10 +1,10 @@
-import { EntityState } from "../../PlayerState";
+import { EntityState } from "../../messages/EntityState";
 import type Position from "../../Position";
 import { AttackHitboxService } from "./AttackHitboxService";
 import { Weapon } from "./Weapon";
-import { WeaponType } from "../../WeaponType";
+import { WeaponType } from "../../enums/WeaponType";
 import { HEAVY_SWORD_ATTACK_1_BASE_DURATION, HEAVY_SWORD_ATTACK_3_BASE_DURATION, HEAVY_SWORD_CD } from "../../constantes";
-import { AttackDataBase, AttackType, MeleeAttackData } from "../../AttackData";
+import { AttackDataBase, AttackType, MeleeAttackData } from "../../types/AttackData";
 
 export class HeavySword extends Weapon {
     readonly name = WeaponType.HEAVY_SWORD;
@@ -12,12 +12,12 @@ export class HeavySword extends Weapon {
         super(20, HEAVY_SWORD_CD, 2, 10)
     }
 
-    public useWeapon(playerPos: Position, attackDir: number): AttackDataBase {
+    public useWeapon(entityPos: Position, attackDir: number): AttackDataBase {
         let res: MeleeAttackData = {
             attackType: AttackType.MELEE,
-            hitbox: AttackHitboxService.createHitbox(playerPos, attackDir, 70),
+            hitbox: AttackHitboxService.createHitbox(entityPos, attackDir, 70),
             playerId: "",
-            position: playerPos,
+            position: entityPos,
             rotation: attackDir,
             knockbackStrength: this._knockbackStrength,
             playerAction: EntityState.ATTACK,

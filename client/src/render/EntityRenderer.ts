@@ -3,11 +3,11 @@ import { Container, Spritesheet } from "pixi.js";
 import type { EntityInfo } from "../../../shared/EntityInfo";
 import type { EntitySprite } from "./EntitySprite";
 import PlayerSprite from "./Player/PlayerSprite";
-import { EntityType } from "../../../shared/EntityType";
-import type PlayerInfo from "../../../shared/PlayerInfo";
-import type { ProjectileInfo } from "../../../shared/player/weapons/projectiles/ProjectileInfo";
+import { EntityType } from "../../../shared/enums/EntityType";
+import type PlayerInfo from "../../../shared/messages/PlayerInfo";
+import type { ProjectileInfo } from "../../../shared/messages/ProjectileInfo";
 import { ProjectileSprite } from "./ProjectileSprite";
-import type { AttackResult } from "../../../shared/AttackResult";
+import type { AttackResult } from "../../../shared/types/AttackResult";
 import { DamagePopup } from "./DamagePopup";
 import { GameState } from "../core/GameState";
 

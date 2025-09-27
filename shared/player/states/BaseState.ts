@@ -1,5 +1,5 @@
-import { EntityState } from "../../PlayerState";
-import { ClientPlayer } from "../ClientPlayer";
+import { EntityState } from "../../messages/EntityState";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export abstract class BaseState {
   constructor(protected player: ClientPlayer) {}

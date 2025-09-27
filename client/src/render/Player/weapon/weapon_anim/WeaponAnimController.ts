@@ -1,6 +1,6 @@
-import type { Direction } from "../../../../../../shared/Direction";
-import type PlayerInfo from "../../../../../../shared/PlayerInfo";
-import { EntityState } from "../../../../../../shared/PlayerState";
+import type { Direction } from "../../../../../../shared/enums/Direction";
+import type PlayerInfo from "../../../../../../shared/messages/PlayerInfo";
+import { EntityState } from "../../../../../../shared/messages/EntityState";
 import type { IWeaponAnim } from "./IWeaponAnim";
 
 export class WeaponAnimController {

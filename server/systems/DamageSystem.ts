@@ -1,5 +1,5 @@
-import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/AttackResult";
-import { EntityState } from "../../shared/PlayerState";
+import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/types/AttackResult";
+import { EntityState } from "../../shared/messages/EntityState";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { ServerState } from "../ServerState";
 

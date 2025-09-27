@@ -1,9 +1,9 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
+import { Direction } from "../../../../../shared/enums/Direction";
 import { findAnimation } from "../../../AssetLoader";
 import DirectionHelper from "../../../../../shared/DirectionHelper";
 import { KNOCKBACK_TIMER } from "../../../../../shared/constantes";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 import type { IAnimState } from "../IAnimState";
 
 export class HitAnim implements IAnimState {

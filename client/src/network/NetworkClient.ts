@@ -1,10 +1,10 @@
 import { io, Socket } from "socket.io-client";
 import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
-import type PlayerInfo from "../../../shared/PlayerInfo";
-import type { AttackReceivedData, AttackResult, KnockbackData } from "../../../shared/AttackResult";
+import type PlayerInfo from "../../../shared/messages/PlayerInfo";
+import type { AttackReceivedData, AttackResult, KnockbackData } from "../../../shared/types/AttackResult";
 import type { AttackDataBase } from "../../../shared/AttackData";
-import { ServerToSocketMsg } from "../../../shared/ServerToSocketMsg";
-import { ClientToSocketMsg } from "../../../shared/ClientToSocketMsg";
+import { ServerToSocketMsg } from "../../../shared/enums/ServerToSocketMsg";
+import { ClientToSocketMsg } from "../../../shared/enums/ClientToSocketMsg";
 import type { EntityInfo } from "../../../shared/EntityInfo";
 
 export class NetworkClient {

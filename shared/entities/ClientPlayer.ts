@@ -1,23 +1,23 @@
 import Position from "../Position";
-import { BaseState } from "./states/BaseState";
-import { IdleState } from "./states/IdleState";
-import { MovingState } from "./states/MovingState";
+import { BaseState } from "../player/states/BaseState";
+import { IdleState } from "../player/states/IdleState";
+import { MovingState } from "../player/states/MovingState";
 import type { EventBus } from "../services/EventBus";
 import { MovementService } from "../services/MovementService";
-import { AttackDashState } from "./states/AttackDashState";
-import { AttackState } from "./states/AttackState";
+import { AttackDashState } from "../player/states/AttackDashState";
+import { AttackState } from "../player/states/AttackState";
 import { AttackService } from "../services/AttackService";
-import { HitState } from "./states/HitState";
-import { DieState } from "./states/DieState";
-import { BlockState } from "./states/BlockState";
+import { HitState } from "../player/states/HitState";
+import { DieState } from "../player/states/DieState";
+import { BlockState } from "../player/states/BlockState";
 import { BlockService } from "../services/BlockService";
-import { KnockBackState } from "./states/KnockBackState";
-import { TeleportState } from "./states/TeleportState";
+import { KnockBackState } from "../player/states/KnockBackState";
+import { TeleportState } from "../player/states/TeleportState";
 import { TeleportService } from "../services/TeleportService";
-import type { AttackReceivedData, KnockbackData } from "../AttackResult";
+import type { AttackReceivedData, KnockbackData } from "../types/AttackResult";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
-import { ClientPlayerCollisionHandler } from "./ClientPlayerCollisionHandler";
-import { Player } from "./LivingEntity";
+import { ClientPlayerCollisionHandler } from "../player/ClientPlayerCollisionHandler";
+import { Player } from "./Player";
 
 export class ClientPlayer extends Player {
     public currentState: BaseState;

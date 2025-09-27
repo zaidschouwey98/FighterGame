@@ -1,8 +1,8 @@
-import { EntityState } from "../../PlayerState";
+import { EntityState } from "../../messages/EntityState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { BaseState } from "./BaseState";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export class HitState extends BaseState {
     readonly name = EntityState.HIT;

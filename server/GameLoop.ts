@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { ServerState } from "./ServerState";
-import { ServerToSocketMsg } from "../shared/ServerToSocketMsg";
+import { ServerToSocketMsg } from "../shared/enums/ServerToSocketMsg";
 import { BotManager } from "./BotManager";
 
 export class GameLoop {

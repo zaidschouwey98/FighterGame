@@ -1,8 +1,8 @@
 import type { Container, Spritesheet } from "pixi.js";
-import { WeaponType } from "../../../../../shared/WeaponType";
+import { WeaponType } from "../../../../../shared/enums/WeaponType";
 import type { AnimController } from "../AnimController";
 import { WeaponSprite } from "./WeaponSprite";
-import { EntityState } from "../../../../../shared/PlayerState";
+import { EntityState } from "../../../../../shared/messages/EntityState";
 import { HeavySwordBodyAttack1 } from "./weapon_anim/heavy_sword/HeavySwordBodyAttack1";
 import { HeavySwordBodyAttack2 } from "./weapon_anim/heavy_sword/HeavySwordBodyAttack2";
 

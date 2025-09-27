@@ -1,6 +1,6 @@
 import { TP_COOLDOWN, TP_DISTANCE } from "../constantes";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
-import type { Player } from "../player/LivingEntity";
+import type { Player } from "../entities/Player";
 
 export class TeleportService {
   private teleportCooldown = TP_COOLDOWN;

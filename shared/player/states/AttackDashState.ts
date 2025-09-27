@@ -1,13 +1,13 @@
-import { EntityState } from "../../PlayerState";
-import type { Player } from "../LivingEntity";
+import { EntityState } from "../../messages/EntityState";
+import type { Player } from "../../entities/Player";
 import type { AttackService } from "../../services/AttackService";
 import { BaseState } from "./BaseState";
 import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import { ClientPlayer } from "../ClientPlayer";
+import { ClientPlayer } from "../../entities/ClientPlayer";
 import { ATTACK_DASH_COOLDOWN, DASH_ATTACK_DURATION } from "../../constantes";
 import DirectionHelper from "../../DirectionHelper";
-import { Direction } from "../../Direction";
+import { Direction } from "../../enums/Direction";
 
 export class AttackDashState extends BaseState {
     readonly name = EntityState.ATTACK_DASH;

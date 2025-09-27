@@ -1,11 +1,11 @@
 import { ENTITY_BASE_CRIT_CHANCE, FIREBALL_SPEED as PROJECTILE_SPEED } from "../../../constantes";
-import { EntityInfo } from "../../../EntityInfo";
-import { EntityType } from "../../../EntityType";
+import { EntityType } from "../../../enums/EntityType";
+import { EntityInfo } from "../../../messages/EntityInfo";
 import Position from "../../../Position";
 import { MovementService } from "../../../services/MovementService";
-import { Entity } from "../../Entity";
+import { Entity } from "../../../entities/Entity";
 import { IEntityCollisionHandler } from "../../IEntityCollisionHandler";
-import { ProjectileInfo } from "./ProjectileInfo";
+import { ProjectileInfo } from "../../../messages/ProjectileInfo";
 
 export class Projectile extends Entity {
     private static counter = 0;

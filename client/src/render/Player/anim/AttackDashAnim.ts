@@ -1,9 +1,9 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
+import { Direction } from "../../../../../shared/enums/Direction";
 import { findAnimation } from "../../../AssetLoader";
 import DirectionHelper from "../../../../../shared/DirectionHelper";
 import type { EffectRenderer } from "../../EffectRenderer";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 import { DASH_ATTACK_DURATION } from "../../../../../shared/constantes";
 import type { IAnimState } from "../IAnimState";
 

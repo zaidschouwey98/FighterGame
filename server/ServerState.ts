@@ -1,13 +1,10 @@
 import { Socket } from "socket.io";
-import { EntityInfo } from "../shared/EntityInfo";
-import { EntityType } from "../shared/EntityType";
-import { Entity } from "../shared/player/Entity";
-import { Player } from "../shared/player/LivingEntity";
-import PlayerInfo from "../shared/PlayerInfo";
+import { EntityType } from "../shared/enums/EntityType";
+import { Entity } from "../shared/entities/Entity";
+import { Player } from "../shared/entities/Player";
+import PlayerInfo from "../shared/messages/PlayerInfo";
 import { CollisionService } from "../shared/services/CollisionService";
 import { EventBus, EventBusMessage } from "../shared/services/EventBus";
-import { MovementService } from "../shared/services/MovementService";
-import { EntityState } from "../shared/PlayerState";
 
 export class ServerState {
     private entities: Map<string, Entity> = new Map();

@@ -1,5 +1,5 @@
 import { Container, Text } from "pixi.js";
-import type PlayerInfo from "../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../shared/messages/PlayerInfo";
 
 export class ScoreBoard {
     private scoreBoardContainer: Container;

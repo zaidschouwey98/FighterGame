@@ -1,5 +1,5 @@
-import { EntityInfo } from "../shared/EntityInfo";
-import PlayerInfo from "../shared/PlayerInfo"
+import { EntityInfo } from "../shared/messages/EntityInfo";
+import PlayerInfo from "../shared/messages/PlayerInfo"
 
 // server/HitboxValidationService.ts
 export class HitboxValidationService {

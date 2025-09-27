@@ -1,17 +1,17 @@
-import { AlphaFilter, Application, ColorMatrixFilter, Container, Spritesheet } from "pixi.js";
+import { Application, ColorMatrixFilter, Container, Spritesheet } from "pixi.js";
 import { WorldRenderer } from "./WorldRenderer";
 import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
 import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
-import type PlayerInfo from "../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../shared/messages/PlayerInfo";
 import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
-import type { Player } from "../../../shared/player/LivingEntity";
+import type { Player } from "../../../shared/entities/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";
-import type { EntityInfo } from "../../../shared/EntityInfo";
-import type { AttackResult } from "../../../shared/AttackResult";
+import type { AttackResult } from "../../../shared/types/AttackResult";
 import { EffectRenderer } from "./EffectRenderer";
+import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 
 export class Renderer {
     private _eventBus: EventBus;

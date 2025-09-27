@@ -1,16 +1,17 @@
-import { EntityType } from "../EntityType";
+import { EntityType } from "../enums/EntityType";
 import Position from "../Position";
-import { Direction } from "../Direction";
-import type PlayerInfo from "../PlayerInfo";
-import { Weapon } from "./weapons/Weapon";
+import { Direction } from "../enums/Direction";
+import type PlayerInfo from "../messages/PlayerInfo";
+import { Weapon } from "../player/weapons/Weapon";
 import { Entity } from "./Entity";
-import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
-import { Gun } from "./weapons/Gun";
+import { IEntityCollisionHandler } from "../player/IEntityCollisionHandler";
+import { Gun } from "../player/weapons/Gun";
 import { MovementService } from "../services/MovementService";
-import { HeavySword } from "./weapons/HeavySword";
+import { HeavySword } from "../player/weapons/HeavySword";
 import { ENTITY_BASE_CRIT_CHANCE } from "../constantes";
+import { LivingEntity } from "./LivingEntity";
 
-export class Player extends Entity {
+export class Player extends LivingEntity {
     public playerName?: string;
     public movingDirection: Direction = Direction.BOTTOM;
     public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
@@ -40,7 +41,7 @@ export class Player extends Entity {
         speed: number = 10,
         playerCollisionHandler: IEntityCollisionHandler
     ) {
-        super(id, position, { dx: 0, dy: 0 }, 10, hp, hp, ENTITY_BASE_CRIT_CHANCE, speed, false, EntityType.PLAYER, playerCollisionHandler);
+        super(id, position, 10, hp, hp, ENTITY_BASE_CRIT_CHANCE, speed, EntityType.PLAYER, playerCollisionHandler);
         this.playerName = playerName;
     }
 

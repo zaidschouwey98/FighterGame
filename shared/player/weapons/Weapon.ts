@@ -1,6 +1,6 @@
-import { AttackDataBase } from "../../AttackData";
 import type Position from "../../Position";
-import type { WeaponType } from "../../WeaponType";
+import type { WeaponType } from "../../enums/WeaponType";
+import { AttackDataBase } from "../../types/AttackData";
 
 export abstract class Weapon {
     abstract readonly name: WeaponType;
@@ -39,5 +39,5 @@ export abstract class Weapon {
 
     public abstract getAttackDuration(attackSpeed:number):number;
 
-    public abstract useWeapon(playerPos:Position, attackDir:number):AttackDataBase;
+    public abstract useWeapon(entityPos:Position, attackDir:number):AttackDataBase;
 }

@@ -1,14 +1,14 @@
 import { Socket } from "socket.io";
-import { AttackDataBase, MeleeAttackData, ProjectileAttackData } from "../../shared/AttackData";
-import PlayerInfo from "../../shared/PlayerInfo";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { HitboxValidationService } from "../HitboxValidationService";
 import { ServerState } from "../ServerState";
 import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
-import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
 import { PhysicsService } from "../../shared/services/PhysicsService";
 import { DamageSystem } from "./DamageSystem";
-import { Player } from "../../shared/player/LivingEntity";
+import { Player } from "../../shared/entities/Player";
+import { AttackDataBase, MeleeAttackData, ProjectileAttackData } from "../../shared/types/AttackData";
+import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
 
 export interface AttackHandler {
     handle(data: AttackDataBase, socket?: Socket): void;

@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
 import { ServerState } from "../ServerState";
-import { AttackDataBase, AttackType } from "../../shared/AttackData";
-import PlayerInfo from "../../shared/PlayerInfo";
+import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { AttackHandler, MeleeAttackHandler, ProjectileAttackHandler } from "./AttackHandler";
 import { DamageSystem } from "./DamageSystem";
+import { AttackDataBase, AttackType } from "../../shared/types/AttackData";
 
 export class AttackSystem {
     private handlers: Map<AttackType, AttackHandler> = new Map()

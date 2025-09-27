@@ -1,8 +1,8 @@
-import { EntityInfo } from "../EntityInfo";
-import { EntityType } from "../EntityType";
-import { EntityState } from "../PlayerState";
+import { EntityType } from "../enums/EntityType";
+import { EntityState } from "../messages/EntityState";
 import Position from "../Position";
-import { IEntityCollisionHandler } from "./IEntityCollisionHandler";
+import { IEntityCollisionHandler } from "../player/IEntityCollisionHandler";
+import { EntityInfo } from "../messages/EntityInfo";
 
 export abstract class Entity {
     public state: EntityState = EntityState.IDLE;

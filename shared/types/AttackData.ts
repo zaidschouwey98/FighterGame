@@ -1,5 +1,4 @@
-import type { Hitbox } from "./Hitbox";
-import { EntityState } from "./PlayerState";
+
 
 // export interface AttackData {
 //     playerId: string;
@@ -7,6 +6,10 @@ import { EntityState } from "./PlayerState";
 //     position: { x: number; y: number };
 //     rotation: number;
 //     knockbackStrength: number;
+
+import { EntityState } from "../messages/EntityState";
+import { Hitbox } from "./Hitbox";
+
     
 //     playerAction:PlayerState;
 //     attackIndex:number;

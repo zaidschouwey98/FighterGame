@@ -1,8 +1,8 @@
 import { AnimatedSprite, Container, Spritesheet } from "pixi.js";
-import { Direction } from "../../../../../shared/Direction";
+import { Direction } from "../../../../../shared/enums/Direction";
 import { findAnimation } from "../../../AssetLoader";
 import DirectionHelper from "../../../../../shared/DirectionHelper";
-import type PlayerInfo from "../../../../../shared/PlayerInfo";
+import type PlayerInfo from "../../../../../shared/messages/PlayerInfo";
 import { BLOCK_DURATION } from "../../../../../shared/constantes";
 import type { IAnimState } from "../IAnimState";
 

@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
 import { ServerState } from "../ServerState";
 import PlayerInfo from "../../shared/messages/PlayerInfo";
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { AttackHandler, MeleeAttackHandler, ProjectileAttackHandler } from "./AttackHandler";
 import { DamageSystem } from "./DamageSystem";
 import { AttackDataBase, AttackType } from "../../shared/types/AttackData";
+import { EventBus, EntityEvent } from "../../shared/services/EventBus";
 
 export class AttackSystem {
     private handlers: Map<AttackType, AttackHandler> = new Map()
@@ -23,7 +23,7 @@ export class AttackSystem {
     public handleStartAttack(playerInfo:PlayerInfo, socket?:Socket) {
         if (this.serverState.playerExists(playerInfo.id)) {
             this.serverState.updatePlayer(playerInfo);
-            this.eventBus.emit(EventBusMessage.START_ATTACK, {playerInfo:this.serverState.getEntity(playerInfo.id).toInfo(), socket:socket})
+            this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
         }
     }
 }

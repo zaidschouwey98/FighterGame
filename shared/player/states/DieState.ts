@@ -2,7 +2,7 @@ import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../../entities/ClientPlayer";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class DieState extends BaseState {
   readonly name = EntityState.DEAD;
@@ -14,7 +14,7 @@ export class DieState extends BaseState {
   enter() {
     this.entity.isDead = true;
 
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+    this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     console.log(`${this.entity.id} is DEAD`);
   }
 

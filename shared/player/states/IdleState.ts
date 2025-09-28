@@ -3,7 +3,7 @@ import { BaseState } from "./BaseState";
 import { EntityState } from "../../messages/EntityState";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class IdleState extends BaseState {
     readonly name = EntityState.IDLE;
@@ -11,7 +11,7 @@ export class IdleState extends BaseState {
         super(entity)
     }
     enter() {
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     }
 
     update(_delta: number) {

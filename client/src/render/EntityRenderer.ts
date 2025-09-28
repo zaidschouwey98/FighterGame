@@ -1,6 +1,5 @@
 import { Container, Spritesheet } from "pixi.js";
 
-import type { EntityInfo } from "../../../shared/EntityInfo";
 import type { EntitySprite } from "./EntitySprite";
 import PlayerSprite from "./Player/PlayerSprite";
 import { EntityType } from "../../../shared/enums/EntityType";
@@ -10,6 +9,8 @@ import { ProjectileSprite } from "./ProjectileSprite";
 import type { AttackResult } from "../../../shared/types/AttackResult";
 import { DamagePopup } from "./DamagePopup";
 import { GameState } from "../core/GameState";
+import type Position from "../../../shared/Position";
+import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 
 export default class EntityRenderer {
     private entityContainers: Map<string, Container>;
@@ -76,9 +77,9 @@ export default class EntityRenderer {
         this.entities.delete(entityId);
     }
 
-    public syncPosition(entities: EntityInfo[]){
-        for (const entity of entities) {
-            let playerContainer = this.entityContainers.get(entity.id);
+    public syncPosition(res: { entityId: string; position: Position; }[]){
+        for (const entity of res) {
+            let playerContainer = this.entityContainers.get(entity.entityId);
             if (!playerContainer) continue;
             playerContainer.x = entity.position.x;
             playerContainer.y = entity.position.y;
@@ -96,10 +97,11 @@ export default class EntityRenderer {
 
     public syncEntities(entities: EntityInfo[]) {
         for (const entity of entities) {
+            console.log((entity as PlayerInfo).state)
             let playerSprite = this.entitySprites.get(entity.id);
             if (!playerSprite) continue;
             // Mise à jour de la position
-            this.syncPosition([entity]);
+            this.syncPosition([{ entityId: entity.id, position: entity.position }]);
             playerSprite.syncPlayer(entity);
         }
     }

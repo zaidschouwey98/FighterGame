@@ -4,7 +4,7 @@ import { Entity } from "../shared/entities/Entity";
 import { Player } from "../shared/entities/Player";
 import PlayerInfo from "../shared/messages/PlayerInfo";
 import { CollisionService } from "../shared/services/CollisionService";
-import { EventBus, EventBusMessage } from "../shared/services/EventBus";
+import { EntityEvent, EventBus } from "../shared/services/EventBus";
 
 export class ServerState {
     private entities: Map<string, Entity> = new Map();
@@ -17,7 +17,7 @@ export class ServerState {
     addPlayer(player: Player, socket: Socket){
         this.entities.set(player.id, player);
         this.playerSockets.set(player.id, socket);
-        this.eventBus.emit(EventBusMessage.ENTITY_ADDED, { entityInfo: player.toInfo()});
+        this.eventBus.emit(EntityEvent.ADDED, player.toInfo());
     }
 
     /**
@@ -27,7 +27,7 @@ export class ServerState {
      */
     addEntity(entity: Entity, socket?:Socket) {
         this.entities.set(entity.id, entity);
-        this.eventBus.emit(EventBusMessage.ENTITY_ADDED, { entityInfo: entity.toInfo(), socket:socket});
+        // this.eventBus.emit(EntityEvent.ADDED, { entityInfo: entity.toInfo(), socket:socket});
     }
 
     addBot(bot: Player) {

@@ -1,25 +1,24 @@
 import { Server, Socket } from "socket.io";
 import { ServerToSocketMsg } from "../../shared/enums/ServerToSocketMsg";
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/types/AttackResult";
 import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
 import { EntityInfo } from "../../shared/messages/EntityInfo";
+import { EntityEvent, EventBus, LocalPlayerEvent } from "../../shared/services/EventBus";
+import { AttackDataBase } from "../../shared/types/AttackData";
+import Position from "../../shared/Position";
 
 export class SocketIoAdapter {
     constructor(private eventBus: EventBus, private serverSocket:Server, private serverState: ServerState) {
-        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackReceivedData: AttackReceivedData,entityId:string}) => {
+        this.eventBus.on(EntityEvent.RECEIVE_ATTACK, (res:{attackReceivedData: AttackReceivedData,entityId:string}) => {
             const playerSocket = this.serverState.getPlayerSocket(res.entityId);
             if(!playerSocket){
-                // throw new Error("Should'nt be undefined")
-                // this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
-                // return;
                 return;
             }
             playerSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackReceivedData);
         });
 
-        this.eventBus.on(EventBusMessage.ATTACK_RESULT, (res:{attackResult: AttackResult,entityId:string}) => {
+        this.eventBus.on(LocalPlayerEvent.ATTACK_RESULT, (res:{attackResult: AttackResult,entityId:string}) => {
             const playerSocket = this.serverState.getPlayerSocket(res.entityId);
             if(!playerSocket){
                 return;
@@ -27,62 +26,65 @@ export class SocketIoAdapter {
             playerSocket.emit(ServerToSocketMsg.ATTACK_RESULT, res.attackResult);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (res:{knockbackData: KnockbackData,entityId:string}) => {
+        this.eventBus.on(EntityEvent.KNOCKBACKED, (res:{knockbackData: KnockbackData,entityId:string}) => {
             const playerSocket = this.serverState.getPlayerSocket(res.entityId);
             if(!playerSocket){
-                // throw new Error("Should'nt be undefined")
-                // this.serverSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackResult);
-                // return;
                 return;
             }
             playerSocket.emit(ServerToSocketMsg.KNOCKBACK_RECEIVED, res.knockbackData);
         });
         
-        this.eventBus.on(EventBusMessage.START_ATTACK, (res:{playerInfo:PlayerInfo, socket:Socket})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
+        this.eventBus.on(EntityEvent.START_ATTACK, (res:{ entityId: string; attackData: AttackDataBase; })=>{
+            const playerSocket = this.serverState.getPlayerSocket(res.entityId);
+            if(!playerSocket){
+                this.serverSocket.emit(ServerToSocketMsg.START_ATTACK, res);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res.playerInfo);
+            playerSocket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, (res:{entityInfo:EntityInfo, killerId:string})=>{
-            this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res.entityInfo);
+        this.eventBus.on(EntityEvent.DIED, (res: { entityInfo: EntityInfo; killerId?: string })=>{
+            this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res);
         })
 
-        this.eventBus.on(EventBusMessage.ENTITY_ADDED, (res:{entityInfo:EntityInfo,socket:Socket})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.NEW_ENTITY, res.entityInfo);
+        this.eventBus.on(EntityEvent.ADDED, (entityInfo: EntityInfo)=>{
+            const playerSocket = this.serverState.getPlayerSocket(entityInfo.id);
+            // if(!playerSocket){
+                this.serverSocket.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
+            //     return;
+            // }
+            // playerSocket.broadcast.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
+        })
+
+        this.eventBus.on(EntityEvent.DIRECTION_CHANGED, (res:{ entityId: string; direction: { dx: number; dy: number; }; })=>{
+            const playerSocket = this.serverState.getPlayerSocket(res.entityId);
+            if(!playerSocket){
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.NEW_ENTITY, res.entityInfo);
+            playerSocket.broadcast.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res);
         })
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIRECTION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res.playerInfo);
+        this.eventBus.on(EntityEvent.POSITION_UPDATED, (res:{ entityId: string; position: Position; })=>{
+            const playerSocket = this.serverState.getPlayerSocket(res.entityId);
+            if(!playerSocket){
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res.playerInfo);
+            playerSocket.broadcast.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res);
         })
 
-        this.eventBus.on(EventBusMessage.ENTITY_POSITION_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res.playerInfo);
+        this.eventBus.on(EntityEvent.UPDATED, (entity:EntityInfo)=>{
+            const playerSocket = this.serverState.getPlayerSocket(entity.id);
+
+            if(!playerSocket){
+                this.serverSocket.emit(ServerToSocketMsg.ENTITY_UPDATE, entity);
                 return;
             }
-            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_POS_UPDATE, res.playerInfo);
+            playerSocket.broadcast.emit(ServerToSocketMsg.ENTITY_UPDATE, entity);
         })
 
-        this.eventBus.on(EventBusMessage.ENTITY_UPDATED, (res:{playerInfo:PlayerInfo,socket:Socket})=>{
-            if(!res.socket){
-                this.serverSocket.emit(ServerToSocketMsg.ENTITY_UPDATE, res.playerInfo);
-                return;
-            }
-            res.socket.broadcast.emit(ServerToSocketMsg.ENTITY_UPDATE, res.playerInfo);
-        })
-
-        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (entityInfo:EntityInfo)=>{
+        this.eventBus.on(EntityEvent.SYNC, (entityInfo:EntityInfo)=>{
             this.serverSocket.emit(ServerToSocketMsg.ENTITY_SYNC, entityInfo);
         })
     }

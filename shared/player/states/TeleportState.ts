@@ -4,7 +4,7 @@ import { BaseState } from "./BaseState";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { Ability } from "../abilities/Ability";
 import { AbilityType } from "../../enums/AbilityType";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class TeleportState extends BaseState {
     readonly name = EntityState.TELEPORTING;
@@ -30,7 +30,7 @@ export class TeleportState extends BaseState {
     enter() {
         this.timer = 150;
         this.distance = 50; // distance de base (si juste tapé)
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {

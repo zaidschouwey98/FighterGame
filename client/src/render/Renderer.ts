@@ -5,13 +5,13 @@ import type Position from "../../../shared/Position";
 import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
 import type PlayerInfo from "../../../shared/messages/PlayerInfo";
-import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type { Player } from "../../../shared/entities/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";
 import type { AttackResult } from "../../../shared/types/AttackResult";
 import { EffectRenderer } from "./EffectRenderer";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
+import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../../shared/services/EventBus";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -72,7 +72,7 @@ export class Renderer {
     }
 
     private registerListeners() {
-        this._eventBus.on(EventBusMessage.ENTITIES_INIT, (players: PlayerInfo[]) => {
+        this._eventBus.on(NetworkEvent.ENTITIES_INIT, (players: EntityInfo[]) => {
             for (const player of players) {
                 this._entityRenderer.addEntity(player);
             }
@@ -80,41 +80,44 @@ export class Renderer {
         })
 
         // Quand un joueur est mis à jour
-        this._eventBus.on(EventBusMessage.ENTITY_UPDATED, (player: PlayerInfo) => {
+        this._eventBus.on(EntityEvent.UPDATED, (player: EntityInfo) => {
             this._entityRenderer.syncEntities([player]);
-            this._scoreBoard.update(player);
+            console.log("should update score board")
+            // this._scoreBoard.update(player);
         });
 
-        this._eventBus.on(EventBusMessage.ENTITY_SYNC, (entity: EntityInfo) => {
+        this._eventBus.on(EntityEvent.SYNC, (entity: EntityInfo) => {
             this._entityRenderer.syncEntities([entity]);
         });
 
-        this._eventBus.on(EventBusMessage.ENTITY_POSITION_UPDATED, (player:PlayerInfo)=>{
-            this._entityRenderer.syncPosition([player])
+        this._eventBus.on(EntityEvent.POSITION_UPDATED, (res: { entityId: string; position: Position; })=>{
+            this._entityRenderer.syncPosition([res])
         })
 
         // Nouvel arrivant
-        this._eventBus.on(EventBusMessage.ENTITY_ADDED, (player: PlayerInfo) => {
+        this._eventBus.on(EntityEvent.ADDED, (player: EntityInfo) => {
             this._entityRenderer.addEntity(player);
             this._entityRenderer.syncEntities([player]);
         });
 
         // Joueur parti
-        this._eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
+        this._eventBus.on(LocalPlayerEvent.LEFT, (playerId: string) => {
             this._entityRenderer.removeEntity(playerId);
         });
 
-        this._eventBus.on(EventBusMessage.ENTITY_DIED, (entityInfo:EntityInfo) => {
-            this._entityRenderer.entityDied(entityInfo, this.onDeathAnimationFinished);
+        this._eventBus.on(EntityEvent.DIED, () => {
+            console.log("todo implement died on renderer cause was entityInfo before")
+            
+            // this._entityRenderer.entityDied(entityInfo, this.onDeathAnimationFinished);
         });
 
-        this._eventBus.on(EventBusMessage.ATTACK_RESULT, (attackResult: AttackResult)=>{
-            this._entityRenderer.showDmgPopup(attackResult);
+        this._eventBus.on(LocalPlayerEvent.ATTACK_RESULT, (res: { entityId: string; attackResult: AttackResult; })=>{
+            this._entityRenderer.showDmgPopup(res.attackResult);
         });
 
-        this._eventBus.on(EventBusMessage.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
-            this._effectRenderer.renderTpDestination(position)
-        })
+        // this._eventBus.on(EventBusMessage.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
+        //     this._effectRenderer.renderTpDestination(position)
+        // })
     }
 
     updateMinimap(localPlayer: Player) {

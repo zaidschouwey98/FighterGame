@@ -3,7 +3,7 @@ import { BaseState } from "./BaseState";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { DASH_ATTACK_DURATION } from "../../constantes";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class AttackDashState extends BaseState {
     readonly name = EntityState.ATTACK_DASH;
@@ -28,7 +28,7 @@ export class AttackDashState extends BaseState {
         this.entity.aimVector = { x: dx / len, y: dy / len };
         this.dashTimer = this.dashDuration;
 
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {
@@ -57,7 +57,7 @@ export class AttackDashState extends BaseState {
         this.entity.position.y += this.entity.aimVector.y * speed;
 
         this.dashTimer -= delta;
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
 
     }
 

@@ -11,6 +11,7 @@ import { UpdateSystem } from "../systems/UpdateSystem";
 import { Player } from "../../shared/entities/Player";
 import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisionHandler";
 import { AttackDataBase } from "../../shared/types/AttackData";
+import Position from "../../shared/Position";
 
 export class HumanEventListener {
     constructor(
@@ -34,17 +35,17 @@ export class HumanEventListener {
             this.updateSystem.handlePlayerUpdated(playerInfo, this.socket)
         );
 
-        this.socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (playerInfo: PlayerInfo) => {
-            this.movementSystem.handlePosUpdated(playerInfo, this.socket);
+        this.socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (res:{ entityId: string; position: Position }) => {
+            this.movementSystem.handlePosUpdated(res.entityId, res.position, this.socket);
         })
 
-        this.socket.on(ClientToSocketMsg.START_ATTACK, (playerInfo: PlayerInfo) => {
-            this.attackSystem.handleStartAttack(playerInfo, this.socket);
+        this.socket.on(ClientToSocketMsg.START_ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) => {
+            // this.attackSystem.handleStartAttack(res., this.socket);
         })
         this.socket.on(
             ClientToSocketMsg.PLAYER_DIRECTION_UPDATED,
-            (playerInfo: PlayerInfo) =>
-                this.directionSystem.handleDirectionUpdate(playerInfo, this.socket)
+            (res: { entityId: string; direction: { dx: number; dy: number; }}) =>
+                this.directionSystem.handleDirectionUpdate(res.entityId, res.direction, this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {

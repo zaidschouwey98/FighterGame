@@ -6,7 +6,7 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { Ability } from "../abilities/Ability";
 import { AbilityType } from "../../enums/AbilityType";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class BlockState extends BaseState {
     readonly name = EntityState.BLOCKING;
@@ -29,7 +29,7 @@ export class BlockState extends BaseState {
     enter() {
         // Indiquer que le joueur est en blocage
         this.blockDuration = BLOCK_DURATION
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {

@@ -1,7 +1,7 @@
 import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 
 export class TeleportedState extends BaseState {
     readonly name = EntityState.TELEPORTED;
@@ -15,7 +15,7 @@ export class TeleportedState extends BaseState {
     }
 
     enter() {
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {

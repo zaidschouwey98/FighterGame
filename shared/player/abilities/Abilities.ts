@@ -1,7 +1,7 @@
 import { ATTACK_COOLDOWN, BLOCK_COOLDOWN, BLOCK_DURATION, TP_COOLDOWN, TP_DISTANCE } from "../../constantes";
 import { LivingEntity } from "../../entities/LivingEntity";
 import { EntityState } from "../../messages/EntityState";
-import { EventBus, EventBusMessage } from "../../services/EventBus";
+import { EntityEvent, EventBus } from "../../services/EventBus";
 import { Ability } from "./Ability";
 
 
@@ -16,7 +16,7 @@ export class AttackAbility extends Ability {
     const rot = Math.atan2(aimVector.y, aimVector.x);
     const attackData = entity.weapon.useWeapon(entity.position, rot);
     attackData.playerId = entity.id;
-    this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
+    this.eventBus.emit(EntityEvent.START_ATTACK, { entityId: entity.id, attackData: attackData });
 
 
     this.triggerCooldown();
@@ -52,8 +52,9 @@ export class TeleportAbility extends Ability {
     entity.position.x = destX;
     entity.position.y = destY;
 
+    this.eventBus.emit(EntityEvent.UPDATED, entity.toInfo());
 
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, entity.toInfo());
+    // this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, entity.toInfo());
 
     // this.eventBus.emit(EventBusMessage.TELEPORT_DESTINATION_HELPER); // Clear helper
 

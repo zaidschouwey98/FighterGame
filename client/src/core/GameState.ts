@@ -1,4 +1,4 @@
-import type { EntityInfo } from "../../../shared/EntityInfo";
+import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 
 export class GameState{
     private static _instance: GameState;

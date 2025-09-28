@@ -1,90 +1,92 @@
 import { io, Socket } from "socket.io-client";
-import { EventBusMessage, type EventBus } from "../../../shared/services/EventBus";
 import type PlayerInfo from "../../../shared/messages/PlayerInfo";
 import type { AttackReceivedData, AttackResult, KnockbackData } from "../../../shared/types/AttackResult";
-import type { AttackDataBase } from "../../../shared/AttackData";
 import { ServerToSocketMsg } from "../../../shared/enums/ServerToSocketMsg";
 import { ClientToSocketMsg } from "../../../shared/enums/ClientToSocketMsg";
-import type { EntityInfo } from "../../../shared/EntityInfo";
+import { EntityEvent, LocalPlayerEvent, NetworkEvent, type EventBus } from "../../../shared/services/EventBus";
+import type { EntityInfo } from "../../../shared/messages/EntityInfo";
+import type { AttackDataBase } from "../../../shared/types/AttackData";
+import type Position from "../../../shared/Position";
+import { GameState } from "../core/GameState";
 
 export class NetworkClient {
     private socket: Socket;
-    constructor(serverUrl: string, private eventBus: EventBus) {
+    constructor(serverUrl: string, private eventBus: EventBus, private localPlayerEventBus: EventBus) {
         this.socket = io(serverUrl);
         this.socket.on(ServerToSocketMsg.CONNECTED, () => {
             console.log("Connecté au serveur", this.socket.id);
-            this.eventBus.emit(EventBusMessage.CONNECTED, this.socket.id);
+            this.eventBus.emit(NetworkEvent.CONNECTED, this.socket.id!);
         });
         this.socket.on(ServerToSocketMsg.CURRENT_ENTITIES, (players: PlayerInfo[]) => {
-            this.eventBus.emit(EventBusMessage.ENTITIES_INIT, Object.values(players));
+            this.eventBus.emit(NetworkEvent.ENTITIES_INIT, Object.values(players));
         });
 
-        this.socket.on(ServerToSocketMsg.NEW_ENTITY, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
+        this.socket.on(ServerToSocketMsg.NEW_ENTITY, (entity: EntityInfo) => {
+            this.eventBus.emit(EntityEvent.ADDED, entity);
         });
 
-        this.socket.on(ServerToSocketMsg.ENTITY_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_UPDATE, (entity: EntityInfo) => {
+            this.eventBus.emit(EntityEvent.UPDATED, entity);
         });
 
-        this.socket.on(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, (res: { entityId: string; direction: { dx: number; dy: number; }}) => {
+            let p = GameState.instance.getEntity(res.entityId);
+            if(!p) return;
+            p!.movingVector = res.direction
+            this.eventBus.emit(EntityEvent.UPDATED, p);
         });
 
-        this.socket.on(ServerToSocketMsg.ENTITY_POS_UPDATE, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_POS_UPDATE, (res:{ entityId: string; position: Position; }) => {
+            this.eventBus.emit(EntityEvent.POSITION_UPDATED, res);
         });
 
         this.socket.on(ServerToSocketMsg.DISCONNECT, (playerId: string) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_LEFT, playerId);
+            this.eventBus.emit(LocalPlayerEvent.LEFT, playerId);
         });
 
         this.socket.on(ServerToSocketMsg.ATTACK_RECEIVED, (attackReceivedData: AttackReceivedData) => {
-            this.eventBus.emit(EventBusMessage.ATTACK_RECEIVED, attackReceivedData);
+            this.eventBus.emit(EntityEvent.RECEIVE_ATTACK, { entityId: attackReceivedData.id, attackReceivedData});
         })
 
         this.socket.on(ServerToSocketMsg.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.eventBus.emit(EventBusMessage.ATTACK_RESULT, attackResult);
+            this.eventBus.emit(LocalPlayerEvent.ATTACK_RESULT, {entityId: attackResult.id,attackResult: attackResult});
         })
 
         this.socket.on(ServerToSocketMsg.KNOCKBACK_RECEIVED, (knockbackData: KnockbackData) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, knockbackData);
+            this.eventBus.emit(EntityEvent.KNOCKBACKED, { entityId: knockbackData.id, knockbackData });
         })
 
-        this.socket.on(ServerToSocketMsg.ENTITY_DIED, (player: EntityInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_DIED, player);
+        this.socket.on(ServerToSocketMsg.ENTITY_DIED, (res:{entityInfo:EntityInfo, killerId:string}) => {
+            this.eventBus.emit(EntityEvent.DIED, res);
         });
 
         this.socket.on(ServerToSocketMsg.ENTITY_SYNC, (entity: EntityInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, entity);
+            this.eventBus.emit(EntityEvent.SYNC, entity);
         });
 
-        this.socket.on(ServerToSocketMsg.ENTITY_RESPAWNED, (player: PlayerInfo) => {
-            this.eventBus.emit(EventBusMessage.PLAYER_RESPAWNED, player);
-        });
 
         // SENDING TO SOCKET    
-        this.eventBus.on(EventBusMessage.LOCAL_ATTACK_PERFORMED, (attackData: AttackDataBase) => {
-            this.socket.emit(ClientToSocketMsg.ATTACK, attackData);
+        this.localPlayerEventBus.on(EntityEvent.START_ATTACK, (res:{ entityId: string, attackData: AttackDataBase }) => {
+            this.socket.emit(ClientToSocketMsg.ATTACK, res.attackData);
         });
 
-        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_UPDATED, (playerInfo) => {
+        this.localPlayerEventBus.on(EntityEvent.UPDATED, (playerInfo) => {
             // TODO SHOULD SEPARATE EVENTS
             this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
-            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, playerInfo);
+            this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
+        });
+        
+        this.localPlayerEventBus.on(LocalPlayerEvent.MOVING, (playerInfo)=>{
+            this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
         });
 
-        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_MOVING, (playerInfo) => {
-            this.eventBus.emit(EventBusMessage.ENTITY_UPDATED, playerInfo);
+        this.localPlayerEventBus.on(EntityEvent.DIRECTION_CHANGED, (res: { entityId: string; direction: { dx: number; dy: number; }}) => {
+            this.socket.emit(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, res);
         });
 
-        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, (playerInfo:PlayerInfo) => {
-            this.socket.emit(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, playerInfo);
-        });
-
-        this.eventBus.on(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, (playerInfo)=>{
-            this.socket.emit(ClientToSocketMsg.PLAYER_POS_UPDATE, playerInfo);
-            this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, playerInfo);
+        this.localPlayerEventBus.on(EntityEvent.POSITION_UPDATED, (res:{ entityId: string; position: Position })=>{
+            this.socket.emit(ClientToSocketMsg.PLAYER_POS_UPDATE, res);
+            this.eventBus.emit(EntityEvent.POSITION_UPDATED, res);
         })
     }
 

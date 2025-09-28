@@ -1,6 +1,5 @@
 import { Socket } from "socket.io";
 import PlayerInfo from "../../shared/messages/PlayerInfo";
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { HitboxValidationService } from "../HitboxValidationService";
 import { ServerState } from "../ServerState";
 import { Projectile } from "../../shared/player/weapons/projectiles/Projectile";
@@ -9,6 +8,7 @@ import { DamageSystem } from "./DamageSystem";
 import { Player } from "../../shared/entities/Player";
 import { AttackDataBase, MeleeAttackData, ProjectileAttackData } from "../../shared/types/AttackData";
 import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectileCollisionHandler";
+import { EntityEvent, EventBus } from "../../shared/services/EventBus";
 
 export interface AttackHandler {
     handle(data: AttackDataBase, socket?: Socket): void;
@@ -69,7 +69,7 @@ export class ProjectileAttackHandler implements AttackHandler {
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
         let proj = new Projectile(data.position, 40, { dx: dx, dy: dy }, data.playerId, 20, 3, new ServerProjectileCollisionHandler(this.damageSystem), ()=>{
-            this.eventBus.emit(EventBusMessage.ENTITY_DIED, { entityInfo: proj.toInfo()})
+            this.eventBus.emit(EntityEvent.DIED, { entityInfo: proj.toInfo()})
             
         })
         this.serverState.addEntity(proj);

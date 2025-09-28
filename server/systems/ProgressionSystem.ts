@@ -1,7 +1,7 @@
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
 import { Player } from "../../shared/entities/Player";
+import { EventBus } from "../../shared/services/EventBus";
 
 export class ProgressionSystem {
     constructor(private serverState: ServerState, private eventBus: EventBus) {
@@ -9,18 +9,18 @@ export class ProgressionSystem {
     }
 
     private registerListeners() {
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, ({ entityInfo, killerId }) => {
-            if (!killerId) return;
-            const killer = this.serverState.getEntity(killerId) as Player;
-            if (!killer) return;
-            killer.hp = Math.min(killer.hp + 10, killer.maxHp);
-            killer.killCounter += 1;
-            killer.killStreak += 1;
-            this.gainXp(killer, killer.currentLvl <= entityInfo.currentLvl ? this.getXpByKilledLevel(entityInfo.currentLvl)/2 : 100);
+        // this.eventBus.on(EventBusMessage.ENTITY_DIED, ({ entityInfo, killerId }) => {
+        //     if (!killerId) return;
+        //     const killer = this.serverState.getEntity(killerId) as Player;
+        //     if (!killer) return;
+        //     killer.hp = Math.min(killer.hp + 10, killer.maxHp);
+        //     killer.killCounter += 1;
+        //     killer.killStreak += 1;
+        //     this.gainXp(killer, killer.currentLvl <= entityInfo.currentLvl ? this.getXpByKilledLevel(entityInfo.currentLvl)/2 : 100);
 
-            this.checkLevelUp(killer);
-            this.eventBus.emit(EventBusMessage.ENTITY_SYNC, killer.toInfo());
-        });
+        //     this.checkLevelUp(killer);
+        //     this.eventBus.emit(EventBusMessage.ENTITY_SYNC, killer.toInfo());
+        // });
     }
 
     private gainXp(player: Player, amount: number) {

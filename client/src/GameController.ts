@@ -1,7 +1,6 @@
 import { Application, Container, Spritesheet } from "pixi.js";
 import type { AttackReceivedData, KnockbackData } from "../../shared/types/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
-import { EventBus, EventBusMessage } from "../../shared/services/EventBus";
 import { GameState } from "./core/GameState";
 import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "../../shared/services/MovementService";
@@ -11,10 +10,12 @@ import type PlayerInfo from "../../shared/messages/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
 import { ClientPlayer } from "../../shared/entities/ClientPlayer";
 import type { EntityInfo } from "../../shared/messages/EntityInfo";
+import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../shared/services/EventBus";
 
 export class GameController {
     private gameState: GameState;
     private eventBus = new EventBus();
+    private localPlayerEventBus = new EventBus();
     private inputHandler;
     private renderer: Renderer;
     private localPlayerId: string | null = null;
@@ -43,7 +44,7 @@ export class GameController {
         this.onRespawn = opts.onRespawn;
 
         this.setupEventListeners();
-        this.networkClient = new NetworkClient(serverUrl, this.eventBus);
+        this.networkClient = new NetworkClient(serverUrl, this.eventBus, this.localPlayerEventBus);
         this.gameState = GameState.instance;
         this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus, "seed", (entityId: string) => {
             if (entityId === this.localPlayerId) {
@@ -58,24 +59,26 @@ export class GameController {
 
     private setupEventListeners() {
         // Connexion
-        this.eventBus.on(EventBusMessage.CONNECTED, (playerId: string) => {
+        this.eventBus.on(NetworkEvent.CONNECTED, (playerId: string) => {
             console.log("playerId : " + playerId)
             this.localPlayerId = playerId;
         });
 
         // Snapshot complet au spawn
-        this.eventBus.on(EventBusMessage.ENTITIES_INIT, (players: EntityInfo[]) => {
+        this.eventBus.on(NetworkEvent.ENTITIES_INIT, (players: EntityInfo[]) => {
+            console.log("Init players", players);
             this.gameState.restoreEntities(players);
         });
 
         // MAJ unique pour tout changement de joueur
-        this.eventBus.on(EventBusMessage.ENTITY_UPDATED, (player: EntityInfo) => {
+        this.eventBus.on(EntityEvent.UPDATED, (player: EntityInfo) => {
             if (player.id !== this.localPlayerId)
                 this.gameState.updateEntity(player);
         });
 
         // Nouveau joueur
-        this.eventBus.on(EventBusMessage.ENTITY_ADDED, (player: EntityInfo) => {
+        this.eventBus.on(EntityEvent.ADDED, (player: EntityInfo) => {
+            console.log("New player", player);
             if (player.id === this.localPlayerId) {
                 this.localPlayer = new ClientPlayer(
                     this.localPlayerId!,
@@ -83,7 +86,7 @@ export class GameController {
                     player.position,
                     player.hp,
                     player.speed,
-                    this.eventBus,
+                    this.localPlayerEventBus,
                     this.inputHandler,
                 );
                 this.localPlayer.updateFromInfo(player as PlayerInfo);
@@ -93,40 +96,42 @@ export class GameController {
         });
 
         // Joueur parti
-        this.eventBus.on(EventBusMessage.PLAYER_LEFT, (playerId: string) => {
+        this.eventBus.on(LocalPlayerEvent.LEFT, (playerId: string) => { // Todo change cause not really Local player
             this.gameState.removeEntity(playerId);
         });
 
         // Résultat attaque
-        this.eventBus.on(EventBusMessage.ATTACK_RECEIVED, (attackReceivedData: AttackReceivedData) => {
-            this.localPlayer?.handleAttackReceived(attackReceivedData);
+        this.eventBus.on(EntityEvent.RECEIVE_ATTACK, (res: { entityId:string, attackReceivedData: AttackReceivedData}) => {
+            if(res.entityId !== this.localPlayer?.id) throw new Error("Received attack for another entity");
+            this.localPlayer?.handleAttackReceived(res.attackReceivedData);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (knockbackData: KnockbackData) => {
-            this.localPlayer?.handleKnockbackReceived(knockbackData);
+        this.eventBus.on(EntityEvent.KNOCKBACKED, (res: { entityId:string, knockbackData: KnockbackData}) => {
+            if(res.entityId !== this.localPlayer?.id) throw new Error("Received knockback for another entity");
+            this.localPlayer?.handleKnockbackReceived(res.knockbackData);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_DIED, (entity: EntityInfo) => {
-            if (entity.id === this.localPlayer?.id) {
+        this.eventBus.on(EntityEvent.DIED, (res) => {
+            if (res.entityInfo.id === this.localPlayer?.id) { // todo change
                 this.localPlayer!.die();
             } else
-                this.gameState.removeEntity(entity.id);
+                this.gameState.removeEntity(res.entityInfo.id);
         });
 
-        this.eventBus.on(EventBusMessage.ENTITY_SYNC, (entity: EntityInfo) => {
+        this.eventBus.on(EntityEvent.SYNC, (entity: EntityInfo) => {
             if (entity.id === this.localPlayer?.id) {
                 this.localPlayer?.updateFromInfo(entity as PlayerInfo);
             } else
                 this.gameState.updateEntity(entity);
         });
 
-        this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
-            // A ENLEVER NE SERT PLUS
-            if (player.id === this.localPlayer?.id) {
+        // this.eventBus.on(EventBusMessage.PLAYER_RESPAWNED, (player) => {
+        //     // A ENLEVER NE SERT PLUS
+        //     if (player.id === this.localPlayer?.id) {
 
-            }
-            this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
-        });
+        //     }
+        //     this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
+        // });
     }
 
     public spawnLocalPlayer(name: string) {

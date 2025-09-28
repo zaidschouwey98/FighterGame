@@ -29,7 +29,7 @@ export class AttackState extends BaseState {
 
   enter() {
     this.player.attackIndex = this.player.weapon.attackCurrentCombo;
-    this.player.mouseDirection = this.attackService.getAttackDir(this.player.position);
+    this.player.aimVector = this.attackService.getAttackDir(this.player.position);
     this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     this.timer = this.player.weapon.getAttackDuration(this.player.attackSpeed);
   }
@@ -43,7 +43,7 @@ export class AttackState extends BaseState {
 
     this.timer -= delta;
     if(this.timer <= this.player.weapon.getAttackDuration(this.player.attackSpeed) / 3 && !this.attackDone){
-      let attackData = this.attackService.performAttack(this.player,this.player.mouseDirection);
+      let attackData = this.attackService.performAttack(this.player,this.player.aimVector);
       if (!attackData) throw new Error("AttackData shouldn't be unset.");
       this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
       this.attackDone = true;

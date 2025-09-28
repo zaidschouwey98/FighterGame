@@ -14,7 +14,7 @@ import { LivingEntity } from "./LivingEntity";
 export class Player extends LivingEntity {
     public playerName?: string;
     public movingDirection: Direction = Direction.BOTTOM;
-    public mouseDirection: { x: number, y: number } = { x: 0, y: 0 };
+    public aimVector: { x: number, y: number } = { x: 0, y: 0 };
     public currentXp = 0;
     public lvlXp = 100;
     public currentLvl = 1;
@@ -59,7 +59,7 @@ export class Player extends LivingEntity {
         this.attackDashMaxSpeed = info.attackDashMaxSpeed;
         this.attackDashTimer = info.attackDashTimer;
         this.attackIndex = info.attackIndex;
-        this.mouseDirection = info.mouseDirection;
+        this.aimVector = info.aimVector;
         this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
@@ -90,7 +90,7 @@ export class Player extends LivingEntity {
             attackDashMaxSpeed: this.attackDashMaxSpeed,
             attackDashTimer: this.attackDashTimer,
             attackIndex: this.attackIndex,
-            mouseDirection: this.mouseDirection,
+            aimVector: this.aimVector,
             knockbackReceivedVector: this.knockbackReceivedVector,
             movingDirection: this.movingDirection,
             isDead: this.isDead,

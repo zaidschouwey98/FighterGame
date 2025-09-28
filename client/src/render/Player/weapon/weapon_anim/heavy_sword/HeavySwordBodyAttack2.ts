@@ -33,8 +33,8 @@ export class HeavySwordBodyAttack2 implements IAnimState {
     }
 
     play(player: PlayerInfo): void {
-        if (!player.mouseDirection) return;
-        const dir = DirectionHelper.getDirectionByVector(player.mouseDirection, [
+        if (!player.aimVector) return;
+        const dir = DirectionHelper.getDirectionByVector(player.aimVector, [
             Direction.RIGHT,
             Direction.LEFT
         ]);
@@ -62,7 +62,7 @@ export class HeavySwordBodyAttack2 implements IAnimState {
         this.lastDir = undefined;
     }
     enter?(_player: PlayerInfo): void {
-        // this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.mouseDirection);
+        // this.effectRenderer.renderAttackEffect(PlayerState.ATTACK_1, player.aimVector);
     }
 
 }

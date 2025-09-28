@@ -22,10 +22,10 @@ export class DashWeaponAnim implements IWeaponAnim {
     }
 
     play(playerInfo:PlayerInfo) {
-        const rot = Math.atan2(playerInfo.mouseDirection.y,playerInfo.mouseDirection.x);
+        const rot = Math.atan2(playerInfo.aimVector.y,playerInfo.aimVector.x);
         const flipX = rot > Math.PI / 2 || rot< -Math.PI / 2;
         this.sprite.scale.x = flipX ? -1 : 1;
-        this.direction = DirectionHelper.getDirectionByVector(playerInfo.mouseDirection,[Direction.LEFT, Direction.RIGHT]);
+        this.direction = DirectionHelper.getDirectionByVector(playerInfo.aimVector,[Direction.LEFT, Direction.RIGHT]);
         this.setTargetRotation();
 
         this.sprite.visible = true;

@@ -23,7 +23,7 @@ export class BlockService {
     const dx = worldMousePos.x - player.position.x;
     const dy = worldMousePos.y - player.position.y;
     const len = Math.sqrt(dx * dx + dy * dy);
-    player.mouseDirection = { x: dx / len, y: dy / len };
+    player.aimVector = { x: dx / len, y: dy / len };
   }
 
   public update(delta: number) {

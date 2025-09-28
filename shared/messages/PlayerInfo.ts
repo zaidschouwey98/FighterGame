@@ -6,7 +6,7 @@ import { EntityInfo } from "./EntityInfo";
 import { EntityType } from "../enums/EntityType";
 
 export default interface PlayerInfo extends EntityInfo{
-    mouseDirection: { x: number; y: number; };
+    aimVector: { x: number; y: number; };
     name?:string;
     state:EntityState;
     movingDirection:Direction;

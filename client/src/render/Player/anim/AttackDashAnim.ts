@@ -70,7 +70,7 @@ export class AttackDashAnim implements IAnimState{
   }
 
   public play(player: PlayerInfo) {
-    const vec = player.mouseDirection ?? { x: 1, y: 0 };
+    const vec = player.aimVector ?? { x: 1, y: 0 };
     const dir = DirectionHelper.getDirectionByVector(vec, [
       Direction.RIGHT, Direction.LEFT
     ]);

@@ -36,8 +36,8 @@ export class BlockAnim implements IAnimState {
     }
 
     public play(player: PlayerInfo) {
-        if (!player.mouseDirection) return;
-        const dir = DirectionHelper.getDirectionByVector(player.mouseDirection, [
+        if (!player.aimVector) return;
+        const dir = DirectionHelper.getDirectionByVector(player.aimVector, [
             Direction.RIGHT,
             Direction.LEFT
         ]);

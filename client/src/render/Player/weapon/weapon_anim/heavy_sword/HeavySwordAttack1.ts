@@ -40,7 +40,7 @@ export class HeavySwordAttack1 implements IWeaponAnim {
         this.progress = 0;
         
 
-        let rotation = Math.atan2(playerInfo.mouseDirection.y, playerInfo.mouseDirection.x);
+        let rotation = Math.atan2(playerInfo.aimVector.y, playerInfo.aimVector.x);
         this.baseRotation = rotation;
         this.flipX = this.baseRotation > Math.PI / 2 || this.baseRotation < -Math.PI / 2;
         this.sprite.scale.x = this.flipX ? 1 : -1;

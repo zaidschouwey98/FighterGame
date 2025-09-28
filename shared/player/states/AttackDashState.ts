@@ -27,10 +27,10 @@ export class AttackDashState extends BaseState {
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
 
         // Vecteur du dash
-        this.player.mouseDirection = { x: dx / len, y: dy / len };
+        this.player.aimVector = { x: dx / len, y: dy / len };
         this.player.attackDashDuration = DASH_ATTACK_DURATION;
         this.player.attackDashTimer = DASH_ATTACK_DURATION;
-        this.player.movingDirection = DirectionHelper.getDirectionByVector(this.player.mouseDirection, [Direction.BOTTOM, Direction.TOP, Direction.LEFT, Direction.RIGHT]);
+        this.player.movingDirection = DirectionHelper.getDirectionByVector(this.player.aimVector, [Direction.BOTTOM, Direction.TOP, Direction.LEFT, Direction.RIGHT]);
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }
 
@@ -65,8 +65,8 @@ export class AttackDashState extends BaseState {
         const speed = this.player.attackDashMaxSpeed * speedFactor;
 
         // Déplacement
-        this.player.position.x += this.player.mouseDirection.x * speed;
-        this.player.position.y += this.player.mouseDirection.y * speed;
+        this.player.position.x += this.player.aimVector.x * speed;
+        this.player.position.y += this.player.aimVector.y * speed;
         this.player.attackDashTimer -= delta;
         this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
     }

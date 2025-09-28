@@ -1,38 +1,44 @@
 import Position from "../Position";
-import { BaseState } from "../player/states/BaseState";
 import { IdleState } from "../player/states/IdleState";
 import { MovingState } from "../player/states/MovingState";
 import type { EventBus } from "../services/EventBus";
 import { MovementService } from "../services/MovementService";
 import { AttackDashState } from "../player/states/AttackDashState";
 import { AttackState } from "../player/states/AttackState";
-import { AttackService } from "../services/AttackService";
 import { HitState } from "../player/states/HitState";
 import { DieState } from "../player/states/DieState";
 import { BlockState } from "../player/states/BlockState";
-import { BlockService } from "../services/BlockService";
 import { KnockBackState } from "../player/states/KnockBackState";
 import { TeleportState } from "../player/states/TeleportState";
-import { TeleportService } from "../services/TeleportService";
 import type { AttackReceivedData, KnockbackData } from "../types/AttackResult";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import { ClientPlayerCollisionHandler } from "../player/ClientPlayerCollisionHandler";
-import { Player } from "./Player";
+import { LivingEntity } from "./LivingEntity";
+import PlayerInfo from "../messages/PlayerInfo";
+import { EntityType } from "../enums/EntityType";
+import { EntityState } from "../messages/EntityState";
+import { AttackAbility, BlockAbility, TeleportAbility } from "../player/abilities/Abilities";
+import { AbilityType } from "../enums/AbilityType";
+import { TeleportedState } from "../player/states/TeleportedState";
 
-export class ClientPlayer extends Player {
-    public currentState: BaseState;
-    public idleState: IdleState;
-    public movingState: MovingState;
-    public attackDashState: AttackDashState;
-    public attackState: AttackState;
-    public dieState: DieState;
-    public blockState: BlockState;
-    public teleportState: TeleportState;
+export class ClientPlayer extends LivingEntity {
+    public playerName?: string;
+    
+    public currentXp = 0;
+    public lvlXp = 100;
+    public currentLvl = 1;
+    
+    public killCounter = 0;
+    public killStreak = 0;
 
-    public attackService: AttackService;
-    public movementService: MovementService;
-    public teleportService: TeleportService;
-    public blockService: BlockService;
+    public attackDashTimer?: number;
+    public attackDashDuration?: number;
+    public attackDashMaxSpeed = 4.5;
+
+    public knockbackReceivedVector?: { x: number; y: number };
+    public knockbackTimer?: number;
+
+    private movementService: MovementService;
 
     constructor(
         id: string,
@@ -43,70 +49,112 @@ export class ClientPlayer extends Player {
         private eventBus: EventBus,
         private inputHandler: IInputHandler,
     ) {
-        super(id, playerName, position, hp, speed, new ClientPlayerCollisionHandler());
+        super(id, position, 10, hp, hp, 0.10, 10, EntityType.PLAYER, new ClientPlayerCollisionHandler());
 
-        this.idleState = new IdleState(this, inputHandler, eventBus);
-        this.currentState = this.idleState;
-
-        this.attackService = new AttackService(inputHandler);
         this.movementService = new MovementService(inputHandler);
-        this.blockService = new BlockService(inputHandler);
-        this.teleportService = new TeleportService(inputHandler);
 
-        this.movingState = new MovingState(this, inputHandler, this.movementService, eventBus);
-        this.attackDashState = new AttackDashState(this, eventBus, inputHandler);
-        this.attackState = new AttackState(this, this.attackService, this.movementService, eventBus);
-        this.dieState = new DieState(this, eventBus);
-        this.blockState = new BlockState(this, eventBus, this.blockService, inputHandler);
-        this.teleportState = new TeleportState(this, this.teleportService, eventBus, inputHandler);
+        const baseState = new IdleState(this, inputHandler, eventBus)
+        this.addState(baseState);
+        this.addState(new MovingState(this, inputHandler, this.movementService, eventBus));
+        this.addState(new AttackDashState(this, eventBus, inputHandler));
+        this.addState(new AttackState(this, this.movementService, eventBus, inputHandler));
+        this.addState(new DieState(this, eventBus));
+        this.addState(new BlockState(this, eventBus, inputHandler));
+        this.addState(new TeleportState(this, eventBus, inputHandler));
+        this.addState(new HitState(this, eventBus, inputHandler));
+        this.addState(new KnockBackState(this, eventBus, inputHandler));
+        this.addState(new TeleportedState(this, eventBus));
+
+        this.currentState = baseState;
+        
+        this.addAbility(AbilityType.ATTACK,new AttackAbility(eventBus));
+        this.addAbility(AbilityType.TELEPORT,new TeleportAbility(eventBus));
+        this.addAbility(AbilityType.BLOCK,new BlockAbility(eventBus));
+
     }
 
     public update(delta: number): void {
-        this.currentState.update(delta);
-        this.blockService.update(delta);
-        this.attackService.update(delta, this);
-        this.teleportService.update(delta);
+        if(!this.currentState) return;
+        super.update(delta);
         this.inputHandler.update();
     }
 
     public handleAttackReceived(attackReceivedData: AttackReceivedData) {
-        this.movingVector = {dx:0, dy:0};
+        this.movingVector = { dx: 0, dy: 0 };
         this.hp = attackReceivedData.newHp;
-        this.knockbackReceivedVector = {x: attackReceivedData.knockbackData.knockbackVector.dx, y: attackReceivedData.knockbackData.knockbackVector.dy};
-        this.changeState(
-            new HitState(
-                this,
-                this.eventBus,
-                this.inputHandler,
-                attackReceivedData.knockbackData.knockbackVector,
-                attackReceivedData.knockbackData.knockbackTimer,
-            )
-        );
+        this.knockbackReceivedVector = { x: attackReceivedData.knockbackData.knockbackVector.dx, y: attackReceivedData.knockbackData.knockbackVector.dy };
+        this.changeState(EntityState.HIT,{ vector: attackReceivedData.knockbackData.knockbackVector, duration: attackReceivedData.knockbackData.knockbackTimer });
     }
 
-    public handleKnockbackReceived(knockbackData: KnockbackData){
-        this.movingVector = {dx:0, dy:0};
-        this.knockbackReceivedVector = {x: knockbackData.knockbackVector.dx, y: knockbackData.knockbackVector.dy};
-        this.changeState(
-            new KnockBackState(this,this.eventBus, this.inputHandler, knockbackData.knockbackVector, knockbackData.knockbackTimer)
-        );
+    public handleKnockbackReceived(knockbackData: KnockbackData) {
+        this.movingVector = { dx: 0, dy: 0 };
+        this.knockbackReceivedVector = { x: knockbackData.knockbackVector.dx, y: knockbackData.knockbackVector.dy };
+        this.changeState(EntityState.KNOCKBACK,{ vector: knockbackData.knockbackVector, duration: knockbackData.knockbackTimer });
     }
 
-    public die() {
-        this.currentState = this.dieState;
-    }
+    
 
     public respawn(position: Position) {
-        this.position = position;
-        this.hp = this.maxHp;
-        this.changeState(this.idleState);
+        throw new Error("Method not implemented.");
     }
 
-    public changeState(nextState: BaseState) {
-        if (!nextState.canEnter()) return;
-        this.currentState.exit();
-        this.currentState = nextState;
-        this.state = nextState.name;
-        nextState.enter();
+    public updateFromInfo(info: PlayerInfo) {
+        this.entityType = EntityType.PLAYER;
+        this.position = info.position;
+        this.maxHp = info.maxHp;
+        this.hp = info.hp;
+        this.speed = info.speed;
+        this.attackDashDuration = info.attackDashDuration;
+        this.attackDashMaxSpeed = info.attackDashMaxSpeed;
+        this.attackDashTimer = info.attackDashTimer;
+        this.attackIndex = info.attackIndex;
+        this.aimVector = info.aimVector;
+        this.knockbackReceivedVector = info.knockbackReceivedVector;
+        this.movingDirection = info.movingDirection;
+        this.isDead = info.isDead;
+        this.playerName = info.name;
+        this.id = info.id;
+        this.state = info.state;
+        this.killCounter = info.killCounter;
+        this.killStreak = info.killStreak;
+        this.critChance = info.critChance;
+        // this.weapon = info.weapon;
+        this.movingVector = info.movingVector;
+        this.attackSpeed = info.attackSpeed;
+        this.radius = info.radius;
+        this.currentXp = info.currentXp;
+        this.lvlXp = info.lvlXp;
+        this.currentLvl = info.currentLvl;
+    }
+
+    public toInfo(): PlayerInfo {
+        return {
+            entityType: EntityType.PLAYER,
+            position: this.position,
+            maxHp: this.maxHp,
+            hp: this.hp,
+            critChance: this.critChance,
+            speed: this.speed,
+            attackDashDuration: this.attackDashDuration,
+            attackDashMaxSpeed: this.attackDashMaxSpeed,
+            attackDashTimer: this.attackDashTimer,
+            attackIndex: this.attackIndex,
+            aimVector: this.aimVector,
+            knockbackReceivedVector: this.knockbackReceivedVector,
+            movingDirection: this.movingDirection,
+            isDead: this.isDead,
+            name: this.playerName,
+            id: this.id,
+            state: this.state,
+            killCounter: this.killCounter,
+            killStreak: this.killStreak,
+            weapon: this.weapon.name,
+            movingVector: this.movingVector,
+            attackSpeed: this.attackSpeed,
+            radius: this.radius,
+            currentXp: this.currentXp,
+            lvlXp: this.lvlXp,
+            currentLvl: this.currentLvl,
+        };
     }
 }

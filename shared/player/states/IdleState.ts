@@ -1,17 +1,17 @@
 // core/player/states/IdleState.ts
 import { BaseState } from "./BaseState";
 import { EntityState } from "../../messages/EntityState";
-import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import { ClientPlayer } from "../../entities/ClientPlayer";
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
+import { EventBus, EventBusMessage } from "../../services/EventBus";
 
 export class IdleState extends BaseState {
     readonly name = EntityState.IDLE;
-    constructor(player: ClientPlayer, private inputHandler: IInputHandler, private eventBus: EventBus) {
-        super(player)
+    constructor(entity: IStatefulEntity, private inputHandler: IInputHandler, private eventBus: EventBus) {
+        super(entity)
     }
     enter() {
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
     }
 
     update(_delta: number) {
@@ -19,28 +19,28 @@ export class IdleState extends BaseState {
 
         // Si des touches de mouvement sont pressées → passer en MovingState
         if (keys.has("w") || keys.has("a") || keys.has("s") || keys.has("d")) {
-            this.player.changeState(this.player.movingState);
+            this.entity.changeState(EntityState.MOVING);
             return;
         }
 
         // Si clic gauche → attaque
         if (this.inputHandler.consumeAttack()) {
-            this.player.changeState(this.player.attackState);
+            this.entity.changeState(EntityState.ATTACK);
             return;
         }
 
         if (this.inputHandler.consumeRightClick()) {
-            this.player.changeState(this.player.blockState);
+            this.entity.changeState(EntityState.BLOCKING);
             return;
         }
 
         // Si espace → dash
         if (this.inputHandler.isSpaceDown()) {
-            this.player.changeState(this.player.teleportState);
+            this.entity.changeState(EntityState.TELEPORTING);
         }
 
         if (this.inputHandler.consumeShift()) {
-            this.player.changeState(this.player.attackDashState);
+            this.entity.changeState(EntityState.ATTACK_DASH);
             return;
         }
     }

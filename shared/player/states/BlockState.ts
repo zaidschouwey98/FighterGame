@@ -1,45 +1,46 @@
 import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
-import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { BLOCK_DURATION } from "../../constantes";
 import type { BlockService } from "../../services/BlockService";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import { ClientPlayer } from "../../entities/ClientPlayer";
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
+import { Ability } from "../abilities/Ability";
+import { AbilityType } from "../../enums/AbilityType";
+import { EventBus, EventBusMessage } from "../../services/EventBus";
 
 export class BlockState extends BaseState {
     readonly name = EntityState.BLOCKING;
+    private blockAbility?: Ability;
     private blockDuration = BLOCK_DURATION;
     constructor(
-        player: ClientPlayer,
+        entity: IStatefulEntity,
         private eventBus: EventBus,
-        private blockService: BlockService,
         private inputHandler:IInputHandler,
     ) {
-        super(player);
+        super(entity);
     }
 
     canEnter(): boolean {
-        if(this.blockService.getBlockCD() > 0)
-            return false;
-        else return true;
+        this.blockAbility = this.entity.getAbility(AbilityType.BLOCK);
+        if(!this.blockAbility) return false;
+        return (this.blockAbility.canUse());
     }
 
     enter() {
         // Indiquer que le joueur est en blocage
         this.blockDuration = BLOCK_DURATION
-        this.blockService.startBlock(this.player)
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {
         if(this.inputHandler.consumeAttack()){
-            this.player.changeState(this.player.attackState);
+            this.entity.changeState(EntityState.ATTACK);
         }
         
         this.blockDuration -= delta;
         if (this.blockDuration <= 0) {
-            this.blockService.resetBlockCD();
-            this.player.changeState(this.player.idleState);
+            this.blockAbility!.use(this.entity);
+            this.entity.changeState(EntityState.IDLE);
             return;
         }
         

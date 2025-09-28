@@ -1,34 +1,38 @@
 import { EntityState } from "../../messages/EntityState";
-import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
-import type { Player } from "../../entities/Player";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../../entities/ClientPlayer";
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
+import { EventBus, EventBusMessage } from "../../services/EventBus";
 
 export class KnockBackState extends BaseState {
+    private knockbackVector: { dx: number; dy: number } = { dx: 0, dy: 0 };
+    private knockbackTimer: number = 0;
     readonly name = EntityState.KNOCKBACK;
     constructor(
-        player: ClientPlayer,
+        entity: IStatefulEntity,
         private eventBus: EventBus,
         private inputHandler: IInputHandler,
-        private knockbackVector: { dx: number; dy: number },
-        private knockbackTimer: number
     ) {
-        super(player);
+        super(entity);
     }
 
-    enter() {
-        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+    enter(params?: { vector: { dx: number; dy: number }; duration: number }) {
+        if (params) {
+            this.knockbackVector = params.vector;
+            this.knockbackTimer = params.duration;
+        } else throw new Error("HitState requires knockback parameters on enter");
+        this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {
         if (this.inputHandler.isSpaceDown()) {
-            this.player.changeState(this.player.teleportState);
+            this.entity.changeState(EntityState.TELEPORTING);
         }
 
         if (this.knockbackTimer > 0) {
-            this.player.position.x += this.knockbackVector.dx * delta;
-            this.player.position.y += this.knockbackVector.dy * delta;
+            this.entity.position.x += this.knockbackVector.dx * delta;
+            this.entity.position.y += this.knockbackVector.dy * delta;
 
             const decayPerSecond = 0.85;
             const decay = Math.pow(decayPerSecond, delta);
@@ -37,10 +41,10 @@ export class KnockBackState extends BaseState {
 
             this.knockbackTimer -= delta;
             if (this.knockbackTimer <= 0) {
-                this.player.changeState(this.player.idleState);
+                this.entity.changeState(EntityState.IDLE);
             }
 
-            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
+            this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
         }
     }
 

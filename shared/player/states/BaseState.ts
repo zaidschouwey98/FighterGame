@@ -1,13 +1,13 @@
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { EntityState } from "../../messages/EntityState";
-import { ClientPlayer } from "../../entities/ClientPlayer";
 
 export abstract class BaseState {
-  constructor(protected player: ClientPlayer) {}
+  constructor(protected entity: IStatefulEntity) {}
 
   abstract readonly name: EntityState;
 
   canEnter(): boolean {return true}; 
-  enter(): void {}    // appelé quand on entre dans l'état
+  enter(_params?: unknown): void {}    // appelé quand on entre dans l'état
   exit(): void {}     // appelé quand on sort de l'état
   update(_delta: number): void {} // logique de mise à jour
 }

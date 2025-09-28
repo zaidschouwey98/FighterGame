@@ -1,59 +1,67 @@
 import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
-import type { AttackService } from "../../services/AttackService";
-import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import { MovementService } from "../../services/MovementService";
-import { ClientPlayer } from "../../entities/ClientPlayer";
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
+import { AbilityType } from "../../enums/AbilityType";
+import Position from "../../Position";
+import { IInputHandler } from "../../../client/src/core/IInputHandler";
+import { Ability } from "../abilities/Ability";
+import { EventBus, EventBusMessage } from "../../services/EventBus";
 
 export class AttackState extends BaseState {
   readonly name = EntityState.ATTACK;
-
-  private attackDashDone: boolean = false;
+  
+  private attackAbility?: Ability;
   private attackDone: boolean = false
-  private timer = 40;
+  private timer = 0;
 
-  constructor(player: ClientPlayer, private attackService: AttackService, private movementService: MovementService, private eventBus: EventBus) {
-    super(player);
+  constructor(entity: IStatefulEntity, private movementService: MovementService, private eventBus: EventBus, private inputHandler: IInputHandler) {
+    super(entity);
   }
 
   canEnter(): boolean {
-    if (this.player.weapon.isDashAttack() && !this.attackDashDone) {
-      this.attackDashDone = true;
-      this.player.changeState(this.player.attackDashState);
-      return false;
-    } else {
-      this.attackDashDone = false;
-      return true;
-    }
+    const ability = this.entity.getAbility(AbilityType.ATTACK);
+    if(!ability) return false;
+    return (ability.canUse());
   }
 
   enter() {
-    this.player.attackIndex = this.player.weapon.attackCurrentCombo;
-    this.player.aimVector = this.attackService.getAttackDir(this.player.position);
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.player.toInfo());
-    this.timer = this.player.weapon.getAttackDuration(this.player.attackSpeed);
+    this.attackAbility = this.entity.getAbility(AbilityType.ATTACK);
+    if (!this.attackAbility) throw new Error("Player tried to enter AttackState without having an attack ability.");
+    this.entity.attackIndex = this.entity.weapon.attackCurrentCombo;
+    this.entity.aimVector = this.getAttackDir(this.entity.position);
+    this.timer = this.entity.weapon.getAttackDuration(this.entity.attackSpeed);
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_UPDATED, this.entity.toInfo());
+    
   }
 
   update(delta: number) {
     let v = this.movementService.getMovementDelta();
-    this.player.movingVector = v;
-    
-    MovementService.moveEntity(this.player, delta, this.player.speed / 3);
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.player.toInfo());
+    this.entity.movingVector = v;
+
+    MovementService.moveEntity(this.entity, delta, this.entity.speed / 3);
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.entity.toInfo());
 
     this.timer -= delta;
-    if(this.timer <= this.player.weapon.getAttackDuration(this.player.attackSpeed) / 3 && !this.attackDone){
-      let attackData = this.attackService.performAttack(this.player,this.player.aimVector);
-      if (!attackData) throw new Error("AttackData shouldn't be unset.");
-      this.eventBus.emit(EventBusMessage.LOCAL_ATTACK_PERFORMED, attackData);
+    if (this.timer <= this.entity.weapon.getAttackDuration(this.entity.attackSpeed) / 3 && !this.attackDone) {
+      
+      this.attackAbility!.use(this.entity, this.entity.aimVector);
+
       this.attackDone = true;
     }
     if (this.timer <= 0) {
-      this.player.changeState(this.player.idleState);
+      this.entity.changeState(EntityState.IDLE);
     }
   }
 
-  exit() { 
+  exit() {
     this.attackDone = false;
+  }
+
+  private getAttackDir(playerPos: Position): { x: number, y: number } {
+    const world = this.inputHandler.getMousePosition();
+    const dx = world.x - playerPos.x;
+    const dy = world.y - playerPos.y;
+    return { x: dx, y: dy }
   }
 }

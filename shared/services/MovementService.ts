@@ -2,6 +2,7 @@ import type { Player } from "../entities/Player";
 import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import Position from "../Position";
 import { EntityInfo } from "../messages/EntityInfo";
+import { IStatefulEntity } from "../entities/IStatefulEntity";
 
 export class MovementService {
   constructor(private inputHandler: IInputHandler) { }
@@ -30,7 +31,7 @@ export class MovementService {
     return {x: entity.position.x + dx * speed / 4 * delta, y:entity.position.y + dy * speed / 4 * delta};
   }
 
-  public static moveEntity(player: Player | EntityInfo, delta:number, changedSpeed?:number) {
+  public static moveEntity(player: Player | EntityInfo | IStatefulEntity, delta:number, changedSpeed?:number) {
     let dx = player.movingVector.dx;
     let dy = player.movingVector.dy;
     let speed = changedSpeed || player.speed;

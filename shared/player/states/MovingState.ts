@@ -1,23 +1,22 @@
 import { Direction } from "../../enums/Direction";
 import { EntityState } from "../../messages/EntityState";
-import { EventBusMessage, type EventBus } from "../../services/EventBus";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
-import type { Player } from "../../entities/Player";
 import { BaseState } from "./BaseState";
-import { ClientPlayer } from "../../entities/ClientPlayer";
+import { IStatefulEntity } from "../../entities/IStatefulEntity";
+import { EventBus, EventBusMessage } from "../../services/EventBus";
 
 export class MovingState extends BaseState {
   readonly name = EntityState.MOVING;
   private lastDx:number;
   private lastDy:number;
   constructor(
-    player: ClientPlayer,
+    entity: IStatefulEntity,
     private inputHandler:IInputHandler,
     private movementService: MovementService,
     private eventBus: EventBus
   ) {
-    super(player);
+    super(entity);
     this.lastDx = 0;
     this.lastDy = 0;
   }
@@ -30,41 +29,42 @@ export class MovingState extends BaseState {
     const { dx, dy } = this.movementService.getMovementDelta();
 
     if (dx === 0 && dy === 0) {
-      this.player.changeState(this.player.idleState);
+      this.entity.changeState(EntityState.IDLE);
       return;
     }
     if (this.inputHandler.consumeAttack()) {
-      this.player.changeState(this.player.attackState);
+      this.entity.changeState(EntityState.ATTACK);
       return;
     }
 
     if (this.inputHandler.consumeRightClick()) {
-      this.player.changeState(this.player.blockState);
+      this.entity.changeState(EntityState.BLOCKING);
       return;
     }
 
-    if (this.inputHandler.isSpaceDown() && this.player.teleportState.canEnter()) {
-      this.player.changeState(this.player.teleportState);
+    if (this.inputHandler.isSpaceDown()) {
+      this.entity.changeState(EntityState.TELEPORTING);
       return;
     }
 
     if(this.inputHandler.consumeShift()){
-      this.player.changeState(this.player.attackDashState);
+      this.entity.changeState(EntityState.ATTACK_DASH);
       return;
     }
 
     // Déplacement
-    MovementService.moveEntity(this.player, delta);
+    MovementService.moveEntity(this.entity, delta);
 
     // Direction
-    if (dy < 0) this.player.movingDirection = Direction.TOP;
-    if (dy > 0) this.player.movingDirection = Direction.BOTTOM;
-    if (dx < 0) this.player.movingDirection = Direction.LEFT;
-    if (dx > 0) this.player.movingDirection = Direction.RIGHT;
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_MOVING, this.player.toInfo());
+    if (dy < 0) this.entity.movingDirection = Direction.TOP;
+    if (dy > 0) this.entity.movingDirection = Direction.BOTTOM;
+    if (dx < 0) this.entity.movingDirection = Direction.LEFT;
+    if (dx > 0) this.entity.movingDirection = Direction.RIGHT;
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_MOVING, this.entity.toInfo());
+
     if (dx !== this.lastDx || dy !== this.lastDy) {
-      this.player.movingVector = {dx:dx,dy:dy};
-      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.player.toInfo());
+      this.entity.movingVector = {dx:dx,dy:dy};
+      this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.entity.toInfo());
 
       this.lastDx = dx;
       this.lastDy = dy;
@@ -72,9 +72,9 @@ export class MovingState extends BaseState {
   }
 
   public exit() { 
-    this.player.movingVector = {dx:0,dy:0};
+    this.entity.movingVector = {dx:0,dy:0};
     this.lastDx = 0;
     this.lastDy = 0;
-    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.player.toInfo());
+    this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_DIRECTION_UPDATED, this.entity.toInfo());
   }
 }

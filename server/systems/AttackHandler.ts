@@ -22,9 +22,10 @@ export class MeleeAttackHandler implements AttackHandler {
     ) { }
 
     handle(data: MeleeAttackData, socket?: Socket): void {
+        if(data.playerId == undefined || data.playerId === "") throw new Error("Melee attack data missing playerId, check attackAbility");
         const attacker = this.serverState.getEntity(data.playerId);
         if (!attacker) return;
-
+        
         attacker.position = data.position;
         attacker.state = data.playerAction;
 

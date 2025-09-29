@@ -97,9 +97,8 @@ export default class EntityRenderer {
 
     public syncEntities(entities: EntityInfo[]) {
         for (const entity of entities) {
-            console.log((entity as PlayerInfo).state)
             let playerSprite = this.entitySprites.get(entity.id);
-            if (!playerSprite) continue;
+            if (!playerSprite) throw new Error("Entity should be added before sync.");
             // Mise à jour de la position
             this.syncPosition([{ entityId: entity.id, position: entity.position }]);
             playerSprite.syncPlayer(entity);

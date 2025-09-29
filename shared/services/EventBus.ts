@@ -43,6 +43,7 @@ export enum EntityEvent {
     RESPAWNED = "ENTITY_RESPAWNED",
     BLOCK = "BLOCK",
     STATE_CHANGED = "STATE_CHANGED",
+    ATTACK = "ATTACK",
 }
 
 export enum LocalPlayerEvent {
@@ -72,6 +73,7 @@ interface EventPayloads {
   [EntityEvent.SYNC]: EntityInfo;
   [EntityEvent.STATE_CHANGED]: { entityId: string, state: EntityState};
 
+  [EntityEvent.ATTACK]: { entityId: string, attackData: AttackDataBase };
   [EntityEvent.START_ATTACK]: { entityId: string; attackData: AttackDataBase };
   [EntityEvent.RECEIVE_ATTACK]: { entityId: string; attackReceivedData: AttackReceivedData };
   [EntityEvent.KNOCKBACKED]: { entityId: string; knockbackData: KnockbackData };

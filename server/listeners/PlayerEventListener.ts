@@ -28,8 +28,8 @@ export class HumanEventListener {
     }
 
     register() {
-        this.socket.on(ClientToSocketMsg.ATTACK, (data: AttackDataBase) =>
-            this.attackSystem.handleAttack(data,this.socket)
+        this.socket.on(ClientToSocketMsg.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) =>
+            this.attackSystem.handleAttack(res.attackData,this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) =>
@@ -40,9 +40,9 @@ export class HumanEventListener {
             this.movementSystem.handlePosUpdated(res.entityId, res.position, this.socket);
         })
 
-        this.socket.on(ClientToSocketMsg.START_ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) => {
-            // this.attackSystem.handleStartAttack(res., this.socket);
-        })
+        // this.socket.on(ClientToSocketMsg.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) => {
+        //     this.attackSystem.handleStartAttack(res, this.socket);
+        // })
         this.socket.on(
             ClientToSocketMsg.PLAYER_DIRECTION_UPDATED,
             (res: { entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction}) =>

@@ -13,7 +13,7 @@ export class MovementSystem {
         if (!player) return;
         player.position = newPos;
         
-        this.eventBus.emit(EntityEvent.UPDATED,this.serverState.getEntity(player.id).toInfo())
+        this.eventBus.emit(EntityEvent.POSITION_UPDATED, {entityId:entityId,position:newPos});
         // this.eventBus.emit(EventBusMessage.ENTITY_POSITION_UPDATED, {playerInfo:this.serverState.getEntity(playerInfo.id).toInfo(),socket:socket})
     }
 }

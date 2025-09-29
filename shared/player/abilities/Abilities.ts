@@ -16,7 +16,7 @@ export class AttackAbility extends Ability {
     const rot = Math.atan2(aimVector.y, aimVector.x);
     const attackData = entity.weapon.useWeapon(entity.position, rot);
     attackData.playerId = entity.id;
-    this.eventBus.emit(EntityEvent.START_ATTACK, { entityId: entity.id, attackData: attackData });
+    this.eventBus.emit(EntityEvent.ATTACK, { entityId: entity.id, attackData: attackData });
 
 
     this.triggerCooldown();

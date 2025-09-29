@@ -32,7 +32,6 @@ export class AttackState extends BaseState {
     this.entity.aimVector = this.getAttackDir(this.entity.position);
     this.timer = this.entity.weapon.getAttackDuration(this.entity.attackSpeed);
     this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
-
   }
 
   update(delta: number) {

@@ -82,7 +82,7 @@ export class Renderer {
         // Quand un joueur est mis à jour
         this._eventBus.on(EntityEvent.UPDATED, (player: EntityInfo) => {
             this._entityRenderer.syncEntities([player]);
-            console.log("should update score board")
+            // console.log("should update score board")
             // this._scoreBoard.update(player);
         });
 
@@ -105,10 +105,8 @@ export class Renderer {
             this._entityRenderer.removeEntity(playerId);
         });
 
-        this._eventBus.on(EntityEvent.DIED, () => {
-            console.log("todo implement died on renderer cause was entityInfo before")
-            
-            // this._entityRenderer.entityDied(entityInfo, this.onDeathAnimationFinished);
+        this._eventBus.on(EntityEvent.DIED, (res) => {
+            this._entityRenderer.entityDied(res.entityInfo, this.onDeathAnimationFinished);
         });
 
         this._eventBus.on(LocalPlayerEvent.ATTACK_RESULT, (res: { entityId: string; attackResult: AttackResult; })=>{

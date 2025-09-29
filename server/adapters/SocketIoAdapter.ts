@@ -17,7 +17,7 @@ export class SocketIoAdapter {
             if(!playerSocket){
                 return;
             }
-            playerSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res.attackReceivedData);
+            playerSocket.emit(ServerToSocketMsg.ATTACK_RECEIVED, res);
         });
 
         this.eventBus.on(LocalPlayerEvent.ATTACK_RESULT, (res:{attackResult: AttackResult,entityId:string}) => {
@@ -25,7 +25,7 @@ export class SocketIoAdapter {
             if(!playerSocket){
                 return;
             }
-            playerSocket.emit(ServerToSocketMsg.ATTACK_RESULT, res.attackResult);
+            playerSocket.emit(ServerToSocketMsg.ATTACK_RESULT, res);
         });
 
         this.eventBus.on(EntityEvent.KNOCKBACKED, (res:{knockbackData: KnockbackData,entityId:string}) => {
@@ -33,7 +33,7 @@ export class SocketIoAdapter {
             if(!playerSocket){
                 return;
             }
-            playerSocket.emit(ServerToSocketMsg.KNOCKBACK_RECEIVED, res.knockbackData);
+            playerSocket.emit(ServerToSocketMsg.KNOCKBACK_RECEIVED, res);
         });
         
         this.eventBus.on(EntityEvent.START_ATTACK, (res:{ entityId: string; attackData: AttackDataBase; })=>{

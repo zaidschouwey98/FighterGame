@@ -11,7 +11,6 @@ export class GameState{
     }
 
     addEntity(info: EntityInfo) {
-        console.log(info)
         this.entities.set(info.id, info);
     }
 

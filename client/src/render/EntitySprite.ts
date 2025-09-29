@@ -1,4 +1,4 @@
-import type { EntityInfo } from "../../../shared/EntityInfo";
+import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 
 export interface EntitySprite {
     syncPlayer(entity: EntityInfo, onDeath?: () => void):void;

@@ -84,6 +84,7 @@ export class ClientPlayer extends LivingEntity {
         this.hp = attackReceivedData.newHp;
         this.knockbackReceivedVector = { x: attackReceivedData.knockbackData.knockbackVector.dx, y: attackReceivedData.knockbackData.knockbackVector.dy };
         this.changeState(EntityState.HIT,{ vector: attackReceivedData.knockbackData.knockbackVector, duration: attackReceivedData.knockbackData.knockbackTimer });
+        console.log("Player received attack, new hp:", this.hp);
     }
 
     public handleKnockbackReceived(knockbackData: KnockbackData) {

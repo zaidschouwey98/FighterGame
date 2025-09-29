@@ -32,7 +32,7 @@ export class NetworkClient {
         });
 
         this.socket.on(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, (res: { entityId: string; direction: { dx: number; dy: number; } }) => {
-            let p = GameState.instance.getEntity(res.entityId);
+            let p = GameState.instance.getEntity(res.entityId); // todo optimize
             if (!p) return;
             p!.movingVector = res.direction
             this.eventBus.emit(EntityEvent.UPDATED, p);
@@ -46,16 +46,16 @@ export class NetworkClient {
             this.eventBus.emit(LocalPlayerEvent.LEFT, playerId);
         });
 
-        this.socket.on(ServerToSocketMsg.ATTACK_RECEIVED, (attackReceivedData: AttackReceivedData) => {
-            this.eventBus.emit(EntityEvent.RECEIVE_ATTACK, { entityId: attackReceivedData.id, attackReceivedData });
+        this.socket.on(ServerToSocketMsg.ATTACK_RECEIVED, (res:{attackReceivedData: AttackReceivedData,entityId:string}) => {
+            this.eventBus.emit(EntityEvent.RECEIVE_ATTACK, res);
         })
 
-        this.socket.on(ServerToSocketMsg.ATTACK_RESULT, (attackResult: AttackResult) => {
-            this.eventBus.emit(LocalPlayerEvent.ATTACK_RESULT, { entityId: attackResult.id, attackResult: attackResult });
+        this.socket.on(ServerToSocketMsg.ATTACK_RESULT, (res:{attackResult: AttackResult,entityId:string}) => {
+            this.eventBus.emit(LocalPlayerEvent.ATTACK_RESULT, res);
         })
 
-        this.socket.on(ServerToSocketMsg.KNOCKBACK_RECEIVED, (knockbackData: KnockbackData) => {
-            this.eventBus.emit(EntityEvent.KNOCKBACKED, { entityId: knockbackData.id, knockbackData });
+        this.socket.on(ServerToSocketMsg.KNOCKBACK_RECEIVED, (res:{knockbackData: KnockbackData,entityId:string}) => {
+            this.eventBus.emit(EntityEvent.KNOCKBACKED, res);
         })
 
         this.socket.on(ServerToSocketMsg.ENTITY_DIED, (res: { entityInfo: EntityInfo, killerId: string }) => {
@@ -68,8 +68,8 @@ export class NetworkClient {
 
 
         // SENDING TO SOCKET    
-        this.localPlayerEventBus.on(EntityEvent.START_ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
-            this.socket.emit(ClientToSocketMsg.ATTACK, res.attackData);
+        this.localPlayerEventBus.on(EntityEvent.ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
+            this.socket.emit(ClientToSocketMsg.ATTACK, res);
         });
 
         this.localPlayerEventBus.on(EntityEvent.UPDATED, (playerInfo) => {

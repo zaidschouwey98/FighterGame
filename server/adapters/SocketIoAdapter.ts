@@ -7,6 +7,8 @@ import { EntityInfo } from "../../shared/messages/EntityInfo";
 import { EntityEvent, EventBus, LocalPlayerEvent } from "../../shared/services/EventBus";
 import { AttackDataBase } from "../../shared/types/AttackData";
 import Position from "../../shared/Position";
+import { EntityState } from "../../shared/messages/EntityState";
+import { Direction } from "../../shared/enums/Direction";
 
 export class SocketIoAdapter {
     constructor(private eventBus: EventBus, private serverSocket:Server, private serverState: ServerState) {
@@ -56,7 +58,7 @@ export class SocketIoAdapter {
             // playerSocket.broadcast.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
         })
 
-        this.eventBus.on(EntityEvent.DIRECTION_CHANGED, (res:{ entityId: string; direction: { dx: number; dy: number; }; })=>{
+        this.eventBus.on(EntityEvent.MOVING_VECTOR_CHANGED, (res:{ entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction })=>{
             const playerSocket = this.serverState.getPlayerSocket(res.entityId);
             if(!playerSocket){
                 this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIRECTION_UPDATE, res);

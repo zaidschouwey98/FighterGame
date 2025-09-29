@@ -1,3 +1,4 @@
+import { Direction } from "../enums/Direction";
 import { EntityInfo } from "../messages/EntityInfo";
 import { EntityState } from "../messages/EntityState";
 import PlayerInfo from "../messages/PlayerInfo";
@@ -33,7 +34,7 @@ export enum EntityEvent {
     REMOVED = "ENTITY_REMOVED",
     UPDATED = "ENTITY_UPDATED",
     POSITION_UPDATED = "POSITION_UPDATED",
-    DIRECTION_CHANGED = "ENTITY_DIRECTION_CHANGED",
+    MOVING_VECTOR_CHANGED = "ENTITY_DIRECTION_CHANGED",
     SYNC = "ENTITY_SYNC",
     START_ATTACK = "ENTITY_START_ATTACK",
     RECEIVE_ATTACK = "ENTITY_RECEIVE_ATTACK",
@@ -67,7 +68,7 @@ interface EventPayloads {
   [EntityEvent.REMOVED]: string; // entityId
   [EntityEvent.UPDATED]: EntityInfo;
   [EntityEvent.POSITION_UPDATED]: { entityId: string; position: Position };
-  [EntityEvent.DIRECTION_CHANGED]: { entityId: string; direction: { dx: number; dy: number } };
+  [EntityEvent.MOVING_VECTOR_CHANGED]: { entityId: string; movingVector: { dx: number; dy: number }, state: EntityState, movingDirection: Direction };
   [EntityEvent.SYNC]: EntityInfo;
   [EntityEvent.STATE_CHANGED]: { entityId: string, state: EntityState};
 

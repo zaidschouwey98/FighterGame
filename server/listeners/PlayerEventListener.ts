@@ -12,6 +12,7 @@ import { Player } from "../../shared/entities/Player";
 import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisionHandler";
 import { AttackDataBase } from "../../shared/types/AttackData";
 import Position from "../../shared/Position";
+import { Direction } from "../../shared/enums/Direction";
 
 export class HumanEventListener {
     constructor(
@@ -44,8 +45,8 @@ export class HumanEventListener {
         })
         this.socket.on(
             ClientToSocketMsg.PLAYER_DIRECTION_UPDATED,
-            (res: { entityId: string; direction: { dx: number; dy: number; }}) =>
-                this.directionSystem.handleDirectionUpdate(res.entityId, res.direction, this.socket)
+            (res: { entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction}) =>
+                this.directionSystem.handleDirectionUpdate(res.entityId, res.movingVector, res.movingDirection, res.state, this.socket)
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {

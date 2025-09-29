@@ -3,9 +3,12 @@ import { EntityState } from "../messages/EntityState";
 import Position from "../Position";
 import { IEntityCollisionHandler } from "../player/IEntityCollisionHandler";
 import { EntityInfo } from "../messages/EntityInfo";
+import { Direction } from "../enums/Direction";
 
 export abstract class Entity {
     public state: EntityState = EntityState.IDLE;
+    public movingDirection: Direction = Direction.BOTTOM;
+
     constructor(
         public id: string,
         public position: Position,

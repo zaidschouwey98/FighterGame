@@ -18,7 +18,6 @@ export abstract class LivingEntity extends Entity implements IStatefulEntity {
     public speed: number;
     public critChance: number;
 
-    public movingDirection: Direction = Direction.BOTTOM;
     public aimVector: { x: number, y: number } = { x: 0, y: 0 };
     public weapon: Weapon;
     public attackIndex = 0;

@@ -65,7 +65,7 @@ export class MovingState extends BaseState {
 
     if (dx !== this.lastDx || dy !== this.lastDy) {
       this.entity.movingVector = {dx:dx,dy:dy};
-      this.eventBus.emit(EntityEvent.DIRECTION_CHANGED, { entityId: this.entity.id, direction: this.entity.movingVector });
+      this.eventBus.emit(EntityEvent.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
 
       this.lastDx = dx;
       this.lastDy = dy;
@@ -76,7 +76,7 @@ export class MovingState extends BaseState {
     this.entity.movingVector = {dx:0,dy:0};
     this.lastDx = 0;
     this.lastDy = 0;
-    this.eventBus.emit(EntityEvent.DIRECTION_CHANGED, { entityId: this.entity.id, direction: this.entity.movingVector });
+      this.eventBus.emit(EntityEvent.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
 
   }
 }

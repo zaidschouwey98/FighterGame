@@ -1,7 +1,9 @@
 import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
 import { Player } from "../../shared/entities/Player";
-import { EventBus } from "../../shared/services/EventBus";
+import { EntityEvent, EventBus } from "../../shared/services/EventBus";
+import { EntityInfo } from "../../shared/messages/EntityInfo";
+import { EntityType } from "../../shared/enums/EntityType";
 
 export class ProgressionSystem {
     constructor(private serverState: ServerState, private eventBus: EventBus) {
@@ -9,18 +11,20 @@ export class ProgressionSystem {
     }
 
     private registerListeners() {
-        // this.eventBus.on(EventBusMessage.ENTITY_DIED, ({ entityInfo, killerId }) => {
-        //     if (!killerId) return;
-        //     const killer = this.serverState.getEntity(killerId) as Player;
-        //     if (!killer) return;
-        //     killer.hp = Math.min(killer.hp + 10, killer.maxHp);
-        //     killer.killCounter += 1;
-        //     killer.killStreak += 1;
-        //     this.gainXp(killer, killer.currentLvl <= entityInfo.currentLvl ? this.getXpByKilledLevel(entityInfo.currentLvl)/2 : 100);
+        this.eventBus.on(EntityEvent.DIED, (res: { entityInfo: EntityInfo; killerId?: string }) => {
+            if (!res.killerId) return;
+            if(res.entityInfo.entityType !== EntityType.PLAYER) return;
+            const entityInfo = res.entityInfo as PlayerInfo;
+            const killer = this.serverState.getEntity(res.killerId) as Player;
+            if (!killer) return;
+            killer.hp = Math.min(killer.hp + 10, killer.maxHp);
+            killer.killCounter += 1;
+            killer.killStreak += 1;
+            this.gainXp(killer, killer.currentLvl <= entityInfo.currentLvl ? this.getXpByKilledLevel(entityInfo.currentLvl)/2 : 100);
 
-        //     this.checkLevelUp(killer);
-        //     this.eventBus.emit(EventBusMessage.ENTITY_SYNC, killer.toInfo());
-        // });
+            this.checkLevelUp(killer);
+            this.eventBus.emit(EntityEvent.SYNC, killer.toInfo());
+        });
     }
 
     private gainXp(player: Player, amount: number) {

@@ -29,11 +29,11 @@ export class HumanEventListener {
 
     register() {
         this.socket.on(ClientToSocketMsg.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) =>
-            this.attackSystem.handleAttack(res.attackData,this.socket)
+            this.attackSystem.handleAttack(res.attackData)
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) =>
-            this.updateSystem.handlePlayerUpdated(playerInfo, this.socket)
+            this.updateSystem.handlePlayerUpdated(playerInfo)
         );
 
         this.socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (res:{ entityId: string; position: Position }) => {
@@ -54,16 +54,16 @@ export class HumanEventListener {
             this.serverState.addPlayer(player,this.socket);
             console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
         });
-        this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, (name: string) => {
-            const player = this.serverState.getEntity(this.socket.id);
-            if (!player) return;
+        // this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, (name: string) => {
+        //     const player = this.serverState.getEntity(this.socket.id);
+        //     if (!player) return;
 
-            player.hp = 100;
-            player.isDead = false;
-            player.position = { x: 0, y: 0 };
-            player.state = EntityState.IDLE;
-            this.socket.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
-            this.socket.broadcast.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
-        });
+        //     player.hp = 100;
+        //     player.isDead = false;
+        //     player.position = { x: 0, y: 0 };
+        //     player.state = EntityState.IDLE;
+        //     this.socket.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
+        //     this.socket.broadcast.emit(ServerToSocketMsg.ENTITY_RESPAWNED, player.toInfo());
+        // });
     }
 }

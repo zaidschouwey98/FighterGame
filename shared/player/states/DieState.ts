@@ -14,7 +14,6 @@ export class DieState extends BaseState {
   enter() {
     this.entity.isDead = true;
 
-    this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
     console.log(`${this.entity.id} is DEAD`);
   }
 

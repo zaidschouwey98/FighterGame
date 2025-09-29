@@ -6,7 +6,7 @@ import { EntityEvent, EventBus } from "../../shared/services/EventBus";
 export class UpdateSystem {
     constructor(private eventBus:EventBus, private serverState: ServerState) { }
 
-    handlePlayerUpdated(playerInfo: PlayerInfo, socket?: Socket) {
+    handlePlayerUpdated(playerInfo: PlayerInfo) {
         const player = this.serverState.getEntity(playerInfo.id);
         if (!player) return;
 

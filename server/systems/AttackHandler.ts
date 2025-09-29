@@ -11,17 +11,16 @@ import { ServerProjectileCollisionHandler } from "../collisions/ServerProjectile
 import { EntityEvent, EventBus } from "../../shared/services/EventBus";
 
 export interface AttackHandler {
-    handle(data: AttackDataBase, socket?: Socket): void;
+    handle(data: AttackDataBase): void;
 }
 
 export class MeleeAttackHandler implements AttackHandler {
     constructor(
         private serverState: ServerState,
-        private eventBus: EventBus,
         private damageSystem: DamageSystem
     ) { }
 
-    handle(data: MeleeAttackData, socket?: Socket): void {
+    handle(data: MeleeAttackData): void {
         if(data.playerId == undefined || data.playerId === "") throw new Error("Melee attack data missing playerId, check attackAbility");
         const attacker = this.serverState.getEntity(data.playerId);
         if (!attacker) return;
@@ -65,7 +64,7 @@ export class ProjectileAttackHandler implements AttackHandler {
         private eventBus: EventBus,
         private damageSystem: DamageSystem
     ) { }
-    handle(data: ProjectileAttackData, socket?: Socket): void {
+    handle(data: ProjectileAttackData): void {
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
         let proj = new Projectile(data.position, 40, { dx: dx, dy: dy }, data.playerId, 20, 3, new ServerProjectileCollisionHandler(this.damageSystem), ()=>{

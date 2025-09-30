@@ -11,6 +11,8 @@ import type { AttackResult } from "../../../shared/types/AttackResult";
 import { EffectRenderer } from "./EffectRenderer";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../../shared/services/EventBus";
+import type { EntityState } from "../../../shared/messages/EntityState";
+import type { Direction } from "../../../shared/enums/Direction";
 
 export class Renderer {
     private _eventBus: EventBus;

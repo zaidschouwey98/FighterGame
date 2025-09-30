@@ -89,6 +89,7 @@ export class NetworkClient {
 
         this.eventBus.on(EntityCommand.STATE_CHANGED, (data: { entityId: string; state: EntityState; })=>{
             this.socket.emit(EntityCommand.STATE_CHANGED, data);
+            // this.eventBus.emit(EntityEvent.UPDATED, { id: data.entityId, state: data.state } as EntityInfo);
         })
     }
 

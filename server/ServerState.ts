@@ -82,8 +82,6 @@ export class ServerState {
 
     updatePlayers(delta: number) {
         for (const p of this.entities.values()) {
-            if (this.bots.has(p.id))
-                continue;
             let ovEnts = CollisionService.overlappedEntities(p, Array.from(this.entities.values()));
             for(const ovEnt of ovEnts)
                 p.onCollideWith(ovEnt);

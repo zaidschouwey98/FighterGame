@@ -1,11 +1,9 @@
 import { Server, Socket } from "socket.io";
 import { ServerToSocketMsg } from "../../shared/enums/ServerToSocketMsg";
 import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/types/AttackResult";
-import PlayerInfo from "../../shared/messages/PlayerInfo";
 import { ServerState } from "../ServerState";
 import { EntityInfo } from "../../shared/messages/EntityInfo";
 import { EntityEvent, EventBus, LocalPlayerEvent } from "../../shared/services/EventBus";
-import { AttackDataBase } from "../../shared/types/AttackData";
 import Position from "../../shared/Position";
 import { EntityState } from "../../shared/messages/EntityState";
 import { Direction } from "../../shared/enums/Direction";

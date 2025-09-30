@@ -10,8 +10,9 @@ import type PlayerInfo from "../../shared/messages/PlayerInfo";
 import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
 import { ClientPlayer } from "../../shared/entities/ClientPlayer";
 import type { EntityInfo } from "../../shared/messages/EntityInfo";
-import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../shared/services/EventBus";
+import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../shared/services/EventBus";
 import { HeavySword } from "../../shared/player/weapons/HeavySword";
+import type { LivingEntity } from "../../shared/entities/LivingEntity";
 
 export class GameController {
     private gameState: GameState;
@@ -83,9 +84,9 @@ export class GameController {
                 this.localPlayer = new ClientPlayer(
                     this.localPlayerId!,
                     (player as PlayerInfo).name,
-                    player.position,
-                    player.hp,
-                    player.speed,
+                    (player as PlayerInfo).position,
+                    (player as PlayerInfo).hp,
+                    (player as PlayerInfo).speed,
                     new HeavySword(),
                     this.eventBus,
                     this.inputHandler,
@@ -133,6 +134,10 @@ export class GameController {
         //     }
         //     this.eventBus.emit(EventBusMessage.ENTITY_ADDED, player);
         // });
+
+        this.eventBus.on(EntityCommand.MOVING_VECTOR_CHANGED, ()=>{
+            this.renderer.playersRenderer.syncEntities([this.localPlayer!.toInfo()])
+        })
     }
 
     public spawnLocalPlayer(name: string) {
@@ -148,7 +153,7 @@ export class GameController {
     public update(delta: number) {
         for (const value of GameState.instance.entities.values()) {
             if (!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0) {
-                MovementService.moveEntity(value, delta);
+                MovementService.moveEntity(value as LivingEntity, delta);
                 this.renderer.playersRenderer.syncEntities([value]);
             }
         }

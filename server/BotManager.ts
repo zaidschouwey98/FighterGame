@@ -59,8 +59,12 @@ export class BotManager {
 
     updateBots(delta: number) {
         for (const bot of this.bots.values()) {
+            if(bot.isDead)
+            {
+                this.bots.delete(bot.id);
+                continue;
+            }
             this.botInputHandler.get(bot.id)!.think(bot.toInfo(), this.serverState.getPlayers(), 70);
-            bot.update(delta);
         }
     }
 

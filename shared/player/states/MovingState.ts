@@ -22,7 +22,8 @@ export class MovingState extends BaseState {
   }
 
   public enter() {
-    this.eventBus.emit(EntityCommand.STATE_CHANGED, { entityId: this.entity.id, state:this.entity.currentState.name });
+    // this.eventBus.emit(EntityCommand.STATE_CHANGED, { entityId: this.entity.id, state:this.entity.currentState.name });
+    // this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
   }
 
   public update(delta: number) {

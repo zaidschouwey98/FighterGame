@@ -14,6 +14,7 @@ import { BotManager } from "./BotManager";
 import { UpdateSystem } from "./systems/UpdateSystem";
 import { SocketIoAdapter } from "./adapters/SocketIoAdapter";
 import { ProgressionSystem } from "./systems/ProgressionSystem";
+import { EntityCommandListener } from "./listeners/EntityCommandListener";
 
 
 const app = express();
@@ -47,9 +48,10 @@ const updateSystem = new UpdateSystem(eventBus,serverState);
 const progressSystem = new ProgressionSystem(serverState,eventBus);
 
 
+const entityCommandListener = new EntityCommandListener(eventBus, attackSystem, movementSystem, directionSystem, updateSystem, serverState);
 
 const botManager = new BotManager(io,serverState,eventBus,attackSystem,directionSystem,movementSystem, updateSystem, progressSystem);
-// botManager.spawnBot("bibitee");
+botManager.spawnBot("bibitee");
 // botManager.spawnBot("bibitee");
 
 const gameLoop = new GameLoop(serverState,botManager,io);
@@ -58,7 +60,7 @@ io.on("connection", (socket: Socket) => {
   if(++playerNb > 0){
     gameLoop.start();
   };
-  const listener = new HumanEventListener(socket, attackSystem, movementSystem, directionSystem, updateSystem, serverState);
+  const listener = new HumanEventListener(socket, eventBus, serverState);
   listener.register();
 
   socket.on("disconnect", () => {

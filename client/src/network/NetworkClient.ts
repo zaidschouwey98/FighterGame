@@ -3,7 +3,7 @@ import type PlayerInfo from "../../../shared/messages/PlayerInfo";
 import type { AttackReceivedData, AttackResult, KnockbackData } from "../../../shared/types/AttackResult";
 import { ServerToSocketMsg } from "../../../shared/enums/ServerToSocketMsg";
 import { ClientToSocketMsg } from "../../../shared/enums/ClientToSocketMsg";
-import { EntityEvent, LocalPlayerEvent, NetworkEvent, type EventBus } from "../../../shared/services/EventBus";
+import { EntityCommand, EntityEvent, LocalPlayerEvent, NetworkEvent, type EventBus } from "../../../shared/services/EventBus";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 import type { AttackDataBase } from "../../../shared/types/AttackData";
 import type Position from "../../../shared/Position";
@@ -68,13 +68,13 @@ export class NetworkClient {
 
 
         // SENDING TO SOCKET    
-        this.localPlayerEventBus.on(EntityEvent.ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
-            this.socket.emit(ClientToSocketMsg.ATTACK, res);
+        this.localPlayerEventBus.on(EntityCommand.ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
+            this.socket.emit(EntityCommand.ATTACK, res);
         });
 
-        this.localPlayerEventBus.on(EntityEvent.UPDATED, (playerInfo) => {
+        this.localPlayerEventBus.on(EntityCommand.UPDATED, (playerInfo) => {
             // TODO SHOULD SEPARATE EVENTS
-            this.socket.emit(ClientToSocketMsg.PLAYER_UPDATE, playerInfo);
+            this.socket.emit(EntityCommand.UPDATED, playerInfo);
             this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
         });
 
@@ -82,12 +82,12 @@ export class NetworkClient {
             this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
         });
 
-        this.localPlayerEventBus.on(EntityEvent.MOVING_VECTOR_CHANGED, (res: { entityId: string, movingVector: { dx: number, dy: number }, state: EntityState, movingDirection: Direction }) => {
-            this.socket.emit(ClientToSocketMsg.PLAYER_DIRECTION_UPDATED, res);
+        this.localPlayerEventBus.on(EntityCommand.MOVING_VECTOR_CHANGED, (res: { entityId: string, movingVector: { dx: number, dy: number }, state: EntityState, movingDirection: Direction }) => {
+            this.socket.emit(EntityCommand.MOVING_VECTOR_CHANGED, res);
         });
 
-        this.localPlayerEventBus.on(EntityEvent.POSITION_UPDATED, (res: { entityId: string; position: Position }) => {
-            this.socket.emit(ClientToSocketMsg.PLAYER_POS_UPDATE, res);
+        this.localPlayerEventBus.on(EntityCommand.POSITION_UPDATED, (res: { entityId: string; position: Position }) => {
+            this.socket.emit(EntityCommand.POSITION_UPDATED, res);
             this.eventBus.emit(EntityEvent.POSITION_UPDATED, res);
         })
     }

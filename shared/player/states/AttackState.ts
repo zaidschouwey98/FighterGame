@@ -6,7 +6,7 @@ import { AbilityType } from "../../enums/AbilityType";
 import Position from "../../Position";
 import { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { Ability } from "../abilities/Ability";
-import { EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
 
 export class AttackState extends BaseState {
   readonly name = EntityState.ATTACK;
@@ -31,7 +31,7 @@ export class AttackState extends BaseState {
     this.entity.attackIndex = this.entity.weapon.attackCurrentCombo;
     this.entity.aimVector = this.getAttackDir(this.entity.position);
     this.timer = this.entity.weapon.getAttackDuration(this.entity.attackSpeed);
-    this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
+    this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
   }
 
   update(delta: number) {
@@ -40,7 +40,7 @@ export class AttackState extends BaseState {
 
     MovementService.moveEntity(this.entity, delta, this.entity.speed / 3);
     // this.eventBus.emit(EventBusMessage.LOCAL_PLAYER_POSITION_UPDATED, this.entity.toInfo());
-    this.eventBus.emit(EntityEvent.POSITION_UPDATED, {
+    this.eventBus.emit(EntityCommand.POSITION_UPDATED, {
       entityId: this.entity.id,
       position: this.entity.position
     });

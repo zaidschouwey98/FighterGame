@@ -3,10 +3,6 @@ import { EntityInfo } from "../../shared/messages/EntityInfo";
 import type PlayerInfo from "../../shared/messages/PlayerInfo";
 
 export class BotInputHandler implements IInputHandler {
-    consumeShift(): boolean {
-        throw new Error("Method not implemented.");
-    }
-    
     private keys = new Set<string>();
     private mouse = { x: 0, y: 0 };
     private attack = false;
@@ -80,7 +76,12 @@ export class BotInputHandler implements IInputHandler {
     }
 
     isSpaceDown(): boolean {
-        throw new Error("Method not implemented.");
+        return false;
+        // throw new Error("Method not implemented.");
+    }
+
+    consumeShift(): boolean {
+        return false;
     }
     getKeys() { return this.keys; }
     getMousePosition() { return this.mouse; }

@@ -4,7 +4,7 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { MovementService } from "../../services/MovementService";
 import { BaseState } from "./BaseState";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EntityEvent, EventBus, LocalPlayerEvent } from "../../services/EventBus";
+import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent } from "../../services/EventBus";
 import PlayerInfo from "../../messages/PlayerInfo";
 
 export class MovingState extends BaseState {
@@ -23,7 +23,7 @@ export class MovingState extends BaseState {
   }
 
   public enter() {
-    this.eventBus.emit(EntityEvent.STATE_CHANGED, { entityId: this.entity.id, state:this.entity.currentState.name });
+    this.eventBus.emit(EntityCommand.STATE_CHANGED, { entityId: this.entity.id, state:this.entity.currentState.name });
   }
 
   public update(delta: number) {
@@ -65,7 +65,7 @@ export class MovingState extends BaseState {
 
     if (dx !== this.lastDx || dy !== this.lastDy) {
       this.entity.movingVector = {dx:dx,dy:dy};
-      this.eventBus.emit(EntityEvent.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
+      this.eventBus.emit(EntityCommand.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
 
       this.lastDx = dx;
       this.lastDy = dy;
@@ -76,7 +76,7 @@ export class MovingState extends BaseState {
     this.entity.movingVector = {dx:0,dy:0};
     this.lastDx = 0;
     this.lastDy = 0;
-      this.eventBus.emit(EntityEvent.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
+      this.eventBus.emit(EntityCommand.MOVING_VECTOR_CHANGED, { entityId: this.entity.id, movingVector: this.entity.movingVector, state: this.entity.currentState.name, movingDirection: this.entity.movingDirection });
 
   }
 }

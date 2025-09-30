@@ -5,6 +5,7 @@ import { Player } from "../shared/entities/Player";
 import PlayerInfo from "../shared/messages/PlayerInfo";
 import { CollisionService } from "../shared/services/CollisionService";
 import { EntityEvent, EventBus } from "../shared/services/EventBus";
+import { EntityInfo } from "../shared/messages/EntityInfo";
 
 export class ServerState {
     private entities: Map<string, Entity> = new Map();
@@ -48,9 +49,9 @@ export class ServerState {
         return this.entities.has(id);
     }
 
-    updatePlayer(playerInfo: PlayerInfo) {
-        if (!this.entities.has(playerInfo.id)) throw new Error("Trying to update player not in map");
-        this.entities.get(playerInfo.id)?.updateFromInfo(playerInfo);
+    updateEntity(entityInfo: EntityInfo) {
+        if (!this.entities.has(entityInfo.id)) throw new Error("Trying to update entity not in map");
+        this.entities.get(entityInfo.id)?.updateFromInfo(entityInfo);
     }
 
     removeEntity(id: string) {

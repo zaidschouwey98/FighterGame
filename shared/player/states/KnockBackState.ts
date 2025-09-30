@@ -3,7 +3,7 @@ import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { BaseState } from "./BaseState";
 import { ClientPlayer } from "../../entities/ClientPlayer";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
 
 export class KnockBackState extends BaseState {
     private knockbackVector: { dx: number; dy: number } = { dx: 0, dy: 0 };
@@ -22,7 +22,7 @@ export class KnockBackState extends BaseState {
             this.knockbackVector = params.vector;
             this.knockbackTimer = params.duration;
         } else throw new Error("HitState requires knockback parameters on enter");
-        this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
+        this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {
@@ -44,7 +44,7 @@ export class KnockBackState extends BaseState {
                 this.entity.changeState(EntityState.IDLE);
             }
 
-            this.eventBus.emit(EntityEvent.UPDATED, this.entity.toInfo());
+            this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
         }
     }
 

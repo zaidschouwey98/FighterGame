@@ -4,7 +4,6 @@ import { CameraService } from "../core/CameraService";
 import type Position from "../../../shared/Position";
 import { Minimap } from "./UI/Minimap";
 import { GameState } from "../core/GameState";
-import type PlayerInfo from "../../../shared/messages/PlayerInfo";
 import type { Player } from "../../../shared/entities/Player";
 import { ScoreBoard } from "./UI/ScoreBoard";
 import EntityRenderer from "./EntityRenderer";

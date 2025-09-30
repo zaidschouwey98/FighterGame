@@ -9,7 +9,7 @@ import { Direction } from "../../shared/enums/Direction";
 export class DirectionSystem {
     constructor(private eventBus: EventBus, private serverState: ServerState) { }
 
-    handleDirectionUpdate(entityId: string, direction: { dx: number; dy: number; }, movingDirection: Direction, state: EntityState, socket?: Socket) {
+    handleDirectionUpdate(entityId: string, direction: { dx: number; dy: number; }, movingDirection: Direction, state: EntityState) {
         const player = this.serverState.getEntity(entityId);
         if (!player) return;
         player.movingVector = direction;

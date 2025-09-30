@@ -8,7 +8,7 @@ import { EntityEvent, EventBus } from "../../shared/services/EventBus";
 export class MovementSystem {
     constructor(private eventBus:EventBus, private serverState: ServerState) { }
 
-    handlePosUpdated(entityId: string, newPos: Position, socket?: Socket){
+    handlePosUpdated(entityId: string, newPos: Position){
         const player = this.serverState.getEntity(entityId);
         if (!player) return;
         player.position = newPos;

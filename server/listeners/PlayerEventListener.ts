@@ -13,14 +13,12 @@ import { ServerPlayerCollisionHandler } from "../collisions/ServerPlayerCollisio
 import { AttackDataBase } from "../../shared/types/AttackData";
 import Position from "../../shared/Position";
 import { Direction } from "../../shared/enums/Direction";
+import { EntityCommand, EventBus } from "../../shared/services/EventBus";
 
 export class HumanEventListener {
     constructor(
         private socket: Socket,
-        private attackSystem: AttackSystem,
-        private movementSystem: MovementSystem,
-        private directionSystem: DirectionSystem,
-        private updateSystem: UpdateSystem,
+        private eventBus: EventBus,
         private serverState: ServerState
     ) {
         socket.emit(ServerToSocketMsg.CONNECTED, socket.id);
@@ -28,25 +26,20 @@ export class HumanEventListener {
     }
 
     register() {
-        this.socket.on(ClientToSocketMsg.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) =>
-            this.attackSystem.handleAttack(res.attackData)
+        this.socket.on(EntityCommand.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) =>
+            this.eventBus.emit(EntityCommand.ATTACK, res)
         );
 
-        this.socket.on(ClientToSocketMsg.PLAYER_UPDATE, (playerInfo: PlayerInfo) =>
-            this.updateSystem.handlePlayerUpdated(playerInfo)
+        this.socket.on(EntityCommand.UPDATED, (playerInfo: PlayerInfo) =>
+            this.eventBus.emit(EntityCommand.UPDATED, playerInfo)
         );
 
-        this.socket.on(ClientToSocketMsg.PLAYER_POS_UPDATE, (res:{ entityId: string; position: Position }) => {
-            this.movementSystem.handlePosUpdated(res.entityId, res.position, this.socket);
+        this.socket.on(EntityCommand.POSITION_UPDATED, (res:{ entityId: string; position: Position }) => {
+            this.eventBus.emit(EntityCommand.POSITION_UPDATED, res);
         })
 
-        // this.socket.on(ClientToSocketMsg.ATTACK, (res:{ entityId: string; attackData: AttackDataBase; }) => {
-        //     this.attackSystem.handleStartAttack(res, this.socket);
-        // })
-        this.socket.on(
-            ClientToSocketMsg.PLAYER_DIRECTION_UPDATED,
-            (res: { entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction}) =>
-                this.directionSystem.handleDirectionUpdate(res.entityId, res.movingVector, res.movingDirection, res.state, this.socket)
+        this.socket.on(EntityCommand.MOVING_VECTOR_CHANGED, (res: { entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction}) =>
+            this.eventBus.emit(EntityCommand.MOVING_VECTOR_CHANGED, res)
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {

@@ -34,26 +34,14 @@ export class SocketIoAdapter {
             playerSocket.emit(ServerToSocketMsg.KNOCKBACK_RECEIVED, res);
         });
         
-        // this.eventBus.on(EntityEvent.START_ATTACK, (res:{ entityId: string; attackData: AttackDataBase; })=>{
-        //     const playerSocket = this.serverState.getPlayerSocket(res.entityId);
-        //     if(!playerSocket){
-        //         this.serverSocket.emit(ServerToSocketMsg.START_ATTACK, res);
-        //         return;
-        //     }
-        //     playerSocket.broadcast.emit(ServerToSocketMsg.START_ATTACK, res);
-        // });
 
         this.eventBus.on(EntityEvent.DIED, (res: { entityInfo: EntityInfo; killerId?: string })=>{
             this.serverSocket.emit(ServerToSocketMsg.ENTITY_DIED, res);
         })
 
         this.eventBus.on(EntityEvent.ADDED, (entityInfo: EntityInfo)=>{
-            const playerSocket = this.serverState.getPlayerSocket(entityInfo.id);
-            // if(!playerSocket){
-                this.serverSocket.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
-            //     return;
-            // }
-            // playerSocket.broadcast.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
+            // const playerSocket = this.serverState.getPlayerSocket(entityInfo.id);
+            this.serverSocket.emit(ServerToSocketMsg.NEW_ENTITY, entityInfo);
         })
 
         this.eventBus.on(EntityEvent.MOVING_VECTOR_CHANGED, (res:{ entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction })=>{

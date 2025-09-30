@@ -118,9 +118,9 @@ export class Renderer {
             this._entityRenderer.showDmgPopup(res.attackResult);
         });
 
-        // this._eventBus.on(EventBusMessage.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
-        //     this._effectRenderer.renderTpDestination(position)
-        // })
+        this._eventBus.on(LocalPlayerEvent.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
+            this._effectRenderer.renderTpDestination(position)
+        })
     }
 
     updateMinimap(localPlayer: Player) {

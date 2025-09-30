@@ -4,7 +4,8 @@ import { BaseState } from "./BaseState";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { Ability } from "../abilities/Ability";
 import { AbilityType } from "../../enums/AbilityType";
-import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent } from "../../services/EventBus";
+import Position from "../../Position";
 
 export class TeleportState extends BaseState {
     readonly name = EntityState.TELEPORTING;
@@ -62,7 +63,9 @@ export class TeleportState extends BaseState {
             return;
         }
 
-        // this.eventBus.emit(EventBusMessage.TELEPORT_DESTINATION_HELPER, new Position(this.entity.position.x + tpVector.x * this.distance, this.entity.position.y + tpVector.y * this.distance));
+        this.eventBus.emit(LocalPlayerEvent.TELEPORT_DESTINATION_HELPER, new Position(this.entity.position.x + tpVector.x * this.distance, this.entity.position.y + tpVector.y * this.distance));
     }
-    exit() { }
+    exit() {
+        this.eventBus.emit(LocalPlayerEvent.TELEPORT_DESTINATION_HELPER, null);
+     }
 }

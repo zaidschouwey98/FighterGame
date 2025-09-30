@@ -40,6 +40,7 @@ export enum LocalPlayerEvent {
     DIRECTION_UPDATED = "LOCAL_PLAYER_DIRECTION_UPDATED",
     ATTACK_RESULT = "ATTACK_RESULT",
     LEFT = "LEFT",
+    TELEPORT_DESTINATION_HELPER = "TELEPORT_DESTINATION_HELPER",
 }
 
 export enum NetworkEvent {
@@ -83,6 +84,7 @@ interface EventPayloads {
     [LocalPlayerEvent.POSITION_UPDATED]: PlayerInfo;
     [LocalPlayerEvent.DIRECTION_UPDATED]: PlayerInfo;
     [LocalPlayerEvent.ATTACK_RESULT]: { entityId: string; attackResult: AttackResult };
+    [LocalPlayerEvent.TELEPORT_DESTINATION_HELPER]: Position | null;
 
     // ---- Network Events ----
     [NetworkEvent.CONNECTED]: string; // socketId

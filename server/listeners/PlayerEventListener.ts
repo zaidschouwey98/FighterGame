@@ -38,6 +38,10 @@ export class HumanEventListener {
             this.eventBus.emit(EntityCommand.POSITION_UPDATED, res);
         })
 
+        this.socket.on(EntityCommand.STATE_CHANGED, (data: { entityId: string; state: EntityState; })=>{
+            this.eventBus.emit(EntityCommand.STATE_CHANGED, data);
+        })
+
         this.socket.on(EntityCommand.MOVING_VECTOR_CHANGED, (res: { entityId: string; movingVector: { dx: number; dy: number; }, state: EntityState, movingDirection: Direction}) =>
             this.eventBus.emit(EntityCommand.MOVING_VECTOR_CHANGED, res)
         );

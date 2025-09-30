@@ -13,7 +13,7 @@ import type { Direction } from "../../../shared/enums/Direction";
 
 export class NetworkClient {
     private socket: Socket;
-    constructor(serverUrl: string, private eventBus: EventBus, private localPlayerEventBus: EventBus) {
+    constructor(serverUrl: string, private eventBus: EventBus) {
         this.socket = io(serverUrl);
         this.socket.on(ServerToSocketMsg.CONNECTED, () => {
             console.log("Connecté au serveur", this.socket.id);
@@ -68,27 +68,27 @@ export class NetworkClient {
 
 
         // SENDING TO SOCKET    
-        this.localPlayerEventBus.on(EntityCommand.ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
+        this.eventBus.on(EntityCommand.ATTACK, (res: { entityId: string, attackData: AttackDataBase }) => {
             this.socket.emit(EntityCommand.ATTACK, res);
         });
 
-        this.localPlayerEventBus.on(EntityCommand.UPDATED, (playerInfo) => {
+        this.eventBus.on(EntityCommand.UPDATED, (playerInfo) => {
             // TODO SHOULD SEPARATE EVENTS
             this.socket.emit(EntityCommand.UPDATED, playerInfo);
             this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
         });
 
-        this.localPlayerEventBus.on(LocalPlayerEvent.MOVING, (playerInfo) => {
-            this.eventBus.emit(EntityEvent.UPDATED, playerInfo);
-        });
-
-        this.localPlayerEventBus.on(EntityCommand.MOVING_VECTOR_CHANGED, (res: { entityId: string, movingVector: { dx: number, dy: number }, state: EntityState, movingDirection: Direction }) => {
+        this.eventBus.on(EntityCommand.MOVING_VECTOR_CHANGED, (res: { entityId: string, movingVector: { dx: number, dy: number }, state: EntityState, movingDirection: Direction }) => {
             this.socket.emit(EntityCommand.MOVING_VECTOR_CHANGED, res);
         });
 
-        this.localPlayerEventBus.on(EntityCommand.POSITION_UPDATED, (res: { entityId: string; position: Position }) => {
+        this.eventBus.on(EntityCommand.POSITION_UPDATED, (res: { entityId: string; position: Position }) => {
             this.socket.emit(EntityCommand.POSITION_UPDATED, res);
             this.eventBus.emit(EntityEvent.POSITION_UPDATED, res);
+        })
+
+        this.eventBus.on(EntityCommand.STATE_CHANGED, (data: { entityId: string; state: EntityState; })=>{
+            this.socket.emit(EntityCommand.STATE_CHANGED, data);
         })
     }
 

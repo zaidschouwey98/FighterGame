@@ -15,7 +15,6 @@ import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../sha
 export class GameController {
     private gameState: GameState;
     private eventBus = new EventBus();
-    private localPlayerEventBus = new EventBus();
     private inputHandler;
     private renderer: Renderer;
     private localPlayerId: string | null = null;
@@ -44,7 +43,7 @@ export class GameController {
         this.onRespawn = opts.onRespawn;
 
         this.setupEventListeners();
-        this.networkClient = new NetworkClient(serverUrl, this.eventBus, this.localPlayerEventBus);
+        this.networkClient = new NetworkClient(serverUrl, this.eventBus);
         this.gameState = GameState.instance;
         this.renderer = new Renderer(app, globalContainer, spriteSheets, this.eventBus, "seed", (entityId: string) => {
             if (entityId === this.localPlayerId) {
@@ -86,7 +85,7 @@ export class GameController {
                     player.position,
                     player.hp,
                     player.speed,
-                    this.localPlayerEventBus,
+                    this.eventBus,
                     this.inputHandler,
                 );
                 this.localPlayer.updateFromInfo(player as PlayerInfo);

@@ -5,7 +5,6 @@ import { MovementService } from "../../services/MovementService";
 import { BaseState } from "./BaseState";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent } from "../../services/EventBus";
-import PlayerInfo from "../../messages/PlayerInfo";
 
 export class MovingState extends BaseState {
   readonly name = EntityState.MOVING;
@@ -61,7 +60,7 @@ export class MovingState extends BaseState {
     if (dy > 0) this.entity.movingDirection = Direction.BOTTOM;
     if (dx < 0) this.entity.movingDirection = Direction.LEFT;
     if (dx > 0) this.entity.movingDirection = Direction.RIGHT;
-    this.eventBus.emit(LocalPlayerEvent.MOVING, this.entity.toInfo() as PlayerInfo);
+    this.eventBus.emit(EntityCommand.MOVE,{ entityId: this.entity.id, position: this.entity.position });
 
     if (dx !== this.lastDx || dy !== this.lastDy) {
       this.entity.movingVector = {dx:dx,dy:dy};

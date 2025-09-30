@@ -10,7 +10,7 @@ import EntityRenderer from "./EntityRenderer";
 import type { AttackResult } from "../../../shared/types/AttackResult";
 import { EffectRenderer } from "./EffectRenderer";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
-import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../../shared/services/EventBus";
+import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../../shared/services/EventBus";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -83,6 +83,10 @@ export class Renderer {
             this._entityRenderer.syncEntities([player]);
             // console.log("should update score board")
             // this._scoreBoard.update(player);
+        });
+
+        this._eventBus.on(EntityCommand.MOVE, (data: { entityId: string; position: Position; })=>{
+            this._entityRenderer.syncPosition([data]);
         });
 
         this._eventBus.on(EntityEvent.SYNC, (entity: EntityInfo) => {

@@ -34,5 +34,10 @@ export class EntityCommandListener {
         eventBus.on(EntityCommand.MOVING_VECTOR_CHANGED, (data: { entityId: string; movingVector: { dx: number; dy: number; }; state: EntityState; movingDirection: Direction; }) => {
             directionSystem.handleDirectionUpdate(data.entityId, data.movingVector, data.movingDirection, data.state)
         })
+
+        eventBus.on(EntityCommand.STATE_CHANGED, (data: { entityId: string; state: EntityState; })=>{
+            // updateSystem.handleEntityUpdated()
+        })
+        
     }
 }

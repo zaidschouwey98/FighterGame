@@ -20,9 +20,10 @@ import { EntityState } from "../messages/EntityState";
 import { AttackAbility, BlockAbility, TeleportAbility } from "../player/abilities/Abilities";
 import { AbilityType } from "../enums/AbilityType";
 import { TeleportedState } from "../player/states/TeleportedState";
+import { Weapon } from "../player/weapons/Weapon";
 
 export class ClientPlayer extends LivingEntity {
-    public playerName?: string;
+    public name?: string;
     
     public currentXp = 0;
     public lvlXp = 100;
@@ -36,7 +37,6 @@ export class ClientPlayer extends LivingEntity {
     public attackDashMaxSpeed = 4.5;
 
     public knockbackReceivedVector?: { x: number; y: number };
-    public knockbackTimer?: number;
 
     private movementService: MovementService;
 
@@ -46,13 +46,15 @@ export class ClientPlayer extends LivingEntity {
         position: Position,
         hp: number = 100,
         speed: number = 10,
-        private eventBus: EventBus,
+        baseWeapon: Weapon,
+        eventBus: EventBus,
         private inputHandler: IInputHandler,
     ) {
-        super(id, position, 10, hp, hp, 0.10, 10, EntityType.PLAYER, new ClientPlayerCollisionHandler());
+        super(id, position, 10, hp, hp, 0.10, 10, EntityType.PLAYER, new ClientPlayerCollisionHandler(), baseWeapon);
+        this.name = playerName;
+        this.speed = speed;
 
         this.movementService = new MovementService(inputHandler);
-
         const baseState = new IdleState(this, inputHandler, eventBus)
         this.addState(baseState);
         this.addState(new MovingState(this, inputHandler, this.movementService, eventBus));
@@ -84,7 +86,6 @@ export class ClientPlayer extends LivingEntity {
         this.hp = attackReceivedData.newHp;
         this.knockbackReceivedVector = { x: attackReceivedData.knockbackData.knockbackVector.dx, y: attackReceivedData.knockbackData.knockbackVector.dy };
         this.changeState(EntityState.HIT,{ vector: attackReceivedData.knockbackData.knockbackVector, duration: attackReceivedData.knockbackData.knockbackTimer });
-        console.log("Player received attack, new hp:", this.hp);
     }
 
     public handleKnockbackReceived(knockbackData: KnockbackData) {
@@ -113,7 +114,7 @@ export class ClientPlayer extends LivingEntity {
         this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
-        this.playerName = info.name;
+        this.name = info.name;
         this.id = info.id;
         this.state = info.state;
         this.killCounter = info.killCounter;
@@ -144,12 +145,12 @@ export class ClientPlayer extends LivingEntity {
             knockbackReceivedVector: this.knockbackReceivedVector,
             movingDirection: this.movingDirection,
             isDead: this.isDead,
-            name: this.playerName,
+            name: this.name,
             id: this.id,
             state: this.state,
             killCounter: this.killCounter,
             killStreak: this.killStreak,
-            weapon: this.weapon.name,
+            weaponType: this.weapon.name,
             movingVector: this.movingVector,
             attackSpeed: this.attackSpeed,
             radius: this.radius,

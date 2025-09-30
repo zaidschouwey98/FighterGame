@@ -11,6 +11,7 @@ import { CHUNK_SIZE, TILE_SIZE } from "../../shared/constantes";
 import { ClientPlayer } from "../../shared/entities/ClientPlayer";
 import type { EntityInfo } from "../../shared/messages/EntityInfo";
 import { EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../shared/services/EventBus";
+import { HeavySword } from "../../shared/player/weapons/HeavySword";
 
 export class GameController {
     private gameState: GameState;
@@ -85,6 +86,7 @@ export class GameController {
                     player.position,
                     player.hp,
                     player.speed,
+                    new HeavySword(),
                     this.eventBus,
                     this.inputHandler,
                 );

@@ -14,6 +14,7 @@ import { AttackDataBase } from "../../shared/types/AttackData";
 import Position from "../../shared/Position";
 import { Direction } from "../../shared/enums/Direction";
 import { EntityCommand, EventBus } from "../../shared/services/EventBus";
+import { HeavySword } from "../../shared/player/weapons/HeavySword";
 
 export class HumanEventListener {
     constructor(
@@ -47,9 +48,9 @@ export class HumanEventListener {
         );
 
         this.socket.on(ClientToSocketMsg.SPAWN_PLAYER, (name: string) => {
-            const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10, new ServerPlayerCollisionHandler());
+            const player = new Player(this.socket.id, name?.trim(),{x:0,y:0}, 100, 10, new ServerPlayerCollisionHandler(), new HeavySword());
             this.serverState.addPlayer(player,this.socket);
-            console.log(`Spawn player ${player.playerName} (${this.socket.id})`);
+            console.log(`Spawn player ${player.name} (${this.socket.id})`);
         });
         // this.socket.on(ClientToSocketMsg.RESPAWN_PLAYER, (name: string) => {
         //     const player = this.serverState.getEntity(this.socket.id);

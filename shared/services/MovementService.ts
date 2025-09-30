@@ -3,6 +3,7 @@ import type { IInputHandler } from "../../client/src/core/IInputHandler";
 import Position from "../Position";
 import { EntityInfo } from "../messages/EntityInfo";
 import { IStatefulEntity } from "../entities/IStatefulEntity";
+import { LivingEntity } from "../entities/LivingEntity";
 
 export class MovementService {
   constructor(private inputHandler: IInputHandler) { }
@@ -18,7 +19,7 @@ export class MovementService {
     return { dx, dy };
   }
 
-  public static calculateNextPos(entity: EntityInfo, delta:number): Position {
+  public static calculateNextPos(entity: LivingEntity, delta:number): Position {
     let dx = entity.movingVector.dx;
     let dy = entity.movingVector.dy;
     const speed = entity.speed;
@@ -31,7 +32,7 @@ export class MovementService {
     return {x: entity.position.x + dx * speed / 4 * delta, y:entity.position.y + dy * speed / 4 * delta};
   }
 
-  public static moveEntity(player: Player | EntityInfo | IStatefulEntity, delta:number, changedSpeed?:number) {
+  public static moveEntity(player: LivingEntity | IStatefulEntity, delta:number, changedSpeed?:number) {
     let dx = player.movingVector.dx;
     let dy = player.movingVector.dy;
     let speed = changedSpeed || player.speed;

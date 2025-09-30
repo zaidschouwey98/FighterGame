@@ -1,8 +1,7 @@
-import { EntityType } from "../enums/EntityType";
-import { EntityInfo } from "./EntityInfo";
+import { LivingEntityInfo } from "./LivingEntityInfo";
 
-export interface ProjectileInfo extends EntityInfo {
-    entityType: EntityType.PROJECTILE;
+
+export interface ProjectileInfo extends LivingEntityInfo {
     ownerId: string;
     damage: number;
     knockbackStrength: number;

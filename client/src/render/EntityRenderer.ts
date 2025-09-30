@@ -38,7 +38,7 @@ export default class EntityRenderer {
             case EntityType.PLAYER:
                 const player = entityInfo as PlayerInfo;
                 container.label = "PlayerContainer"
-                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this._tileContainer, this.staticEffectContainer, player.name || "unknown-client-side", player.weapon);
+                sprite = new PlayerSprite(player.id, container, this.spriteSheets, this._terrainContainer, this._tileContainer, this.staticEffectContainer, player.name || "unknown-client-side", player.weaponType);
                 break;
             // case EntityType.MOB:
             //     sprite = new MobSprite(entityInfo.id, container, this.spriteSheets);

@@ -3,30 +3,34 @@ import { IEntityCollisionHandler } from "../player/IEntityCollisionHandler";
 import Position from "../Position";
 import { EntityType } from "../enums/EntityType";
 import { ENTITY_BASE_CRIT_CHANCE } from "../constantes";
-import { Direction } from "../enums/Direction";
 import { Weapon } from "../player/weapons/Weapon";
-import { HeavySword } from "../player/weapons/HeavySword";
 import { EntityState } from "../messages/EntityState";
 import { BaseState } from "../player/states/BaseState";
 import { AbilityType } from "../enums/AbilityType";
 import { Ability } from "../player/abilities/Ability";
 import { IStatefulEntity } from "./IStatefulEntity";
+import { Direction } from "../enums/Direction";
+import { LivingEntityInfo } from "../messages/LivingEntityInfo";
+import { WeaponType } from "../enums/WeaponType";
+import { NoWeapon } from "../player/weapons/NoWeapon";
 
-export abstract class LivingEntity extends Entity implements IStatefulEntity {
+export abstract class LivingEntity extends Entity implements IStatefulEntity, LivingEntityInfo {
     public hp: number;
     public maxHp: number;
     public speed: number;
     public critChance: number;
+    public movingDirection: Direction = Direction.BOTTOM;
 
     public aimVector: { x: number, y: number } = { x: 0, y: 0 };
     public weapon: Weapon;
+    public weaponType: WeaponType;
     public attackIndex = 0;
     public attackSpeed = 1;
 
     public currentState!: BaseState;
     private states: Map<EntityState, BaseState> = new Map();
     private abilities = new Map<AbilityType, Ability>();
-
+    
 
     constructor(
         id: string,
@@ -38,13 +42,21 @@ export abstract class LivingEntity extends Entity implements IStatefulEntity {
         speed: number,
         entityType: EntityType,
         entityCollisionHandler: IEntityCollisionHandler,
+        weapon?: Weapon,
     ) {
-        super(id, position, { dx: 0, dy: 0 }, radius, hp, maxHp, critChance, speed, false, entityType, entityCollisionHandler);
+        super(id, position, { dx: 0, dy: 0 }, radius, false, entityType, entityCollisionHandler);
+        if(weapon){
+            this.weapon = weapon;
+            this.weaponType = weapon.name;
+        } else {
+            this.weaponType = WeaponType.NONE;
+            this.weapon = new NoWeapon(0,0,0,0);
+        }
+        
         this.hp = hp;
         this.maxHp = maxHp;
         this.critChance = critChance;
         this.speed = speed;
-        this.weapon = new HeavySword()
     }
 
     public update(delta: number): void {

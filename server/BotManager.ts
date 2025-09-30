@@ -10,6 +10,7 @@ import { BotAdapter } from "./adapters/BotAdapter";
 import { ServerToSocketMsg } from "../shared/enums/ServerToSocketMsg";
 import { ProgressionSystem } from "./systems/ProgressionSystem";
 import { ClientPlayer } from "../shared/entities/ClientPlayer";
+import { HeavySword } from "../shared/player/weapons/HeavySword";
 
 export class BotManager {
     static botCounter: number = 0;
@@ -47,6 +48,7 @@ export class BotManager {
             position,
             100,
             10,
+            new HeavySword(),
             this.eventBus,
             this.botInputHandler.get(id)!
         );

@@ -10,14 +10,13 @@ import { ENTITY_BASE_CRIT_CHANCE } from "../constantes";
 import { LivingEntity } from "./LivingEntity";
 
 export class Player extends LivingEntity {
-    public playerName?: string;
+    public name?: string;
     public movingDirection: Direction = Direction.BOTTOM;
     public aimVector: { x: number, y: number } = { x: 0, y: 0 };
     public currentXp = 0;
     public lvlXp = 100;
     public currentLvl = 1;
 
-    public weapon: Weapon = new HeavySword();
     public killCounter = 0;
     public killStreak = 0;
     
@@ -37,10 +36,11 @@ export class Player extends LivingEntity {
         position: Position,
         hp: number = 100,
         speed: number = 10,
-        playerCollisionHandler: IEntityCollisionHandler
+        playerCollisionHandler: IEntityCollisionHandler, 
+        baseWeapon: Weapon,
     ) {
-        super(id, position, 10, hp, hp, ENTITY_BASE_CRIT_CHANCE, speed, EntityType.PLAYER, playerCollisionHandler);
-        this.playerName = playerName;
+        super(id, position, 10, hp, hp, ENTITY_BASE_CRIT_CHANCE, speed, EntityType.PLAYER, playerCollisionHandler, baseWeapon);
+        this.name = playerName;
     }
 
     public update(delta: number): void {
@@ -61,7 +61,7 @@ export class Player extends LivingEntity {
         this.knockbackReceivedVector = info.knockbackReceivedVector;
         this.movingDirection = info.movingDirection;
         this.isDead = info.isDead;
-        this.playerName = info.name;
+        this.name = info.name;
         this.id = info.id;
         this.state = info.state;
         this.killCounter = info.killCounter;
@@ -92,12 +92,12 @@ export class Player extends LivingEntity {
             knockbackReceivedVector: this.knockbackReceivedVector,
             movingDirection: this.movingDirection,
             isDead: this.isDead,
-            name: this.playerName,
+            name: this.name,
             id: this.id,
             state: this.state,
             killCounter: this.killCounter,
             killStreak: this.killStreak,
-            weapon: this.weapon.name,
+            weaponType: this.weapon.name,
             movingVector: this.movingVector,
             attackSpeed: this.attackSpeed,
             radius: this.radius,

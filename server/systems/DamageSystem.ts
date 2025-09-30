@@ -2,6 +2,8 @@ import { AttackReceivedData, AttackResult, KnockbackData } from "../../shared/ty
 import { EntityState } from "../../shared/messages/EntityState";
 import { ServerState } from "../ServerState";
 import { EntityEvent, EventBus, LocalPlayerEvent } from "../../shared/services/EventBus";
+import { EntityType } from "../../shared/enums/EntityType";
+import { LivingEntity } from "../../shared/entities/LivingEntity";
 
 export class DamageSystem {
     constructor(
@@ -10,9 +12,9 @@ export class DamageSystem {
     ) { }
 
     applyDamage(targetId: string, damage: number, attackerId: string, knockback?: { dx: number, dy: number }, knockbackTimer: number = 20) {
-        const target = this.serverState.getEntity(targetId);
-        const attacker = this.serverState.getEntity(attackerId);
-        if (!target) return;
+        const target = this.serverState.getEntity(targetId) as LivingEntity;
+        const attacker = this.serverState.getEntity(attackerId) as LivingEntity;
+        if (!target || target.entityType != EntityType.PLAYER) return;
 
         if (target.state === EntityState.BLOCKING) {
             this.eventBus.emit(EntityEvent.KNOCKBACKED, {

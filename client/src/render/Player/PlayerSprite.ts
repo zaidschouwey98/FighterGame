@@ -64,8 +64,8 @@ export default class PlayerSprite implements EntitySprite {
     }
 
     public syncPlayer(entity: PlayerInfo, onDeath?: () => void) {
-        if (entity.weapon != this.currentWeaponType) {
-            this.setWeapon(entity.weapon);
+        if (entity.weaponType != this.currentWeaponType) {
+            this.setWeapon(entity.weaponType);
         }
 
         this.playerPlate.update(entity.hp, entity.maxHp, entity.currentXp, entity.lvlXp, entity.currentLvl);

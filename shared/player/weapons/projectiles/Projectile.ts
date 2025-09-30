@@ -3,11 +3,11 @@ import { EntityType } from "../../../enums/EntityType";
 import { EntityInfo } from "../../../messages/EntityInfo";
 import Position from "../../../Position";
 import { MovementService } from "../../../services/MovementService";
-import { Entity } from "../../../entities/Entity";
 import { IEntityCollisionHandler } from "../../IEntityCollisionHandler";
 import { ProjectileInfo } from "../../../messages/ProjectileInfo";
+import { LivingEntity } from "../../../entities/LivingEntity";
 
-export class Projectile extends Entity {
+export class Projectile extends LivingEntity {
     private static counter = 0;
     constructor(
         position: Position,
@@ -19,7 +19,7 @@ export class Projectile extends Entity {
         projectileCollisionHandler: IEntityCollisionHandler,
         private onTimeOut: ()=>void
     ) {
-        super(ownerId + "_proj_" + Projectile.counter++, position, movingVector, 5, 10, 10, ENTITY_BASE_CRIT_CHANCE, PROJECTILE_SPEED, false, EntityType.PROJECTILE, projectileCollisionHandler);
+        super(ownerId + "_proj_" + Projectile.counter++, position, 5, 10, 10, ENTITY_BASE_CRIT_CHANCE, PROJECTILE_SPEED, EntityType.PROJECTILE, projectileCollisionHandler);
     }
 
     public updateFromInfo(info: EntityInfo): void {
@@ -28,6 +28,12 @@ export class Projectile extends Entity {
 
     public toInfo(): ProjectileInfo {
         return {
+            attackSpeed: 0, 
+            state: this.state,
+            movingDirection: this.movingDirection,
+            aimVector: this.aimVector,
+            weaponType: this.weaponType,
+            attackIndex: this.attackIndex,
             critChance: this.critChance,
             entityType: EntityType.PROJECTILE,
             ownerId: this.ownerId,

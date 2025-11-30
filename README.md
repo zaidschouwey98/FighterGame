@@ -1,6 +1,6 @@
 Builder ton image Docker
 
-Sur PC dev :
+Sur PC devs :
 
 docker build -t fightergame:latest .
 docker rm fightergame

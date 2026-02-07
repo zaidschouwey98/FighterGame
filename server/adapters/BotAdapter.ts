@@ -8,7 +8,7 @@ import { MovementSystem } from "../systems/MovementSystem";
 import { UpdateSystem } from "../systems/UpdateSystem";
 import { AttackDataBase } from "../../shared/types/AttackData";
 import { EntityInfo } from "../../shared/messages/EntityInfo";
-import { EventBus } from "../../shared/services/EventBus";
+import { EntityEvent, EventBus } from "../../shared/services/EventBus";
 
 
 export class BotAdapter {
@@ -68,18 +68,20 @@ export class BotAdapter {
         //     }
         // });
 
-        // eventBus.on(EventBusMessage.ATTACK_RECEIVED, (res:{attackReceivedData: AttackReceivedData, entityId: string}) => {
-        //     for (const bot of this.botManager.getBots()) {
-        //         if(bot.id === res.entityId)
-        //             bot.handleAttackReceived(res.attackReceivedData);
-        //     }  
-        // })
+        eventBus.on(EntityEvent.RECEIVE_ATTACK, (res: { entityId: string; attackReceivedData: AttackReceivedData }) => {
+            for (const bot of this.botManager.getBots()) {
+                if (bot.id === res.entityId) {
+                    bot.handleAttackReceived(res.attackReceivedData);
+                }
+            }
+        });
 
-        // eventBus.on(EventBusMessage.ENTITY_RECEIVED_KNOCKBACK, (res:{knockbackData: KnockbackData, entityId: string}) => {
-        //     for (const bot of this.botManager.getBots()) {
-        //         if(bot.id === res.entityId)
-        //             bot.handleKnockbackReceived(res.knockbackData);
-        //     }  
-        // })
+        eventBus.on(EntityEvent.KNOCKBACKED, (res: { entityId: string; knockbackData: KnockbackData }) => {
+            for (const bot of this.botManager.getBots()) {
+                if (bot.id === res.entityId) {
+                    bot.handleKnockbackReceived(res.knockbackData);
+                }
+            }
+        });
     }
 }

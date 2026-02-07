@@ -31,7 +31,7 @@ export class ServerState {
         // this.eventBus.emit(EntityEvent.ADDED, { entityInfo: entity.toInfo(), socket:socket});
     }
 
-    addBot(bot: Player) {
+    addBot(bot: Entity) {
         this.bots.add(bot.id);
         this.entities.set(bot.id, bot)
     }

@@ -157,14 +157,20 @@ export class GameController {
                 this.renderer.playersRenderer.syncEntities([value]);
             }
         }
-        this.renderer.update(delta);
 
+        if (!this.localPlayer) {
+            this.renderer.update(delta, null);
+            return;
+        }
 
-
-        if (!this.localPlayer) return;
-        // Handle attack dash if ongoing
         this.localPlayer.update(delta);
 
+        this.renderer.update(delta, {
+            x: this.localPlayer.position.x,
+            y: this.localPlayer.position.y,
+            vx: this.localPlayer.movingVector.dx,
+            vy: this.localPlayer.movingVector.dy,
+        });
 
         // render world
         const tileX = Math.floor(this.localPlayer.position.x / TILE_SIZE);
@@ -179,6 +185,5 @@ export class GameController {
 
         this.renderer.updateCamera(this.localPlayer.position)
         this.renderer.updateMinimap(this.localPlayer);
-
     }
 }

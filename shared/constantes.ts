@@ -1,8 +1,10 @@
 export const CAMERA_ZOOM = 2.5;
-export const RENDER_DISTANCE = 4;
+export const RENDER_DISTANCE = 5;
 export const TILE_SIZE = 16;        // Taille en pixels
 export const CHUNK_SIZE = 8;       // Taille des chunks
-export const MAP_FREQUENCY = 0.1;
+export const MAP_FREQUENCY = 0.01;
+/** Offset Y pour le tri profondeur : perso ancré au centre → pieds ≈ y + offset */
+export const ENTITY_DEPTH_FOOT_OFFSET = 12;
 export const KNOCKBACK_TIMER = 40;
 export const ATTACK_COOLDOWN = 25;
 export const ATTACK_RESET = 100;

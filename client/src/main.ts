@@ -8,7 +8,7 @@ import { GameScene } from './scene/GameScene';
 (async () => {
   const app = new Application();
   await app.init({
-    background: '#1099bb',
+    background: '#1a2e28',
     resizeTo: window,
     // textureGCActive: true, // Enable texture garbage collection
     // textureGCMaxIdle: 7200, // 2 hours idle time

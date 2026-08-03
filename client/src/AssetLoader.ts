@@ -160,6 +160,12 @@ const atlasConfig = [
         assetDimensions: { w: 16, h: 32 },
         textures: ["tree_1", "tree_2", "tree_3", "tree_4"] as const
     },
+    {
+        file: "/assets/tallgrass.png",
+        spriteAmount: { w: 3, h: 1 },
+        assetDimensions: { w: 16, h: 16 },
+        textures: ["tall_grass_1", "tall_grass_2", "tall_grass_3"] as const
+    },
    
   
    

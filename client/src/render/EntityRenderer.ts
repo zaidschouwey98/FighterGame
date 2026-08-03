@@ -11,17 +11,20 @@ import { DamagePopup } from "./DamagePopup";
 import { GameState } from "../core/GameState";
 import type Position from "../../../shared/Position";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
+import { ENTITY_DEPTH_FOOT_OFFSET } from "../../../shared/constantes";
 
 export default class EntityRenderer {
     private entityContainers: Map<string, Container>;
     private spriteSheets: Spritesheet[];
     private entitySprites: Map<string, EntitySprite>;
     private entities: Map<string, EntityInfo>;
+    /** Conteneur partagé avec props (arbres / herbe) pour Y-sort */
     private entityContainer: Container;
     private staticEffectContainer: Container;
 
     constructor(
-        playerContainer: Container,
+        /** Doit être le même conteneur que les props sol (terrain) */
+        depthContainer: Container,
         spriteSheets: Spritesheet[],
         private _tileContainer: Container,
         private _terrainContainer: Container,
@@ -34,8 +37,7 @@ export default class EntityRenderer {
         this.entityContainers = new Map();
         this.entitySprites = new Map();
         this.entities = new Map();
-        this.entityContainer = playerContainer;
-        // Profondeur body par Y pour overlaps; les plates restent sur un autre calque
+        this.entityContainer = depthContainer;
         this.entityContainer.sortableChildren = true;
         this.platesLayer.sortableChildren = true;
     }
@@ -76,7 +78,7 @@ export default class EntityRenderer {
         this.entities.set(entityInfo.id, entityInfo);
 
         this.entityContainer.addChild(container);
-        this.applyWorldPosition(entityInfo.id, entityInfo.position.x, entityInfo.position.y);
+        this.applyWorldPosition(entityInfo.id, entityInfo.position.x, entityInfo.position.y, entityInfo.entityType);
     }
 
     public removeEntity(entityId: string) {
@@ -96,17 +98,30 @@ export default class EntityRenderer {
 
     public syncPosition(res: { entityId: string; position: Position; }[]){
         for (const entity of res) {
-            this.applyWorldPosition(entity.entityId, entity.position.x, entity.position.y);
+            const info = this.entities.get(entity.entityId);
+            this.applyWorldPosition(
+                entity.entityId,
+                entity.position.x,
+                entity.position.y,
+                info?.entityType,
+            );
         }
     }
 
-    private applyWorldPosition(entityId: string, x: number, y: number) {
+    private depthFor(y: number, entityType?: EntityType): number {
+        // Joueur/projectiles : ancre centre → comparer aux pieds. Props : bas déjà en y.
+        if (entityType === EntityType.PLAYER || entityType === EntityType.PROJECTILE) {
+            return Math.round(y + ENTITY_DEPTH_FOOT_OFFSET);
+        }
+        return Math.round(y);
+    }
+
+    private applyWorldPosition(entityId: string, x: number, y: number, entityType?: EntityType) {
         const playerContainer = this.entityContainers.get(entityId);
         if (!playerContainer) return;
         playerContainer.x = x;
         playerContainer.y = y;
-        // Y-sort : personnages plus bas à l'écran dessinés par-dessus
-        playerContainer.zIndex = Math.round(y);
+        playerContainer.zIndex = this.depthFor(y, entityType ?? this.entities.get(entityId)?.entityType);
         this.entitySprites.get(entityId)?.setWorldPosition(x, y);
     }
 
@@ -123,6 +138,7 @@ export default class EntityRenderer {
         for (const entity of entities) {
             let playerSprite = this.entitySprites.get(entity.id);
             if (!playerSprite) throw new Error("Entity should be added before sync.");
+            this.entities.set(entity.id, entity);
             this.syncPosition([{ entityId: entity.id, position: entity.position }]);
             playerSprite.syncPlayer(entity);
         }

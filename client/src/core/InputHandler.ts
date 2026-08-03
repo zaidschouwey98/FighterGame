@@ -21,15 +21,15 @@ export class InputHandler implements IInputHandler {
             e.preventDefault();
         });
         window.addEventListener("keydown", (e) => {
-            this.keysPressed.add(e.key.toLowerCase());
             const key = e.key.toLowerCase();
             this.keysPressed.add(key);
 
-            // Détecter "space"
-            if (key === " ") { // e.key renvoie " " pour espace
+            // Détecter "space" (maintien pour charge TP)
+            if (key === " ") {
                 this.spaceDown = true;
             }
-            if (key === "shift") {
+            // Edge only : le key-repeat OS ne doit pas re-déclencher le dash
+            if (key === "shift" && !e.repeat) {
                 this.shiftPressed = true;
             }
         });

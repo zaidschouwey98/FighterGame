@@ -21,7 +21,11 @@ export class ProjectileSprite implements EntitySprite {
        onDeath && onDeath();
     }
 
+    public setWorldPosition(_x: number, _y: number) {}
+
     public update(_delta: number) {
         
     }
+
+    public destroy() {}
 }

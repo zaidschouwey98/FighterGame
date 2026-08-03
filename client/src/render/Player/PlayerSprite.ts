@@ -1,4 +1,4 @@
-import { Container, Spritesheet, Ticker } from "pixi.js";
+import { Container, Spritesheet } from "pixi.js";
 import { AnimController } from "./AnimController";
 import { IdleAnim } from "./anim/IdleAnim";
 import { MovingAnim } from "./anim/MovingAnim";
@@ -21,6 +21,7 @@ import { TeleportedAnim } from "./anim/TeleportedAnim";
 export default class PlayerSprite implements EntitySprite {
     private controller: AnimController;
     private playerPlate: PlayerPlate;
+    private plateRoot: Container;
     private weapon: WeaponSprite;
     private currentWeaponType: WeaponType;
     private weaponFactory: WeaponFactory;
@@ -31,15 +32,20 @@ export default class PlayerSprite implements EntitySprite {
         _terrainContainer: Container,
         tileContainer: Container,
         private staticEffectsContainer: Container,
+        /** Calque UI au-dessus de tous les corps (évite sprite autre joueur par-dessus la barre HP) */
+        platesLayer: Container,
         playerName: string,
         weaponType: WeaponType,
     ) {
         const effectRenderer = new EffectRenderer(spriteSheets, playerContainer, staticEffectsContainer);
 
         this.weaponFactory = new WeaponFactory();
-        // Label au-dessus du joueur
 
-        this.playerPlate = new PlayerPlate(this.playerContainer, playerName);
+        // Barre HP hors du conteneur corps : toujours au-dessus des sprites entités
+        this.plateRoot = new Container();
+        this.plateRoot.label = `PlayerPlateRoot:${id}`;
+        platesLayer.addChild(this.plateRoot);
+        this.playerPlate = new PlayerPlate(this.plateRoot, playerName);
 
         this.controller = new AnimController({
             [EntityState.IDLE]: new IdleAnim(spriteSheets, this.playerContainer),
@@ -63,11 +69,17 @@ export default class PlayerSprite implements EntitySprite {
         this.weapon = this.weaponFactory.createWeaponSprite(weaponType, this.spriteSheets, this.playerContainer, this.controller, this.staticEffectsContainer)
     }
 
+    public setWorldPosition(x: number, y: number) {
+        this.plateRoot.x = x;
+        this.plateRoot.y = y;
+    }
+
     public syncPlayer(entity: PlayerInfo, onDeath?: () => void) {
         if (entity.weaponType != this.currentWeaponType) {
             this.setWeapon(entity.weaponType);
         }
 
+        this.setWorldPosition(entity.position.x, entity.position.y);
         this.playerPlate.update(entity.hp, entity.maxHp, entity.currentXp, entity.lvlXp, entity.currentLvl);
         this.controller.update(entity, onDeath);
         this.weapon.setState(entity);
@@ -81,6 +93,7 @@ export default class PlayerSprite implements EntitySprite {
     public destroy() {
         this.controller.stop();
         this.weapon.destroy();
-        this.playerPlate.destroy();
+        // plateRoot contient le PlayerPlate
+        this.plateRoot.destroy({ children: true });
     }
 }

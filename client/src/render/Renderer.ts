@@ -66,7 +66,14 @@ export class Renderer {
         rootContainer.addChild(this._uiContainer); // follows the camera
         this._scoreBoard = new ScoreBoard(this._uiContainer)
         this._minimap = new Minimap(this._uiContainer, 200);
-        this._entityRenderer = new EntityRenderer(this._objectContainer, spriteSheets, this._tilesContainer,this._terrainContainer, this._terrainContainer); // todo Old was overlay (the right one)
+        this._entityRenderer = new EntityRenderer(
+            this._objectContainer,
+            spriteSheets,
+            this._tilesContainer,
+            this._terrainContainer,
+            this._overlayContainer,
+            this._overlayContainer,
+        );
         this._worldRenderer = new WorldRenderer(seed, spriteSheets, this._tilesContainer, this._terrainContainer, this._objectContainer);
         this._effectRenderer = new EffectRenderer(spriteSheets,this._objectContainer, this._overlayContainer);
         this.registerListeners();

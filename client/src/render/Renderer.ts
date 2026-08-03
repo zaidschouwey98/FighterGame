@@ -11,8 +11,8 @@ import type { AttackResult } from "../../../shared/types/AttackResult";
 import { EffectRenderer } from "./EffectRenderer";
 import type { EntityInfo } from "../../../shared/messages/EntityInfo";
 import { EntityCommand, EntityEvent, EventBus, LocalPlayerEvent, NetworkEvent } from "../../../shared/services/EventBus";
-import type { EntityState } from "../../../shared/messages/EntityState";
-import type { Direction } from "../../../shared/enums/Direction";
+import { EntityType } from "../../../shared/enums/EntityType";
+import type PlayerInfo from "../../../shared/messages/PlayerInfo";
 
 export class Renderer {
     private _eventBus: EventBus;
@@ -64,8 +64,8 @@ export class Renderer {
         globalContainer.addChild(this._uiContainer);
         rootContainer.addChild(globalContainer);
         rootContainer.addChild(this._uiContainer); // follows the camera
-        this._scoreBoard = new ScoreBoard(this._uiContainer)
-        this._minimap = new Minimap(this._uiContainer, 200);
+        this._scoreBoard = new ScoreBoard(this._uiContainer, 214);
+        this._minimap = new Minimap(this._uiContainer, 188);
         this._entityRenderer = new EntityRenderer(
             this._objectContainer,
             spriteSheets,
@@ -85,21 +85,23 @@ export class Renderer {
                 this._entityRenderer.addEntity(player);
             }
             this._entityRenderer.syncEntities(players);
+            this._scoreBoard.setPlayers(this.asPlayers(players));
         })
 
-        // Quand un joueur est mis à jour
+        // Quand un joueur est mis à jour (état / infos, pas juste la pos)
         this._eventBus.on(EntityEvent.UPDATED, (player: EntityInfo) => {
             this._entityRenderer.syncEntities([player]);
-            // console.log("should update score board")
-            // this._scoreBoard.update(player);
+            this.tryUpdateScore(player);
         });
 
         this._eventBus.on(EntityCommand.MOVE, (data: { entityId: string; position: Position; })=>{
             this._entityRenderer.syncPosition([data]);
         });
 
+        // Kill / XP / stats après un kill (ProgressionSystem → ENTITY_SYNC)
         this._eventBus.on(EntityEvent.SYNC, (entity: EntityInfo) => {
             this._entityRenderer.syncEntities([entity]);
+            this.tryUpdateScore(entity);
         });
 
         this._eventBus.on(EntityEvent.POSITION_UPDATED, (res: { entityId: string; position: Position; })=>{
@@ -110,24 +112,37 @@ export class Renderer {
         this._eventBus.on(EntityEvent.ADDED, (player: EntityInfo) => {
             this._entityRenderer.addEntity(player);
             this._entityRenderer.syncEntities([player]);
+            this.tryUpdateScore(player);
         });
 
         // Joueur parti
         this._eventBus.on(LocalPlayerEvent.LEFT, (playerId: string) => {
             this._entityRenderer.removeEntity(playerId);
+            this._scoreBoard.remove(playerId);
         });
 
         this._eventBus.on(EntityEvent.DIED, (res) => {
             this._entityRenderer.entityDied(res.entityInfo, this.onDeathAnimationFinished);
+            // Retire le mort de la liste active (le killer sera resync via ENTITY_SYNC)
+            this._scoreBoard.remove(res.entityInfo.id);
         });
 
         this._eventBus.on(LocalPlayerEvent.ATTACK_RESULT, (res: { entityId: string; attackResult: AttackResult; })=>{
             this._entityRenderer.showDmgPopup(res.attackResult);
         });
 
-        this._eventBus.on(LocalPlayerEvent.TELEPORT_DESTINATION_HELPER, (position:Position)=>{
-            this._effectRenderer.renderTpDestination(position)
+        this._eventBus.on(LocalPlayerEvent.TELEPORT_DESTINATION_HELPER, (position) => {
+            this._effectRenderer.renderTpDestination(position ?? undefined);
         })
+    }
+
+    private tryUpdateScore(entity: EntityInfo) {
+        if (entity.entityType !== EntityType.PLAYER) return;
+        this._scoreBoard.update(entity as PlayerInfo);
+    }
+
+    private asPlayers(entities: EntityInfo[]): PlayerInfo[] {
+        return entities.filter(e => e.entityType === EntityType.PLAYER) as PlayerInfo[];
     }
 
     updateMinimap(localPlayer: Player) {

@@ -17,7 +17,7 @@ import { LivingEntity } from "./LivingEntity";
 import PlayerInfo from "../messages/PlayerInfo";
 import { EntityType } from "../enums/EntityType";
 import { EntityState } from "../messages/EntityState";
-import { AttackAbility, BlockAbility, TeleportAbility } from "../player/abilities/Abilities";
+import { AttackAbility, AttackDashAbility, BlockAbility, TeleportAbility } from "../player/abilities/Abilities";
 import { AbilityType } from "../enums/AbilityType";
 import { TeleportedState } from "../player/states/TeleportedState";
 import { Weapon } from "../player/weapons/Weapon";
@@ -70,6 +70,7 @@ export class ClientPlayer extends LivingEntity {
         this.currentState = baseState;
         
         this.addAbility(AbilityType.ATTACK,new AttackAbility(eventBus));
+        this.addAbility(AbilityType.ATTACK_DASH, new AttackDashAbility());
         this.addAbility(AbilityType.TELEPORT,new TeleportAbility(eventBus));
         this.addAbility(AbilityType.BLOCK,new BlockAbility(eventBus));
 

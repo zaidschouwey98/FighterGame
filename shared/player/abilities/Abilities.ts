@@ -1,7 +1,7 @@
-import { ATTACK_COOLDOWN, BLOCK_COOLDOWN, BLOCK_DURATION, TP_COOLDOWN, TP_DISTANCE } from "../../constantes";
+import { ATTACK_DASH_COOLDOWN, BLOCK_COOLDOWN, TP_COOLDOWN, TP_DISTANCE } from "../../constantes";
 import { LivingEntity } from "../../entities/LivingEntity";
 import { EntityState } from "../../messages/EntityState";
-import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EventBus } from "../../services/EventBus";
 import { Ability } from "./Ability";
 
 
@@ -19,6 +19,17 @@ export class AttackAbility extends Ability {
     this.eventBus.emit(EntityCommand.ATTACK, { entityId: entity.id, attackData: attackData });
 
 
+    this.triggerCooldown();
+  }
+}
+
+export class AttackDashAbility extends Ability {
+  constructor() {
+    super(ATTACK_DASH_COOLDOWN);
+  }
+
+  use(_entity: unknown) {
+    if (!this.canUse()) return;
     this.triggerCooldown();
   }
 }

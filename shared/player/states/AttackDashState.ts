@@ -3,13 +3,16 @@ import { BaseState } from "./BaseState";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { DASH_ATTACK_DURATION } from "../../constantes";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
-import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EventBus } from "../../services/EventBus";
+import { Ability } from "../abilities/Ability";
+import { AbilityType } from "../../enums/AbilityType";
 
 export class AttackDashState extends BaseState {
     readonly name = EntityState.ATTACK_DASH;
 
     private dashDuration = DASH_ATTACK_DURATION;
     private dashTimer = 0;
+    private ability?: Ability;
 
     constructor(
         entity: IStatefulEntity,
@@ -17,6 +20,12 @@ export class AttackDashState extends BaseState {
         private inputHandler: IInputHandler
     ) {
         super(entity);
+    }
+
+    canEnter(): boolean {
+        this.ability = this.entity.getAbility(AbilityType.ATTACK_DASH);
+        if (!this.ability) return false;
+        return this.ability.canUse();
     }
 
     enter() {
@@ -27,6 +36,7 @@ export class AttackDashState extends BaseState {
 
         this.entity.aimVector = { x: dx / len, y: dy / len };
         this.dashTimer = this.dashDuration;
+        this.ability?.use(this.entity);
 
         this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
     }

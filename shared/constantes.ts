@@ -11,6 +11,9 @@ export const TP_DISTANCE = 120;
 export const DASH_ATTACK_DURATION = 30;
 export const BLOCK_DURATION = 30;
 export const BLOCK_COOLDOWN = 30;
+/** Demi-angle du cône de parade (°) — 60 → cône total 120° face à la souris */
+export const BLOCK_HALF_ANGLE_DEG = 60;
+export const BLOCK_FRONT_DOT_MIN = Math.cos((BLOCK_HALF_ANGLE_DEG * Math.PI) / 180);
 export const ENTITY_BASE_CRIT_CHANCE = 0.1; // 10%
 export const ATTACK_DASH_COOLDOWN = 60;
 

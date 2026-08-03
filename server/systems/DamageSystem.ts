@@ -4,6 +4,8 @@ import { ServerState } from "../ServerState";
 import { EntityEvent, EventBus, LocalPlayerEvent } from "../../shared/services/EventBus";
 import { EntityType } from "../../shared/enums/EntityType";
 import { LivingEntity } from "../../shared/entities/LivingEntity";
+import { PhysicsService } from "../../shared/services/PhysicsService";
+import { BLOCK_FRONT_DOT_MIN } from "../../shared/constantes";
 
 export class DamageSystem {
     constructor(
@@ -16,7 +18,15 @@ export class DamageSystem {
         const attacker = this.serverState.getEntity(attackerId) as LivingEntity;
         if (!target || target.entityType != EntityType.PLAYER) return;
 
-        if (target.state === EntityState.BLOCKING) {
+        if (
+            target.state === EntityState.BLOCKING &&
+            PhysicsService.isFacingSource(
+                target.position,
+                target.aimVector,
+                attacker.position,
+                BLOCK_FRONT_DOT_MIN
+            )
+        ) {
             this.eventBus.emit(EntityEvent.KNOCKBACKED, {
                 knockbackData: {
                     id: targetId,

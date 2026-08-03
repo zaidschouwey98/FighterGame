@@ -1,12 +1,11 @@
 import { EntityState } from "../../messages/EntityState";
 import { BaseState } from "./BaseState";
 import { BLOCK_DURATION } from "../../constantes";
-import type { BlockService } from "../../services/BlockService";
 import type { IInputHandler } from "../../../client/src/core/IInputHandler";
 import { IStatefulEntity } from "../../entities/IStatefulEntity";
 import { Ability } from "../abilities/Ability";
 import { AbilityType } from "../../enums/AbilityType";
-import { EntityCommand, EntityEvent, EventBus } from "../../services/EventBus";
+import { EntityCommand, EventBus } from "../../services/EventBus";
 
 export class BlockState extends BaseState {
     readonly name = EntityState.BLOCKING;
@@ -27,12 +26,15 @@ export class BlockState extends BaseState {
     }
 
     enter() {
-        // Indiquer que le joueur est en blocage
-        this.blockDuration = BLOCK_DURATION
+        this.blockDuration = BLOCK_DURATION;
+        this.syncAimFromMouse();
         this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
     }
 
     update(delta: number) {
+        this.syncAimFromMouse();
+        this.eventBus.emit(EntityCommand.UPDATED, this.entity.toInfo());
+
         if (this.inputHandler.consumeAttack()) {
             if (this.entity.changeState(EntityState.ATTACK)) return;
         }
@@ -47,5 +49,14 @@ export class BlockState extends BaseState {
     }
 
     exit() {
+    }
+
+    /** Parade orientée vers la souris (direction du bouclier) */
+    private syncAimFromMouse() {
+        const world = this.inputHandler.getMousePosition();
+        const dx = world.x - this.entity.position.x;
+        const dy = world.y - this.entity.position.y;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        this.entity.aimVector = { x: dx / len, y: dy / len };
     }
 }

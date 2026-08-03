@@ -25,23 +25,20 @@ export class IdleState extends BaseState {
 
         // Si clic gauche → attaque
         if (this.inputHandler.consumeAttack()) {
-            this.entity.changeState(EntityState.ATTACK);
-            return;
+            if (this.entity.changeState(EntityState.ATTACK)) return;
         }
 
         if (this.inputHandler.consumeRightClick()) {
-            this.entity.changeState(EntityState.BLOCKING);
-            return;
+            if (this.entity.changeState(EntityState.BLOCKING)) return;
         }
 
-        // Si espace → dash
+        // Si espace → TP
         if (this.inputHandler.isSpaceDown()) {
-            this.entity.changeState(EntityState.TELEPORTING);
+            if (this.entity.changeState(EntityState.TELEPORTING)) return;
         }
 
         if (this.inputHandler.consumeShift()) {
-            this.entity.changeState(EntityState.ATTACK_DASH);
-            return;
+            if (this.entity.changeState(EntityState.ATTACK_DASH)) return;
         }
     }
 }

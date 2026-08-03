@@ -34,23 +34,19 @@ export class MovingState extends BaseState {
       return;
     }
     if (this.inputHandler.consumeAttack()) {
-      this.entity.changeState(EntityState.ATTACK);
-      return;
+      if (this.entity.changeState(EntityState.ATTACK)) return;
     }
 
     if (this.inputHandler.consumeRightClick()) {
-      this.entity.changeState(EntityState.BLOCKING);
-      return;
+      if (this.entity.changeState(EntityState.BLOCKING)) return;
     }
 
     if (this.inputHandler.isSpaceDown()) {
-      this.entity.changeState(EntityState.TELEPORTING);
-      return;
+      if (this.entity.changeState(EntityState.TELEPORTING)) return;
     }
 
-    if(this.inputHandler.consumeShift()){
-      this.entity.changeState(EntityState.ATTACK_DASH);
-      return;
+    if (this.inputHandler.consumeShift()) {
+      if (this.entity.changeState(EntityState.ATTACK_DASH)) return;
     }
 
     // Déplacement

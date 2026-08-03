@@ -28,6 +28,6 @@ export interface IStatefulEntity {
     
     addState(state: BaseState): void;
     hasState(type: EntityState): boolean;
-    changeState(state: EntityState, params?: unknown): void;
+    changeState(state: EntityState, params?: unknown): boolean;
     toInfo(): EntityInfo;
 }

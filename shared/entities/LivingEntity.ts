@@ -72,17 +72,18 @@ export abstract class LivingEntity extends Entity implements IStatefulEntity, Li
         return this.states.has(type);
     }
 
-    public changeState(entityState: EntityState, params?: unknown): void {
+    public changeState(entityState: EntityState, params?: unknown): boolean {
         const nextState = this.states.get(entityState);
         if (!nextState) {
             console.warn(`State ${entityState} not found on entity ${this.id}`);
-            return;
+            return false;
         }
-        if (!nextState.canEnter()) return;
+        if (!nextState.canEnter()) return false;
         this.currentState.exit();
         this.currentState = nextState;
         this.state = nextState.name;
         nextState.enter(params);
+        return true;
     }
 
     public addAbility(type: AbilityType, ability: Ability): void {

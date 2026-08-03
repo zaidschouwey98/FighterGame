@@ -26,7 +26,7 @@ export class HitState extends BaseState {
 
     update(delta: number) {
         if (this.inputHandler.isSpaceDown()) {
-            this.entity.changeState(EntityState.TELEPORTING);
+            if (this.entity.changeState(EntityState.TELEPORTING)) return;
         }
 
         if (this.knockbackTimer > 0) {

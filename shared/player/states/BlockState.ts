@@ -33,8 +33,8 @@ export class BlockState extends BaseState {
     }
 
     update(delta: number) {
-        if(this.inputHandler.consumeAttack()){
-            this.entity.changeState(EntityState.ATTACK);
+        if (this.inputHandler.consumeAttack()) {
+            if (this.entity.changeState(EntityState.ATTACK)) return;
         }
         
         this.blockDuration -= delta;

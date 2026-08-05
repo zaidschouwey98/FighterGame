@@ -22,7 +22,7 @@ export class MeleeAttackHandler implements AttackHandler {
 
     handle(data: MeleeAttackData): void {
         if(data.playerId == undefined || data.playerId === "") throw new Error("Melee attack data missing playerId, check attackAbility");
-        const attacker = this.serverState.getEntity(data.playerId);
+        const attacker = this.serverState.getEntity(data.playerId) as Player | undefined;
         if (!attacker) return;
         
         attacker.position = data.position;
@@ -49,8 +49,8 @@ export class MeleeAttackHandler implements AttackHandler {
                 continue;
             this.damageSystem.applyDamage(
                 target.id,
-                20,                      // damage
-                attacker.id,             // killer
+                attacker.weapon.weaponDamage,
+                attacker.id,
                 PhysicsService.computeKnockback(attacker.position, target.position, data.knockbackStrength),
                 40
             );
@@ -65,9 +65,12 @@ export class ProjectileAttackHandler implements AttackHandler {
         private damageSystem: DamageSystem
     ) { }
     handle(data: ProjectileAttackData): void {
+        const attacker = this.serverState.getEntity(data.playerId) as Player | undefined;
+        const damage = attacker?.weapon.weaponDamage ?? 20;
+        const knockback = data.knockbackStrength;
         let dx = Math.cos(data.rotation);
         let dy = Math.sin(data.rotation);
-        let proj = new Projectile(data.position, 40, { dx: dx, dy: dy }, data.playerId, 20, 3, new ServerProjectileCollisionHandler(this.damageSystem), ()=>{
+        let proj = new Projectile(data.position, 40, { dx: dx, dy: dy }, data.playerId, damage, knockback, new ServerProjectileCollisionHandler(this.damageSystem), ()=>{
             this.eventBus.emit(EntityEvent.DIED, { entityInfo: proj.toInfo()})
             
         })

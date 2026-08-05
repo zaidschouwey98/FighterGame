@@ -35,6 +35,18 @@ export abstract class Weapon {
         return this._weaponDamage;
     }
 
+    public set weaponDamage(value: number) {
+        this._weaponDamage = value;
+    }
+
+    public get knockbackStrength(): number {
+        return this._knockbackStrength;
+    }
+
+    public set knockbackStrength(value: number) {
+        this._knockbackStrength = value;
+    }
+
     public abstract isDashAttack():boolean;
 
     public abstract getAttackDuration(attackSpeed:number):number;

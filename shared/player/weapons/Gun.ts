@@ -24,7 +24,7 @@ export class Gun extends Weapon {
             playerId: "",
             position: entityPos,
             rotation: attackDir,
-            knockbackStrength: 20,
+            knockbackStrength: this._knockbackStrength,
             playerAction: EntityState.IDLE,
             attackIndex: 0
         };

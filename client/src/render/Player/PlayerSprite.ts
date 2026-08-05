@@ -93,7 +93,6 @@ export default class PlayerSprite implements EntitySprite {
     public destroy() {
         this.controller.stop();
         this.weapon.destroy();
-        // plateRoot contient le PlayerPlate
         this.plateRoot.destroy({ children: true });
     }
 }

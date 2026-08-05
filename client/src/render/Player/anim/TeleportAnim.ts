@@ -25,7 +25,7 @@ export class TeleportingAnim implements IAnimState {
     }
 
     public play(_player: PlayerInfo) {
-        const dir = Direction.BOTTOM
+        const dir = Direction.BOTTOM;
         if (dir === this.lastDir && this.current) return;
         this.lastDir = dir;
 
@@ -40,21 +40,22 @@ export class TeleportingAnim implements IAnimState {
     }
 
     public stop() {
-        const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
-        tp_effect.anchor.set(0.5)
-        tp_effect.x = this.player!.position.x;
-        tp_effect.y = this.player!.position.y;
-        tp_effect.visible = true;
-        tp_effect.loop = false;
-        tp_effect.animationSpeed = 0.2;
-        tp_effect.currentFrame = 0;
-        tp_effect.play();
-        tp_effect.onComplete = () => { 
-            this.staticEffectsContainer.removeChild(tp_effect);
-            tp_effect.destroy() 
+        if (this.player) {
+            const tp_effect = new AnimatedSprite(findAnimation(this.spriteSheets, "tp_effect")!);
+            tp_effect.anchor.set(0.5);
+            tp_effect.x = this.player.position.x;
+            tp_effect.y = this.player.position.y;
+            tp_effect.visible = true;
+            tp_effect.loop = false;
+            tp_effect.animationSpeed = 0.2;
+            tp_effect.currentFrame = 0;
+            tp_effect.play();
+            tp_effect.onComplete = () => {
+                this.staticEffectsContainer.removeChild(tp_effect);
+                tp_effect.destroy();
+            };
+            this.staticEffectsContainer.addChild(tp_effect);
         }
-
-        this.staticEffectsContainer.addChild(tp_effect)
 
         if (!this.current) return;
         this.current.stop();

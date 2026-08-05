@@ -91,8 +91,7 @@ export class Renderer {
         this._entityRenderer = new EntityRenderer(
             this._terrainContainer,
             spriteSheets,
-            this._tilesContainer,
-            this._terrainContainer,
+            this._groundFxContainer,
             this._overlayContainer,
             this._overlayContainer,
         );

@@ -7,12 +7,13 @@ import type { IAnimState } from "../IAnimState";
 const MAX_CORPSES = 8;
 
 export class DieAnim implements IAnimState {
-    /** Corps terminés, laissés sur le terrain */
+    /** Corps terminés, laissés au sol (même layer que le sang) */
     private static corpses: AnimatedSprite[] = [];
 
     private current?: AnimatedSprite;
 
-    constructor(private spriteSheets: Spritesheet[], private terrainContainer: Container) {
+    /** groundFx = layer sang / déco au sol, sous les joueurs vivants */
+    constructor(private spriteSheets: Spritesheet[], private groundFxContainer: Container) {
     }
 
     public play(player: PlayerInfo, stopCallBack?: () => void) {
@@ -36,7 +37,7 @@ export class DieAnim implements IAnimState {
             stopCallBack?.();
         };
 
-        this.terrainContainer.addChild(dyingAnim);
+        this.groundFxContainer.addChild(dyingAnim);
         this.current = dyingAnim;
         dyingAnim.play();
     }

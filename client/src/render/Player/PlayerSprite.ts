@@ -29,8 +29,8 @@ export default class PlayerSprite implements EntitySprite {
         public id: string,
         private playerContainer: Container,
         private spriteSheets: Spritesheet[],
-        _terrainContainer: Container,
-        tileContainer: Container,
+        /** Layer sol (sang + cadavres), sous les joueurs vivants */
+        groundFxContainer: Container,
         private staticEffectsContainer: Container,
         /** Calque UI au-dessus de tous les corps (évite sprite autre joueur par-dessus la barre HP) */
         platesLayer: Container,
@@ -55,8 +55,8 @@ export default class PlayerSprite implements EntitySprite {
             [EntityState.KNOCKBACK]: new KnockBackAnim(spriteSheets, playerContainer),
             [EntityState.HIT]: new HitAnim(spriteSheets, playerContainer),
             [EntityState.TELEPORTING]: new TeleportingAnim(spriteSheets, playerContainer, staticEffectsContainer),
-            [EntityState.TELEPORTED]: new TeleportedAnim(spriteSheets, playerContainer, tileContainer),
-            [EntityState.DEAD]: new DieAnim(spriteSheets, _terrainContainer),
+            [EntityState.TELEPORTED]: new TeleportedAnim(spriteSheets, playerContainer, staticEffectsContainer),
+            [EntityState.DEAD]: new DieAnim(spriteSheets, groundFxContainer),
         }, EntityState.IDLE);
 
         this.weapon = this.weaponFactory.createWeaponSprite(weaponType, spriteSheets, this.playerContainer, this.controller, staticEffectsContainer);

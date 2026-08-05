@@ -26,8 +26,8 @@ export default class EntityRenderer {
         /** Doit être le même conteneur que les props sol (terrain) */
         depthContainer: Container,
         spriteSheets: Spritesheet[],
-        private _tileContainer: Container,
-        private _terrainContainer: Container,
+        /** Layer sol : sang + cadavres (sous les joueurs vivants) */
+        private _groundFxContainer: Container,
         staticEffectContainer: Container,
         /** Au-dessus des corps (overlay) pour les barres HP */
         private platesLayer: Container,
@@ -55,8 +55,7 @@ export default class EntityRenderer {
                     player.id,
                     container,
                     this.spriteSheets,
-                    this._terrainContainer,
-                    this._tileContainer,
+                    this._groundFxContainer,
                     this.staticEffectContainer,
                     this.platesLayer,
                     player.name || "unknown-client-side",

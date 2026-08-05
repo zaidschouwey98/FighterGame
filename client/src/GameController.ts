@@ -2,6 +2,7 @@ import { Application, Container, Spritesheet } from "pixi.js";
 import type { AttackReceivedData, KnockbackData } from "../../shared/types/AttackResult";
 import { CoordinateService } from "./core/CoordinateService";
 import { GameState } from "./core/GameState";
+import { HitFeelService } from "./core/HitFeelService";
 import { InputHandler } from "./core/InputHandler";
 import { MovementService } from "../../shared/services/MovementService";
 import { NetworkClient } from "./network/NetworkClient";
@@ -25,6 +26,7 @@ export class GameController {
     private localPlayer: ClientPlayer | undefined;
     private networkClient: NetworkClient;
     private playerName?: string;
+    private hitFeel = new HitFeelService();
 
     // Services
     private coordinateService: CoordinateService;
@@ -52,6 +54,7 @@ export class GameController {
                 this.onDeath();
             }
         });
+        this.renderer.setHitFeel(this.hitFeel);
         this.coordinateService = new CoordinateService(app, this.renderer.camera);
         this.inputHandler = new InputHandler(this.coordinateService);
         this.renderer.worldRenderer.update(0, 0);
@@ -106,6 +109,10 @@ export class GameController {
         this.eventBus.on(EntityEvent.RECEIVE_ATTACK, (res: { entityId:string, attackReceivedData: AttackReceivedData}) => {
             if(res.entityId !== this.localPlayer?.id) throw new Error("Received attack for another entity");
             this.localPlayer?.handleAttackReceived(res.attackReceivedData);
+            // Feedback victime : freeze + sparks (crit non dispo côté receive → normal)
+            this.hitFeel.onImpact(false);
+            const p = this.localPlayer;
+            if (p) this.renderer.playHitAt(p.position.x, p.position.y - 6, false);
         });
 
         this.eventBus.on(EntityEvent.KNOCKBACKED, (res: { entityId:string, knockbackData: KnockbackData}) => {
@@ -151,21 +158,24 @@ export class GameController {
     }
 
     public update(delta: number) {
+        // Hitstop : le sim freeze, FX/shake continuent via process + renderer
+        const simDelta = this.hitFeel.process(delta);
+
         for (const value of GameState.instance.entities.values()) {
             if (!value.isDead && value.movingVector.dx != 0 || value.movingVector.dy != 0) {
-                MovementService.moveEntity(value as LivingEntity, delta);
+                MovementService.moveEntity(value as LivingEntity, simDelta);
                 this.renderer.playersRenderer.syncEntities([value]);
             }
         }
 
         if (!this.localPlayer) {
-            this.renderer.update(delta, null);
+            this.renderer.update(simDelta, null);
             return;
         }
 
-        this.localPlayer.update(delta);
+        this.localPlayer.update(simDelta);
 
-        this.renderer.update(delta, {
+        this.renderer.update(simDelta, {
             x: this.localPlayer.position.x,
             y: this.localPlayer.position.y,
             vx: this.localPlayer.movingVector.dx,

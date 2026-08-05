@@ -95,7 +95,8 @@ export class HitAnim implements IAnimState {
         bloodEffect.anchor.set(0.5)
         bloodEffect.visible = true;
         bloodEffect.loop = false;
-        bloodEffect.animationSpeed = 0.3;
+        bloodEffect.animationSpeed = 0.42;
+        bloodEffect.scale.set(1.15);
         bloodEffect.gotoAndPlay(0);
         bloodEffect.onComplete = () => { bloodEffect.destroy() }
         this.playerContainer.addChild(bloodEffect)

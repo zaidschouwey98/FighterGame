@@ -19,6 +19,12 @@ export const BLOCK_FRONT_DOT_MIN = Math.cos((BLOCK_HALF_ANGLE_DEG * Math.PI) / 1
 export const ENTITY_BASE_CRIT_CHANCE = 0.1; // 10%
 export const ATTACK_DASH_COOLDOWN = 60;
 
+/** Game feel — impact */
+export const HITSTOP_NORMAL = 5;
+export const HITSTOP_CRIT = 9;
+export const HIT_SHAKE_NORMAL = 2.2;
+export const HIT_SHAKE_CRIT = 4.5;
+
 // Heavy sword
 export const HEAVY_SWORD_ATTACK_1_BASE_DURATION = 40;
 export const HEAVY_SWORD_ATTACK_2_BASE_DURATION = 40;

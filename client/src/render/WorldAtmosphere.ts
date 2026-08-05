@@ -1,29 +1,20 @@
 import { AdjustmentFilter, GodrayFilter } from "pixi-filters";
 import { ColorMatrixFilter, Container } from "pixi.js";
-import { DirectionalLightFilter } from "./custom_filters/DirectionalLightFilter";
 
 /**
- * Ambiance mondiale : grade + lumière dirigée + godrays.
+ * Ambiance mondiale : grade + godrays (pas de lumière directionnelle shader).
  * Appliqué aux couches monde (pas l'UI).
  */
 export class WorldAtmosphere {
     private godray: GodrayFilter;
     private grade: AdjustmentFilter;
     private warmLift: ColorMatrixFilter;
-    private directionalLight: DirectionalLightFilter;
     private time = 0;
 
     /** Angle soleil partagé (degrés) — herbe / ombres peuvent l'exploiter */
     lightAngle = 28;
 
     constructor(private worldRoot: Container) {
-        this.directionalLight = new DirectionalLightFilter({
-            ambient: 0.76,
-            intensity: 0.48,
-            warmth: 0.4,
-            angle: this.lightAngle,
-        });
-
         this.godray = new GodrayFilter({
             angle: this.lightAngle,
             gain: 0.32,
@@ -54,7 +45,6 @@ export class WorldAtmosphere {
         this.worldRoot.filters = [
             this.grade,
             this.warmLift,
-            this.directionalLight,
             this.godray,
         ];
     }
@@ -62,10 +52,8 @@ export class WorldAtmosphere {
     /** delta normalisé (style ticker ≈ 1 à 60 FPS) */
     update(delta: number) {
         this.time += delta * 0.02;
-        // soleil qui dérive doucement
         this.lightAngle = 26 + Math.sin(this.time * 0.15) * 8;
         this.godray.time = this.time;
         this.godray.angle = this.lightAngle;
-        this.directionalLight.angle = this.lightAngle;
     }
 }
